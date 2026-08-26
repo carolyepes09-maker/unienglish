@@ -19,33 +19,69 @@
       {
         "source": "**/*.@(js|json|wasm)",
         "headers": [
-          { "key": "Cache-Control", "value": "no-cache" }
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
         ]
       },
       {
         "source": "/index.html",
         "headers": [
-          { "key": "Cache-Control", "value": "no-cache" }
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
         ]
       },
       {
         "source": "/assets/**",
         "headers": [
-          { "key": "Cache-Control", "value": "public, max-age=86400" }
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=86400"
+          }
         ]
       },
       {
         "source": "/canvaskit/**",
         "headers": [
-          { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
         ]
       },
       {
         "source": "/assets/assets/fonts/**",
         "headers": [
-          { "key": "Cache-Control", "value": "public, max-age=2592000, immutable" }
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=2592000, immutable"
+          }
         ]
       }
     ]
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "unienglish1-54948",
+          "appId": "1:221745981086:android:aa6b25eace03776f0d7d8f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "unienglish1-54948",
+          "configurations": {
+            "android": "1:221745981086:android:aa6b25eace03776f0d7d8f",
+            "ios": "1:221745981086:ios:e30517c00c4d99bf0d7d8f",
+            "web": "1:221745981086:web:12619111be5af8ac0d7d8f"
+          }
+        }
+      }
+    }
   }
 }

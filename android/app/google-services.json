@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "890133079966",
-    "project_id": "unienglish-77a42",
-    "storage_bucket": "unienglish-77a42.firebasestorage.app"
+    "project_number": "221745981086",
+    "project_id": "unienglish1-54948",
+    "storage_bucket": "unienglish1-54948.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:890133079966:android:d017302314211b584bd88f",
+        "mobilesdk_app_id": "1:221745981086:android:aa6b25eace03776f0d7d8f",
         "android_client_info": {
-          "package_name": "com.example.fluter_app"
+          "package_name": "com.unilibre.unienglish"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBrL7BILuSxAVjDRj16AgTQ7RZYy74f7fs"
+          "current_key": "AIzaSyAc-4N59CGOKxeXxdv_iAEHM2SK66OZpUk"
         }
       ],
       "services": {
