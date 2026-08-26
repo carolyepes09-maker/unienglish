@@ -153,6 +153,43 @@ class _LoginScreenState extends State<LoginScreen>
     ]).timeout(const Duration(seconds: 10), onTimeout: () => []);
   }
 
+  /// Envía el correo de restablecimiento de contraseña para el email que el
+  /// usuario ya haya escrito en el campo de correo del formulario.
+  Future<void> _olvideContrasena() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      _mostrarError(
+        AppStrings.tr(
+          'Escribe tu correo arriba para poder enviarte el enlace',
+          'Enter your email above so we can send you the link',
+        ),
+      );
+      return;
+    }
+
+    final resultado = await _authService.enviarCorreoRecuperacion(
+      email: email,
+    );
+
+    if (!mounted) return;
+    if (resultado['success']) {
+      _mostrarExito(
+        AppStrings.tr(
+          'Te enviamos un correo para restablecer tu contraseña',
+          'We sent you an email to reset your password',
+        ),
+      );
+    } else {
+      _mostrarError(
+        resultado['error'] ??
+            AppStrings.tr(
+              'No se pudo enviar el correo de recuperación',
+              'Could not send the recovery email',
+            ),
+      );
+    }
+  }
+
   /// Muestra un mensaje de éxito
   void _mostrarExito(String mensaje) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -559,14 +596,7 @@ class _LoginScreenState extends State<LoginScreen>
                       // ─────────────────────────────────────────────────────────
                       if (!_esRegistro)
                         GestureDetector(
-                          onTap: () {
-                            _mostrarError(
-                              AppStrings.tr(
-                                'Función no disponible aún',
-                                'Feature not available yet',
-                              ),
-                            );
-                          },
+                          onTap: _olvideContrasena,
                           child: Text(
                             AppStrings.tr(
                               '¿Olvidaste tu contraseña?',
@@ -1024,12 +1054,7 @@ class _LoginScreenState extends State<LoginScreen>
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            onTap: () => _mostrarError(
-                              AppStrings.tr(
-                                'Función no disponible aún',
-                                'Feature not available yet',
-                              ),
-                            ),
+                            onTap: _olvideContrasena,
                             child: Text(
                               AppStrings.tr(
                                 '¿Olvidaste tu contraseña?',

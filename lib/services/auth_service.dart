@@ -163,6 +163,20 @@ class AuthService {
     }
   }
 
+  /// Envía el correo de restablecimiento de contraseña de Firebase Auth.
+  Future<Map<String, dynamic>> enviarCorreoRecuperacion({
+    required String email,
+  }) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return {'success': true};
+    } on fb_auth.FirebaseAuthException catch (e) {
+      return {'success': false, 'error': _mensajeError(e)};
+    } catch (e) {
+      return {'success': false, 'error': 'Error inesperado: ${e.toString()}'};
+    }
+  }
+
   /// Cierra la sesión
   Future<void> cerrarSesion() async {
     await _auth.signOut();
