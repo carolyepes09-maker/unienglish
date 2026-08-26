@@ -1,0 +1,30 @@
+[
+  {
+    "usuario_id": "550e8400-e29b-41d4-a716-446655440000",
+    "nombre_completo": "Test User",
+    "correo_electronico": "test@example.com",
+    "password": "123456",
+    "codigo_estudiante": "2024001",
+    "facultad_programa": "Ingeniería de Sistemas",
+    "idioma_preferido": "es",
+    "nivel_actual": "A2",
+    "racha_dias": 7,
+    "puntos_totales": 850,
+    "ultima_conexion": "2024-04-20T14:30:00Z",
+    "notificaciones_activas": true
+  },
+  {
+    "usuario_id": "550e8400-e29b-41d4-a716-446655440001",
+    "nombre_completo": "María García",
+    "correo_electronico": "maria@example.com",
+    "password": "password123",
+    "codigo_estudiante": "2024002",
+    "facultad_programa": "Administración",
+    "idioma_preferido": "es",
+    "nivel_actual": "A1",
+    "racha_dias": 3,
+    "puntos_totales": 450,
+    "ultima_conexion": "2024-04-19T16:00:00Z",
+    "notificaciones_activas": true
+  }
+]

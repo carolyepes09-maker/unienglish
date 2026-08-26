@@ -1,0 +1,128 @@
+[
+  {
+    "modulo_id": "grammar_a1_001",
+    "categoria": "Grammar",
+    "nivel": "A1",
+    "titulo": "Present Simple",
+    "descripcion": "Aprende a usar el Present Simple en inglés",
+    "orden": 1,
+    "temas": [
+      {
+        "tema_id": "grammar_a1_001_001",
+        "titulo": "Introduction to Present Simple",
+        "descripcion": "Introducción a la estructura básica",
+        "orden": 1
+      },
+      {
+        "tema_id": "grammar_a1_001_002",
+        "titulo": "Affirmative Sentences",
+        "descripcion": "Oraciones afirmativas en Present Simple",
+        "orden": 2
+      },
+      {
+        "tema_id": "grammar_a1_001_003",
+        "titulo": "Negative Sentences",
+        "descripcion": "Oraciones negativas",
+        "orden": 3
+      },
+      {
+        "tema_id": "grammar_a1_001_004",
+        "titulo": "Questions",
+        "descripcion": "Hacer preguntas en Present Simple",
+        "orden": 4
+      }
+    ]
+  },
+  {
+    "modulo_id": "grammar_a1_002",
+    "categoria": "Grammar",
+    "nivel": "A1",
+    "titulo": "Present Continuous",
+    "descripcion": "Domina el Present Continuous",
+    "orden": 2,
+    "temas": [
+      {
+        "tema_id": "grammar_a1_002_001",
+        "titulo": "What is Present Continuous?",
+        "descripcion": "Concepto y estructura",
+        "orden": 1
+      },
+      {
+        "tema_id": "grammar_a1_002_002",
+        "titulo": "Form and Structure",
+        "descripcion": "Cómo se forma",
+        "orden": 2
+      }
+    ]
+  },
+  {
+    "modulo_id": "reading_a1_001",
+    "categoria": "Reading",
+    "nivel": "A1",
+    "titulo": "Short Stories",
+    "descripcion": "Comprensión lectora con historias cortas",
+    "orden": 1,
+    "temas": [
+      {
+        "tema_id": "reading_a1_001_001",
+        "titulo": "Story 1: Daily Routine",
+        "descripcion": "Lee sobre la rutina diaria",
+        "orden": 1
+      }
+    ]
+  },
+  {
+    "modulo_id": "listening_a1_001",
+    "categoria": "Listening",
+    "nivel": "A1",
+    "titulo": "Basic Conversations",
+    "descripcion": "Comprensión auditiva básica",
+    "orden": 1,
+    "temas": [
+      {
+        "tema_id": "listening_a1_001_001",
+        "titulo": "Greetings",
+        "descripcion": "Saludos en inglés",
+        "orden": 1
+      }
+    ]
+  },
+  {
+    "modulo_id": "writing_a1_001",
+    "categoria": "Writing",
+    "nivel": "A1",
+    "titulo": "Basic Writing",
+    "descripcion": "Introducción a la escritura",
+    "orden": 1,
+    "temas": [
+      {
+        "tema_id": "writing_a1_001_001",
+        "titulo": "Writing Simple Sentences",
+        "descripcion": "Escribe oraciones simples",
+        "orden": 1
+      }
+    ]
+  },
+  {
+    "modulo_id": "grammar_a2_001",
+    "categoria": "Grammar",
+    "nivel": "A2",
+    "titulo": "Past Simple",
+    "descripcion": "Estructura del pasado simple",
+    "orden": 3,
+    "temas": [
+      {
+        "tema_id": "grammar_a2_001_001",
+        "titulo": "Regular Verbs",
+        "descripcion": "Verbos regulares en pasado",
+        "orden": 1
+      },
+      {
+        "tema_id": "grammar_a2_001_002",
+        "titulo": "Irregular Verbs",
+        "descripcion": "Verbos irregulares en pasado",
+        "orden": 2
+      }
+    ]
+  }
+]

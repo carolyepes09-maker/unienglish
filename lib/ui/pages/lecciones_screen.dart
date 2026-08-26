@@ -1,0 +1,808 @@
+import 'package:flutter/material.dart';
+import '../utils/app_fonts.dart';
+import '../../services/leccion_service.dart';
+import 'leccion_detalle_screen.dart';
+import '../utils/responsive.dart';
+import '../utils/app_strings.dart';
+import 'tema_detalle_screen.dart' show kGrammarTopicImages;
+
+const Color kPrimaryRed = Color(0xFFCC0000);
+const Color kTextDark = Color(0xFF1A0000);
+const Color kCream = Color(0xFFF5E6D0);
+const Color kCreamMuted = Color(0xAAF5E6D0);
+const Color kDesktopCream = Color(0xFFF7EEE0);
+
+/// =============================================================================
+/// 📚 PANTALLA: lib/ui/pages/lecciones_screen.dart
+/// =============================================================================
+/// Muestra el mapa de aprendizaje dividido por niveles (A1, A2, B1, B2).
+///
+/// FUNCIONALIDADES:
+/// 1. Selector de Nivel: Permite al usuario filtrar el contenido académico.
+/// 2. Lista de Habilidades: Muestra las categorías (Grammar, Reading, etc.)
+///    con sus respectivos progresos.
+/// 3. Control de Acceso: Bloquea visualmente las lecciones que aún no están
+///    disponibles o terminadas.
+/// =============================================================================
+
+class LeccionesScreen extends StatefulWidget {
+  final VoidCallback? onBack;
+  final dynamic authService; // Se recibe dynamic o AuthService
+
+  const LeccionesScreen({super.key, this.onBack, required this.authService});
+
+  @override
+  State<LeccionesScreen> createState() => _LeccionesScreenState();
+}
+
+//  Se recibe dynamic o AuthService , crea una instancia del servicio LeccionService
+class _LeccionesScreenState extends State<LeccionesScreen>
+    with IdiomaListenerMixin<LeccionesScreen> {
+  final LeccionService _leccionService = LeccionService();
+  int _selectedLevel = 0;
+  bool _imagenesPrecargadas = false;
+
+  @override
+  void initState() {
+    super.initState();
+    String nivelActual =
+        widget.authService.usuarioActual?['nivel_actual'] ?? 'A1';
+    _selectedLevel = _leccionService.niveles.indexOf(nivelActual);
+    if (_selectedLevel == -1) _selectedLevel = 0;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Precarga en segundo plano las imágenes ilustrativas de los temas de
+    // Grammar mientras el usuario todavía está viendo esta pantalla, para
+    // que ya estén listas (sin espera de red) cuando entre a un tema.
+    if (!_imagenesPrecargadas) {
+      _imagenesPrecargadas = true;
+      for (final ruta in kGrammarTopicImages.values) {
+        precacheImage(AssetImage(ruta), context);
+      }
+    }
+  }
+
+  //
+  @override
+  Widget build(BuildContext context) {
+    // ─── PASO 3: CONSUMO DEL SERVICIO ───────────────────────────────────────
+    // Le pedimos al servicio las lecciones que corresponden al nivel seleccionado.
+    final lecciones = _leccionService.getLecciones(
+      _leccionService.niveles[_selectedLevel],
+    );
+
+    if (isDesktop(context)) {
+      return _buildDesktopLayout(context, lecciones);
+    }
+    return _buildMobileLayout(context, lecciones);
+  }
+
+  /// Layout original de teléfono — sin ningún cambio.
+  Widget _buildMobileLayout(
+    BuildContext context,
+    List<LeccionInfo> lecciones,
+  ) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          onPressed: () {
+            if (widget.onBack != null) {
+              widget.onBack!();
+            } else {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        title: Text(
+          AppStrings.tr('Lecciones', 'Lessons'),
+          style: AppFonts.poppins(
+            color: kTextDark,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: false,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── TABS de nivel ───────────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: List.generate(_leccionService.niveles.length, (index) {
+                final isSelected = _selectedLevel == index;
+                return GestureDetector(
+                  onTap: () async {
+                    setState(() => _selectedLevel = index);
+                    final String? userId = widget.authService.usuarioActualId;
+                    if (userId != null) {
+                      await widget.authService.actualizarNivel(
+                        userId,
+                        _leccionService.niveles[index],
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: isSelected ? kPrimaryRed : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      _leccionService.niveles[index],
+                      style: AppFonts.poppins(
+                        color: isSelected ? kPrimaryRed : Colors.grey,
+                        fontSize: 16,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          const Divider(height: 1),
+
+          const SizedBox(height: 12),
+
+          // ── BANNER con textura ────────
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 100),
+            height: 80,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/bg_nivel.jpg',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                  ),
+                ),
+                Positioned.fill(
+                  child: Container(color: Colors.black.withOpacity(0.50)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppStrings.tr(
+                          'Nivel ${_leccionService.niveles[_selectedLevel]}',
+                          'Level ${_leccionService.niveles[_selectedLevel]}',
+                        ),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.poppins(
+                          color: kCream,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        AppStrings.tr(
+                          'Continua practicando',
+                          'Keep practicing',
+                        ),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.poppins(
+                          color: kCreamMuted,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // ── LISTA de lecciones: El puente entre la UI y el Contenido ──
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: lecciones.length,
+              // 1.3 RENDERIZADO: Por cada curso definido en el servicio, creamos una tarjeta.
+              itemBuilder: (context, index) {
+                final leccion = lecciones[index];
+                return _lessonCard(
+                  icon: leccion.icon,
+                  title: leccion.title,
+                  subtitle: leccion.subtitle,
+                  progress: leccion.progress,
+                  isLocked: leccion.isLocked,
+                  // ─── PASO 4: EVENTO DE CLIC (NAVEGACIÓN) ────────────────────────
+                  // Al tocar una tarjeta, validamos si no está bloqueada para ir al detalle.
+                  onTap: () {
+                    if (!leccion.isLocked) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LeccionDetalleScreen(
+                            // Enviamos los datos de la lección seleccionada a la siguiente pantalla
+                            titulo: leccion.title,
+                            subtitulo: leccion.subtitle,
+                            icon: leccion.icon,
+                            progress: leccion.progress,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _lessonCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required double progress,
+    required bool isLocked,
+    required VoidCallback onTap,
+  }) {
+    // ── Tarjeta BLOQUEADA — gris claro sin textura ──────────────────────────
+    if (isLocked) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.grey[300]!, width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(Icons.lock, color: Colors.grey[400], size: 22),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppFonts.poppins(
+                      color: Colors.grey[400],
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: AppFonts.poppins(
+                      color: Colors.grey[400],
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: 0,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.grey[300]!,
+                      ),
+                      minHeight: 5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              '0%',
+              style: AppFonts.poppins(
+                color: Colors.grey[400],
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // ── Tarjeta ACTIVA — con textura roja ───────────────────────────────────
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
+        child: Stack(
+          children: [
+            // Textura roja
+            Positioned.fill(
+              child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
+            ),
+            // Capa oscura
+            Positioned.fill(
+              child: Container(color: Colors.black.withOpacity(0.42)),
+            ),
+            // Contenido
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  // Ícono
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.30),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.15),
+                        width: 1,
+                      ),
+                    ),
+                    child: Icon(icon, color: kCream, size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  // Título + subtítulo + barra
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: AppFonts.poppins(
+                            color: kCream,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          subtitle,
+                          style: AppFonts.poppins(
+                            color: kCreamMuted,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.white.withOpacity(0.15),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              kPrimaryRed,
+                            ),
+                            minHeight: 5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Porcentaje
+                  Text(
+                    '${(progress * 100).toInt()}%',
+                    style: AppFonts.poppins(
+                      color: kCream,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // LAYOUT DE ESCRITORIO (PC) — cabecera propia, tabs en píldora, banner de
+  // nivel y tarjetas de habilidad en grilla de 2 columnas. Misma lógica de
+  // selección de nivel y navegación que el móvil.
+  // ═══════════════════════════════════════════════════════════════════════
+  Widget _buildDesktopLayout(
+    BuildContext context,
+    List<LeccionInfo> lecciones,
+  ) {
+    final nivelActual = _leccionService.niveles[_selectedLevel];
+    final activas = lecciones.where((l) => !l.isLocked).length;
+
+    return Scaffold(
+      backgroundColor: kDesktopCream,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Cabecera ────────────────────────────────────────────────
+              Row(
+                children: [
+                  Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        if (widget.onBack != null) {
+                          widget.onBack!();
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(Icons.chevron_left, color: kTextDark),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.tr('Lecciones', 'Lessons'),
+                        style: AppFonts.poppins(
+                          color: kTextDark,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        AppStrings.tr(
+                          'Domina cada habilidad para avanzar de nivel.',
+                          'Master each skill to level up.',
+                        ),
+                        style: AppFonts.poppins(
+                          color: Colors.brown[300],
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // ── Tabs de nivel en píldora ────────────────────────────────
+              Row(
+                children: List.generate(_leccionService.niveles.length, (
+                  index,
+                ) {
+                  final isSelected = _selectedLevel == index;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Material(
+                      color: isSelected ? kPrimaryRed : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () async {
+                          setState(() => _selectedLevel = index);
+                          final String? userId =
+                              widget.authService.usuarioActualId;
+                          if (userId != null) {
+                            await widget.authService.actualizarNivel(
+                              userId,
+                              _leccionService.niveles[index],
+                            );
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 22,
+                            vertical: 12,
+                          ),
+                          child: Text(
+                            _leccionService.niveles[index],
+                            style: AppFonts.poppins(
+                              color: isSelected ? Colors.white : Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+
+              const SizedBox(height: 24),
+
+              // ── Banner de nivel ─────────────────────────────────────────
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 22,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF6B1010), Color(0xFF8B6F6F)],
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.tr('Nivel $nivelActual', 'Level $nivelActual'),
+                          style: AppFonts.poppins(
+                            color: kCream,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          AppStrings.tr(
+                            'Continúa practicando · $activas de ${lecciones.length} habilidades activas',
+                            'Keep practicing · $activas of ${lecciones.length} skills active',
+                          ),
+                          style: AppFonts.poppins(
+                            color: kCreamMuted,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '68%',
+                          style: AppFonts.poppins(
+                            color: const Color(0xFFD4A017),
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          AppStrings.tr('completado', 'completed'),
+                          style: AppFonts.poppins(
+                            color: kCreamMuted,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // ── Grilla de habilidades (2 columnas) ──────────────────────
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: lecciones.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 2.6,
+                ),
+                itemBuilder: (context, index) {
+                  final leccion = lecciones[index];
+                  return _desktopSkillCard(
+                    icon: leccion.icon,
+                    title: leccion.title,
+                    subtitle: leccion.subtitle,
+                    progress: leccion.progress,
+                    isLocked: leccion.isLocked,
+                    onTap: () {
+                      if (!leccion.isLocked) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LeccionDetalleScreen(
+                              titulo: leccion.title,
+                              subtitulo: leccion.subtitle,
+                              icon: leccion.icon,
+                              progress: leccion.progress,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _desktopSkillCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required double progress,
+    required bool isLocked,
+    required VoidCallback onTap,
+  }) {
+    if (isLocked) {
+      return Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: kDesktopCream,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(Icons.lock, color: Colors.grey[400], size: 20),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: AppFonts.poppins(
+                      color: Colors.brown[300],
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    AppStrings.tr('Próximamente', 'Coming soon'),
+                    style: AppFonts.poppins(
+                      color: Colors.brown[200],
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: 0,
+                      backgroundColor: Colors.white.withOpacity(0.6),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.white.withOpacity(0.6),
+                      ),
+                      minHeight: 5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Icon(Icons.lock, color: Colors.amber[300], size: 18),
+          ],
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
+            ),
+            Positioned.fill(
+              child: Container(color: Colors.black.withOpacity(0.42)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: kCream, size: 20),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              title,
+                              style: AppFonts.poppins(
+                                color: kCream,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '${(progress * 100).toInt()}%',
+                              style: AppFonts.poppins(
+                                color: kCream,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          subtitle,
+                          style: AppFonts.poppins(
+                            color: kCreamMuted,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.white.withOpacity(0.15),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFFD4A017),
+                            ),
+                            minHeight: 5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

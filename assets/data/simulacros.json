@@ -1,0 +1,60 @@
+[
+  {
+    "passage": "Climate change is one of the most pressing issues of our time. Scientists agree that human activities have significantly contributed to global warming. Immediate action is needed to reduce carbon emissions.",
+    "question": "What is the main idea of the passage?",
+    "options": [
+      "Scientists study climate change",
+      "Climate change requires urgent action",
+      "Human activities are increasing",
+      "Carbon emissions are natural"
+    ],
+    "correctIndex": 1,
+    "explanation": "The passage explicitly states that 'Immediate action is needed', highlighting the urgency of the issue."
+  },
+  {
+    "passage": "The Great Barrier Reef is the world's largest coral reef system. It is composed of over 2,900 individual reefs and 900 islands. However, it is facing severe threats from rising sea temperatures and pollution.",
+    "question": "What is the primary threat to the Great Barrier Reef mentioned?",
+    "options": [
+      "Overfishing",
+      "Too many tourists",
+      "Rising sea temperatures and pollution",
+      "Lack of individual reefs"
+    ],
+    "correctIndex": 2,
+    "explanation": "The text identifies 'rising sea temperatures and pollution' as the severe threats facing the reef."
+  },
+  {
+    "question": "Which word is a synonym for 'essential' in an academic context?",
+    "options": [
+      "Optional",
+      "Crucial",
+      "Minor",
+      "Secondary"
+    ],
+    "correctIndex": 1,
+    "explanation": "'Crucial' is a common academic synonym for 'essential' or 'very important'."
+  },
+  {
+    "passage": "Artificial Intelligence is transforming industries by automating repetitive tasks and providing data-driven insights. While it offers efficiency, concerns about job displacement and ethical use remain prominent.",
+    "question": "According to the text, what is one benefit of AI?",
+    "options": [
+      "Ethical dilemmas",
+      "Job displacement",
+      "Data-driven insights",
+      "Repetitive tasks"
+    ],
+    "correctIndex": 2,
+    "explanation": "The text states that AI provides 'data-driven insights' as one of its advantages."
+  },
+  {
+    "question": "Choose the most appropriate completion: 'The results of the study _______ the initial hypothesis.'",
+    "options": [
+      "confirmed",
+      "confirmation",
+      "confirming",
+      "confirms"
+    ],
+    "correctIndex": 0,
+    "explanation": "The sentence requires a past tense verb as it describes the outcome of a finished study."
+  }
+]
