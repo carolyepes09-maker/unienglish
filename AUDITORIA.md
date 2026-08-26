@@ -7,7 +7,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 1 | Sin control de versiones (git init) | Resuelto | feaeea8 | 2026-08-26 |
 | 2 | Firebase solo configurado para Web (Android/iOS rotos) | Resuelto | 34fbe67, 31f73d2 | 2026-08-26 |
 | 3 | Sincronización con pérdida silenciosa de progreso | Pendiente | — | — |
-| 4 | "¿Olvidaste tu contraseña?" es un botón muerto | Pendiente | — | — |
+| 4 | "¿Olvidaste tu contraseña?" es un botón muerto | Resuelto | 7617789 | 2026-08-26 |
 | 5 | Bug en el progreso del examen (solo Grammar/Reading) | Pendiente | — | — |
 | 6 | Usuario nuevo arranca con estadísticas inventadas | Pendiente | — | — |
 | 7 | Documentación desactualizada y contradictoria | Pendiente | — | — |
