@@ -5,6 +5,8 @@ import 'package:gif/gif.dart';
 import '../../services/auth_service.dart';
 import '../../services/progreso_service.dart';
 import '../../services/idioma_service.dart';
+import '../../services/vocabulario_service.dart';
+import '../../services/actividad_service.dart';
 
 const Color kPrimaryRed = Color(0xFFCC0000);
 const Color kGoldAccent = Color(0xFF8B6914);
@@ -28,8 +30,17 @@ const Color kCreamMuted = Color(0xAAF5E6D0);
 class PerfilScreen extends StatefulWidget {
   final AuthService authService;
   final VoidCallback? onBack;
+  // TEMPORAL: solo la usa _confirmarYCargarDatosDemo() para poder refrescar
+  // el vocabulario al instante después de escribir los datos de
+  // demostración. Se quita junto con esa acción.
+  final VocabularioService? vocabularioServiceDemo;
 
-  const PerfilScreen({super.key, required this.authService, this.onBack});
+  const PerfilScreen({
+    super.key,
+    required this.authService,
+    this.onBack,
+    this.vocabularioServiceDemo,
+  });
 
   @override
   State<PerfilScreen> createState() => _PerfilScreenState();
@@ -239,12 +250,36 @@ class _PerfilScreenState extends State<PerfilScreen>
       'actividades_recientes': actividadesRecientes,
     });
 
+    // Escribir en Firestore no es suficiente: ProgresoService/
+    // VocabularioService/ActividadService ya tenían sus propios datos
+    // cargados en memoria desde que se abrió la app, y no se enteran solos
+    // de que algo cambió en la cuenta. Se les pide re-sincronizar aquí
+    // mismo (misma lógica de "gana el más reciente" del hallazgo 3 --
+    // como se acaba de escribir con el timestamp de "ahora", el lado
+    // remoto gana) para que la pantalla se actualice al instante, sin
+    // depender de cerrar y volver a abrir la app.
+    if (exito) {
+      await Future.wait([
+        _progresoService.sincronizarConCuenta(),
+        if (widget.vocabularioServiceDemo != null)
+          widget.vocabularioServiceDemo!.sincronizarConCuenta(),
+        ActividadService().sincronizarConCuenta(),
+      ]);
+      // PerfilScreen lee _progresoService.examenesRealizados (etc.)
+      // directo en build(), sin escuchar sus cambios -- a diferencia de
+      // HomeScreen/VocabularioScreen, que sí tienen su propio listener y
+      // ya se refrescan solas con el notifyListeners() de arriba. Este
+      // setState() fuerza que ESTA pantalla también se redibuje con los
+      // valores nuevos.
+      if (mounted) setState(() {});
+    }
+
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           exito
-              ? 'Datos de demostración cargados. Vuelve a entrar (o refresca) para verlos.'
+              ? 'Datos de demostración cargados y aplicados.'
               : 'No se pudo guardar -- revisa la conexión e inténtalo de nuevo.',
         ),
         backgroundColor: exito ? Colors.green[700] : Colors.red[700],
