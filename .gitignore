@@ -51,3 +51,9 @@ app.*.map.json
 /android/.gradle/
 /android/build/
 /android/app/build/
+
+# Logs de sesiones anteriores de `flutter analyze`/`flutter build`, capturados
+# a mano en algún momento -- quedan desactualizados apenas se corre de nuevo
+# el comando. Se sacan del control de versiones, sin borrarlos del disco.
+/analyze.txt
+/build.log.txt
