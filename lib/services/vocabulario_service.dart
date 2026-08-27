@@ -57,17 +57,13 @@ class VocabularioService {
 
   Future<void> _cargarDatosUsuarioLocal() async {
     try {
-      // Si esta clave ya existe Y pertenece al usuario que tiene sesión
-      // ahora, este navegador/dispositivo tiene vocabulario real guardado
-      // localmente. Si no existe (incógnito, navegador nuevo, otro
-      // dispositivo) o pertenece a OTRA cuenta (alguien cerró sesión y
-      // entró con otra en el mismo navegador), no hay nada de este usuario
-      // que proteger y conviene traer el vocabulario guardado en su cuenta.
+      // El vocabulario local solo cuenta como "de este usuario" si el uid
+      // guardado coincide con el que tiene sesión ahora (si no, es de otra
+      // cuenta que usó este mismo navegador/dispositivo antes).
       final usuarioIdActual = _authService.usuarioActualId;
       final uidLocal = _prefs.getString('vocabulario_uid');
-      final huboDatosLocales =
-          _prefs.containsKey('palabras_usuario') &&
-          (uidLocal == null || uidLocal == usuarioIdActual);
+      final localEsDeEsteUsuario =
+          uidLocal != null && uidLocal == usuarioIdActual;
 
       final palabrasJson = _prefs.getString('palabras_usuario') ?? '[]';
       _tarjetasUsuario = List<Map<String, dynamic>>.from(
@@ -79,13 +75,16 @@ class VocabularioService {
         jsonDecode(progresoJson),
       );
 
-      if (huboDatosLocales) {
-        // Este dispositivo ya tenía vocabulario real: lo subimos a Firestore
-        // en vez de arriesgarnos a pisarlo con un valor remoto vacío.
-        await _guardarEnFirestore();
-      } else {
-        await _sincronizarDesdeFirestore();
-      }
+      // "Última modificación real" del vocabulario en este dispositivo (no
+      // "última vez que se sincronizó"). Si el vocabulario local es de otra
+      // cuenta, no cuenta.
+      final actualizadoLocal = localEsDeEsteUsuario
+          ? DateTime.tryParse(
+              _prefs.getString('vocabulario_actualizado_en') ?? '',
+            )
+          : null;
+
+      await _sincronizarPorTimestamp(actualizadoLocal);
 
       print('✅ ${_tarjetasUsuario.length} palabras del usuario cargadas');
     } catch (e) {
@@ -93,42 +92,70 @@ class VocabularioService {
     }
   }
 
-  // Trae el vocabulario guardado en la cuenta (Firestore) cuando no hay
-  // nada local que proteger.
-  Future<void> _sincronizarDesdeFirestore() async {
+  // Compara cuándo se modificó realmente el vocabulario por última vez en
+  // este dispositivo ([actualizadoLocal]) contra cuándo se modificó por
+  // última vez en la cuenta (Firestore), y aplica el más reciente sobre el
+  // otro lado -- así un dispositivo con vocabulario viejo en caché nunca
+  // sobrescribe con esos datos viejos algo más nuevo guardado desde otro
+  // dispositivo. Si ninguno de los dos tiene timestamp todavía (cuenta
+  // recién creada / sin vocabulario propio aún), no hace nada.
+  Future<void> _sincronizarPorTimestamp(DateTime? actualizadoLocal) async {
     final usuarioId = _authService.usuarioActualId;
     if (usuarioId == null) return;
 
     try {
       final usuario = await _authService.obtenerUsuarioPorId(usuarioId);
-      final tarjetas = usuario?['vocabulario_tarjetas_usuario'];
-      final progreso = usuario?['vocabulario_progreso_tarjetas'];
+      final actualizadoRemotoStr =
+          usuario?['vocabulario_actualizado_en'] as String?;
+      final actualizadoRemoto = actualizadoRemotoStr != null
+          ? DateTime.tryParse(actualizadoRemotoStr)
+          : null;
 
-      if (tarjetas is List) {
-        _tarjetasUsuario = tarjetas
-            .map((e) => Map<String, dynamic>.from(e as Map))
-            .toList();
-      }
-      if (progreso is List) {
-        _progresoTarjetas = progreso
-            .map((e) => Map<String, dynamic>.from(e as Map))
-            .toList();
-      }
+      final ganaLocal =
+          actualizadoLocal != null &&
+          (actualizadoRemoto == null ||
+              actualizadoLocal.isAfter(actualizadoRemoto));
 
-      if (tarjetas is List || progreso is List) {
-        await _guardarDatosLocal();
+      if (ganaLocal) {
+        // Lo que hay en este dispositivo es más nuevo (o la cuenta todavía
+        // no tiene nada): lo subimos, conservando su propio timestamp.
+        await _guardarEnFirestore(actualizadoLocal);
+      } else if (actualizadoRemoto != null) {
+        // La cuenta tiene algo igual o más nuevo que este dispositivo: lo
+        // bajamos, conservando el timestamp con el que llegó.
+        final tarjetas = usuario?['vocabulario_tarjetas_usuario'];
+        final progreso = usuario?['vocabulario_progreso_tarjetas'];
+        if (tarjetas is List) {
+          _tarjetasUsuario = tarjetas
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
+        }
+        if (progreso is List) {
+          _progresoTarjetas = progreso
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
+        }
+        await _guardarDatosLocal(actualizadoRemoto);
       }
     } catch (e) {
-      print('❌ Error sincronizando vocabulario desde Firestore: $e');
+      print('❌ Error sincronizando vocabulario por timestamp: $e');
     }
   }
 
-  Future<void> _guardarDatosLocal() async {
+  // [marcaDeTiempo] es cuándo se modificó realmente este vocabulario --
+  // puede ser "ahora" (el usuario acaba de agregar/editar/borrar una
+  // palabra, ver _guardarDatosUsuarioLocal) o el timestamp que ya traía el
+  // lado que ganó la comparación en _sincronizarPorTimestamp.
+  Future<void> _guardarDatosLocal(DateTime marcaDeTiempo) async {
     try {
       await _prefs.setString('palabras_usuario', jsonEncode(_tarjetasUsuario));
       await _prefs.setString(
         'progreso_vocabulario',
         jsonEncode(_progresoTarjetas),
+      );
+      await _prefs.setString(
+        'vocabulario_actualizado_en',
+        marcaDeTiempo.toIso8601String(),
       );
       final usuarioId = _authService.usuarioActualId;
       if (usuarioId != null) {
@@ -139,7 +166,7 @@ class VocabularioService {
     }
   }
 
-  Future<void> _guardarEnFirestore() async {
+  Future<void> _guardarEnFirestore(DateTime marcaDeTiempo) async {
     final usuarioId = _authService.usuarioActualId;
     if (usuarioId == null) return;
 
@@ -147,17 +174,20 @@ class VocabularioService {
       await _authService.actualizarUsuario(usuarioId, {
         'vocabulario_tarjetas_usuario': _tarjetasUsuario,
         'vocabulario_progreso_tarjetas': _progresoTarjetas,
+        'vocabulario_actualizado_en': marcaDeTiempo.toIso8601String(),
       });
     } catch (e) {
       print('❌ Error guardando vocabulario en Firestore: $e');
     }
   }
 
-  // Guarda los cambios locales (SharedPreferences) y en la cuenta
-  // (Firestore), para que el vocabulario esté atado al usuario.
+  // Se llama cada vez que una acción real del usuario cambia el vocabulario
+  // (guardarPalabra, eliminarPalabra, actualizarPalabra): ese es el único
+  // momento en que corresponde estampar "ahora" como última modificación.
   Future<void> _guardarDatosUsuarioLocal() async {
-    await _guardarDatosLocal();
-    await _guardarEnFirestore();
+    final ahora = DateTime.now();
+    await _guardarDatosLocal(ahora);
+    await _guardarEnFirestore(ahora);
   }
 
   /// Carga todas las tarjetas combinadas

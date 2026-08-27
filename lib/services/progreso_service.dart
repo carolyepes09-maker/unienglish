@@ -68,17 +68,14 @@ class ProgresoService extends ChangeNotifier {
 
   Future<void> _cargarDatos() async {
     try {
-      // Si estas claves ya existen Y pertenecen al usuario que tiene sesión
-      // ahora, este navegador/dispositivo tiene progreso real acumulado
-      // localmente. Si no existen (incógnito, navegador nuevo, otro
-      // dispositivo) o pertenecen a OTRA cuenta (alguien cerró sesión y
-      // entró con otra en el mismo navegador), no hay nada de este usuario
-      // que proteger y conviene traer el progreso guardado en su cuenta.
+      // Carga primero lo que haya localmente (caché rápida/offline), pero
+      // solo cuenta como "de este usuario" si el uid guardado coincide con
+      // el que tiene sesión ahora (si no, es de otra cuenta que usó este
+      // mismo navegador/dispositivo antes).
       final usuarioIdActual = AuthService().usuarioActualId;
       final uidLocal = _prefs.getString('progreso_uid');
-      final huboDatosLocales =
-          _prefs.containsKey('lecciones_completadas') &&
-          (uidLocal == null || uidLocal == usuarioIdActual);
+      final localEsDeEsteUsuario =
+          uidLocal != null && uidLocal == usuarioIdActual;
 
       _rachaDias = _prefs.getInt('racha_dias') ?? _rachaDias;
       _tiempoTotalHoras =
@@ -103,13 +100,14 @@ class ProgresoService extends ChangeNotifier {
           _progresoHaciaSiguienteNivel;
       _siguienteNivel = _prefs.getString('siguiente_nivel') ?? _siguienteNivel;
 
-      if (huboDatosLocales) {
-        // Este dispositivo ya tenía progreso real: lo subimos a Firestore
-        // en vez de arriesgarnos a pisarlo con un valor remoto vacío.
-        await _guardarEnFirestore();
-      } else {
-        await _sincronizarDesdeFirestore();
-      }
+      // "Última modificación real" de estos datos en este dispositivo (no
+      // "última vez que se sincronizó" -- eso importa para la comparación
+      // de abajo). Si el progreso local es de otra cuenta, no cuenta.
+      final actualizadoLocal = localEsDeEsteUsuario
+          ? DateTime.tryParse(_prefs.getString('progreso_actualizado_en') ?? '')
+          : null;
+
+      await _sincronizarPorTimestamp(actualizadoLocal);
 
       notifyListeners();
     } catch (e) {
@@ -117,58 +115,85 @@ class ProgresoService extends ChangeNotifier {
     }
   }
 
-  // Trae el progreso guardado en la cuenta (Firestore) cuando no hay nada
-  // local que proteger. Solo sobreescribe los campos que sí existan en el
-  // documento remoto — si un campo nunca se guardó, se conserva el valor
-  // local/por defecto.
-  Future<void> _sincronizarDesdeFirestore() async {
+  // Compara cuándo se modificó realmente el progreso por última vez en este
+  // dispositivo ([actualizadoLocal]) contra cuándo se modificó por última
+  // vez en la cuenta (Firestore), y aplica el más reciente sobre el otro
+  // lado -- así un dispositivo con datos viejos en caché nunca sobrescribe
+  // con esos datos viejos algo más nuevo que ya se guardó desde otro
+  // dispositivo. Si ninguno de los dos tiene timestamp todavía (cuenta
+  // recién creada), no hace nada: se queda con los valores en cero.
+  Future<void> _sincronizarPorTimestamp(DateTime? actualizadoLocal) async {
     final usuarioId = AuthService().usuarioActualId;
     if (usuarioId == null) return;
 
     try {
       final usuario = await AuthService().obtenerUsuarioPorId(usuarioId);
-      if (usuario == null) return;
+      final actualizadoRemotoStr =
+          usuario?['progreso_actualizado_en'] as String?;
+      final actualizadoRemoto = actualizadoRemotoStr != null
+          ? DateTime.tryParse(actualizadoRemotoStr)
+          : null;
 
-      if (usuario['racha_dias'] != null) {
-        _rachaDias = (usuario['racha_dias'] as num).toInt();
-      }
-      if (usuario['tiempo_total_horas'] != null) {
-        _tiempoTotalHoras = (usuario['tiempo_total_horas'] as num).toInt();
-      }
-      if (usuario['lecciones_completadas'] != null) {
-        _leccionesCompletadas =
-            (usuario['lecciones_completadas'] as num).toInt();
-      }
-      if (usuario['examenes_realizados'] != null) {
-        _examenesRealizados = (usuario['examenes_realizados'] as num).toInt();
-      }
-      final actividad = usuario['actividad_semanal'];
-      if (actividad is List) {
-        _actividadSemanal = actividad
-            .map((e) => (e as num).toDouble())
-            .toList();
-      }
-      final habilidades = usuario['habilidades_values'];
-      if (habilidades is List) {
-        _habilidadesValues = habilidades
-            .map((e) => (e as num).toDouble())
-            .toList();
-      }
-      if (usuario['progreso_siguiente_nivel'] != null) {
-        _progresoHaciaSiguienteNivel =
-            (usuario['progreso_siguiente_nivel'] as num).toDouble();
-      }
-      if (usuario['siguiente_nivel'] != null) {
-        _siguienteNivel = usuario['siguiente_nivel'] as String;
-      }
+      final ganaLocal =
+          actualizadoLocal != null &&
+          (actualizadoRemoto == null ||
+              actualizadoLocal.isAfter(actualizadoRemoto));
 
-      await _guardarLocal();
+      if (ganaLocal) {
+        // Lo que hay en este dispositivo es más nuevo (o la cuenta todavía
+        // no tiene nada): lo subimos, conservando su propio timestamp.
+        await _guardarEnFirestore(actualizadoLocal);
+      } else if (actualizadoRemoto != null) {
+        // La cuenta tiene algo igual o más nuevo que este dispositivo: lo
+        // bajamos, conservando el timestamp con el que llegó.
+        _aplicarDatosRemotos(usuario!);
+        await _guardarLocal(actualizadoRemoto);
+      }
     } catch (e) {
-      debugPrint('Error sincronizando progreso desde Firestore: $e');
+      debugPrint('Error sincronizando progreso por timestamp: $e');
     }
   }
 
-  Future<void> _guardarLocal() async {
+  // Copia a memoria los campos que sí existan en el documento remoto --  si
+  // un campo nunca se guardó, se conserva el valor local/por defecto.
+  void _aplicarDatosRemotos(Map<String, dynamic> usuario) {
+    if (usuario['racha_dias'] != null) {
+      _rachaDias = (usuario['racha_dias'] as num).toInt();
+    }
+    if (usuario['tiempo_total_horas'] != null) {
+      _tiempoTotalHoras = (usuario['tiempo_total_horas'] as num).toInt();
+    }
+    if (usuario['lecciones_completadas'] != null) {
+      _leccionesCompletadas =
+          (usuario['lecciones_completadas'] as num).toInt();
+    }
+    if (usuario['examenes_realizados'] != null) {
+      _examenesRealizados = (usuario['examenes_realizados'] as num).toInt();
+    }
+    final actividad = usuario['actividad_semanal'];
+    if (actividad is List) {
+      _actividadSemanal = actividad.map((e) => (e as num).toDouble()).toList();
+    }
+    final habilidades = usuario['habilidades_values'];
+    if (habilidades is List) {
+      _habilidadesValues = habilidades
+          .map((e) => (e as num).toDouble())
+          .toList();
+    }
+    if (usuario['progreso_siguiente_nivel'] != null) {
+      _progresoHaciaSiguienteNivel =
+          (usuario['progreso_siguiente_nivel'] as num).toDouble();
+    }
+    if (usuario['siguiente_nivel'] != null) {
+      _siguienteNivel = usuario['siguiente_nivel'] as String;
+    }
+  }
+
+  // [marcaDeTiempo] es cuándo se modificó realmente este progreso -- puede
+  // ser "ahora" (acaba de pasar algo, ver _saveData) o el timestamp que ya
+  // traía el lado que ganó la comparación en _sincronizarPorTimestamp (para
+  // no inventarle una fecha más nueva de la que en verdad tiene).
+  Future<void> _guardarLocal(DateTime marcaDeTiempo) async {
     try {
       await _prefs.setInt('racha_dias', _rachaDias);
       await _prefs.setInt('tiempo_total_horas', _tiempoTotalHoras);
@@ -187,6 +212,10 @@ class ProgresoService extends ChangeNotifier {
         _progresoHaciaSiguienteNivel,
       );
       await _prefs.setString('siguiente_nivel', _siguienteNivel);
+      await _prefs.setString(
+        'progreso_actualizado_en',
+        marcaDeTiempo.toIso8601String(),
+      );
 
       final usuarioId = AuthService().usuarioActualId;
       if (usuarioId != null) {
@@ -197,7 +226,7 @@ class ProgresoService extends ChangeNotifier {
     }
   }
 
-  Future<void> _guardarEnFirestore() async {
+  Future<void> _guardarEnFirestore(DateTime marcaDeTiempo) async {
     final usuarioId = AuthService().usuarioActualId;
     if (usuarioId == null) return;
 
@@ -211,15 +240,20 @@ class ProgresoService extends ChangeNotifier {
         'habilidades_values': _habilidadesValues,
         'progreso_siguiente_nivel': _progresoHaciaSiguienteNivel,
         'siguiente_nivel': _siguienteNivel,
+        'progreso_actualizado_en': marcaDeTiempo.toIso8601String(),
       });
     } catch (e) {
       debugPrint('Error guardando progreso en Firestore: $e');
     }
   }
 
+  // Se llama cada vez que una acción real del usuario cambia el progreso
+  // (registrarRevision, completarLeccion, registrarExamen): ese es el único
+  // momento en que corresponde estampar "ahora" como última modificación.
   Future<void> _saveData() async {
-    await _guardarLocal();
-    await _guardarEnFirestore();
+    final ahora = DateTime.now();
+    await _guardarLocal(ahora);
+    await _guardarEnFirestore(ahora);
     notifyListeners();
   }
 
