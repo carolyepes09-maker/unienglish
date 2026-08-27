@@ -25,7 +25,21 @@ const Duration _kFirestoreTimeout = Duration(seconds: 6);
 class AuthService {
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
-  AuthService._internal();
+  AuthService._internal() : _authInyectado = null, _firestoreInyectado = null;
+
+  /// Solo para pruebas: crea una instancia INDEPENDIENTE del singleton
+  /// global de arriba, con FirebaseAuth/FirebaseFirestore inyectados (ej.
+  /// los fakes de firebase_auth_mocks / fake_cloud_firestore). El resto de
+  /// la app real nunca llama a este constructor -- siempre usa AuthService()
+  /// (el singleton), que sigue funcionando exactamente igual que antes.
+  AuthService.forTesting({
+    required fb_auth.FirebaseAuth auth,
+    required FirebaseFirestore firestore,
+  }) : _authInyectado = auth,
+       _firestoreInyectado = firestore;
+
+  final fb_auth.FirebaseAuth? _authInyectado;
+  final FirebaseFirestore? _firestoreInyectado;
 
   // Getters (no campos 'final' evaluados al construir el objeto): así,
   // construir AuthService() nunca toca el SDK de Firebase -- solo lo hace
@@ -35,8 +49,9 @@ class AuthService {
   // la instancia, y truenan si Firebase.initializeApp() todavía no ha
   // corrido -- exactamente el orden en que main.dart construye estos
   // servicios ahora (ver hallazgo 9).
-  fb_auth.FirebaseAuth get _auth => fb_auth.FirebaseAuth.instance;
-  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  fb_auth.FirebaseAuth get _auth => _authInyectado ?? fb_auth.FirebaseAuth.instance;
+  FirebaseFirestore get _firestore =>
+      _firestoreInyectado ?? FirebaseFirestore.instance;
 
   Map<String, dynamic>? _usuarioActualData;
   String? _usuarioActualId;
