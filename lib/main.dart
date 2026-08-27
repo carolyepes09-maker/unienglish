@@ -17,10 +17,6 @@ import 'ui/pages/lecciones_screen.dart';
 import 'ui/pages/progreso_screen.dart';
 import 'ui/pages/simulacro_screen.dart';
 import 'ui/pages/perfil_screen.dart';
-import 'ui/pages/leccion_detalle_screen.dart';
-import 'ui/pages/tema_detalle_screen.dart';
-import 'ui/pages/ejercicios_screen.dart';
-import 'ui/pages/resultado_screen.dart';
 import 'ui/utils/responsive.dart';
 
 // Servicios globales
@@ -220,31 +216,7 @@ class _UniEnglishAppState extends State<UniEnglishApp> {
         ),
       ),
       home: const _AppBootstrap(),
-      routes: {
-        '/main': (context) => const MainNavigation(),
-        '/simulacro_test': (context) =>
-            SimulacroScreen(authService: _authService),
-        '/leccion_detalle': (context) => const LeccionDetalleScreen(
-          titulo: 'Grammar',
-          subtitulo: 'Gramática',
-          icon: Icons.abc,
-          progress: 0.75,
-        ),
-        '/tema_detalle': (context) => const TemaDetalleScreen(
-          temaNombre: 'Present Simple',
-          leccion: 'grammar',
-        ),
-        '/ejercicios': (context) => const EjerciciosScreen(
-          temaNombre: 'Present Simple',
-          leccion: 'grammar',
-        ),
-        '/resultado': (context) => ResultadoScreen(
-          correctas: 5,
-          total: 5,
-          temaNombre: 'Present Simple',
-          leccion: 'grammar',
-        ),
-      },
+      routes: {'/main': (context) => const MainNavigation()},
     );
   }
 }
