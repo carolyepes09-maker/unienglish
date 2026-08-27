@@ -9,7 +9,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 3 | Sincronización con pérdida silenciosa de progreso | Pendiente | — | — |
 | 4 | "¿Olvidaste tu contraseña?" es un botón muerto | Resuelto | 7617789 | 2026-08-26 |
 | 5 | Bug en el progreso del examen (solo Grammar/Reading) | Pendiente | — | — |
-| 6 | Usuario nuevo arranca con estadísticas inventadas | Pendiente | — | — |
+| 6 | Usuario nuevo arranca con estadísticas inventadas | Resuelto | 0a6f339 | 2026-08-26 |
 | 7 | Documentación desactualizada y contradictoria | Pendiente | — | — |
 | 8 | Reglas de Firestore sin validación de esquema | Pendiente | — | — |
 | 9 | Manejo de fallos de arranque se anula a sí mismo | Pendiente | — | — |
