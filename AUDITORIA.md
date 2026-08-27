@@ -11,7 +11,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 5 | Bug en el progreso del examen (solo Grammar/Reading) | Resuelto | 197cbf0 | 2026-08-26 |
 | 6 | Usuario nuevo arranca con estadísticas inventadas | Resuelto | 0a6f339 | 2026-08-26 |
 | 7 | Documentación desactualizada y contradictoria | Resuelto | ff183e9, 7368243 | 2026-08-26 |
-| 8 | Reglas de Firestore sin validación de esquema | Escrito, sin desplegar | 311e5a2 | 2026-08-26 |
+| 8 | Reglas de Firestore sin validación de esquema | Resuelto y desplegado | 311e5a2 | 2026-08-27 |
 | 9 | Manejo de fallos de arranque se anula a sí mismo | Resuelto (con corrección) | 3a08f5f, efa4357 | 2026-08-26 |
 | 10 | Modelo de datos que no escala (doc único en Firestore) | Diagnosticado (ver MIGRACION_DATOS.md) | — | 2026-08-27 |
 | 11 | Prácticamente cero pruebas automatizadas | Resuelto | 82783cf, c19b282, 7615a92, 496041f, a13f3a5 | 2026-08-26 |
@@ -19,7 +19,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 13 | print() en vez de logging real | Resuelto | 23481f2 | 2026-08-27 |
 | 14 | Rutas nombradas muertas en main.dart | Resuelto | df92165 | 2026-08-27 |
 | 15 | Archivos de log viejos en la raíz | Resuelto | 9c9302d | 2026-08-27 |
-| 16 | Warnings de lint acumulados (withOpacity, etc.) | Migrado, pendiente de revisión visual | a29e9c8 | 2026-08-27 |
+| 16 | Warnings de lint acumulados (withOpacity, etc.) | Resuelto (revisado visualmente en producción) | a29e9c8 | 2026-08-27 |
 
 ## Decisiones ya tomadas con Ferek
 
