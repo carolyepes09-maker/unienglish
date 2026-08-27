@@ -27,8 +27,16 @@ class AuthService {
   factory AuthService() => _instance;
   AuthService._internal();
 
-  final fb_auth.FirebaseAuth _auth = fb_auth.FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Getters (no campos 'final' evaluados al construir el objeto): así,
+  // construir AuthService() nunca toca el SDK de Firebase -- solo lo hace
+  // cuando de verdad se llama a un método (initialize, iniciarSesion, etc.),
+  // momento en el que Firebase.initializeApp() ya debería haber terminado.
+  // Si esto fueran campos 'final', se evaluarían de inmediato al construir
+  // la instancia, y truenan si Firebase.initializeApp() todavía no ha
+  // corrido -- exactamente el orden en que main.dart construye estos
+  // servicios ahora (ver hallazgo 9).
+  fb_auth.FirebaseAuth get _auth => fb_auth.FirebaseAuth.instance;
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
 
   Map<String, dynamic>? _usuarioActualData;
   String? _usuarioActualId;
