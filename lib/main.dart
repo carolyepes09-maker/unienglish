@@ -14,6 +14,7 @@ import 'services/progreso_service.dart';
 import 'services/vocabulario_service.dart';
 import 'services/actividad_service.dart';
 import 'services/idioma_service.dart';
+import 'services/tema_service.dart';
 import 'ui/pages/login_screen.dart';
 import 'ui/pages/home_screen.dart';
 import 'ui/pages/lecciones_screen.dart';
@@ -28,6 +29,7 @@ late final ProgresoService _progresoService;
 late final VocabularioService _vocabularioService;
 late final ActividadService _actividadService;
 final IdiomaService _idiomaService = IdiomaService();
+final TemaService _temaService = TemaService();
 
 // Etapas reales del arranque, para que la pantalla de carga (_LoadingScreen)
 // pueda mostrar un texto que avanza de verdad en vez de un spinner mudo.
@@ -82,6 +84,7 @@ Future<void> _inicializarServicios() async {
       _vocabularioService.precargarLocal(),
       _actividadService.precargarLocal(),
       _idiomaService.initialize(),
+      _temaService.initialize(),
     ]);
     AppLogger.log('✅ Firebase y carga local listos');
     _etapaArranque.value = _EtapaArranque.datosLocales;
@@ -383,6 +386,7 @@ class _UniEnglishAppState extends State<UniEnglishApp> {
   void initState() {
     super.initState();
     _idiomaService.addListener(_onIdiomaChanged);
+    _temaService.addListener(_onIdiomaChanged);
   }
 
   void _onIdiomaChanged() => setState(() {});
@@ -390,6 +394,7 @@ class _UniEnglishAppState extends State<UniEnglishApp> {
   @override
   void dispose() {
     _idiomaService.removeListener(_onIdiomaChanged);
+    _temaService.removeListener(_onIdiomaChanged);
     super.dispose();
   }
 
@@ -424,6 +429,24 @@ class _UniEnglishAppState extends State<UniEnglishApp> {
           ),
         ),
       ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF1A0000),
+        primaryColor: kPrimaryRed,
+        textTheme: AppFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF1A0000),
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Color(0xFFF5E6D0)),
+          titleTextStyle: AppFonts.poppins(
+            color: const Color(0xFFF5E6D0),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      themeMode: _temaService.themeMode,
       home: const _AppBootstrap(),
       routes: {'/main': (context) => const MainNavigation()},
     );

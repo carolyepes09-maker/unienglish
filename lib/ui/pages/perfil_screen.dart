@@ -5,6 +5,8 @@ import 'package:gif/gif.dart';
 import '../../services/auth_service.dart';
 import '../../services/progreso_service.dart';
 import '../../services/idioma_service.dart';
+import '../../services/tema_service.dart';
+import '../utils/app_colors.dart';
 
 const Color kPrimaryRed = Color(0xFFCC0000);
 const Color kGoldAccent = Color(0xFF8B6914);
@@ -40,6 +42,11 @@ class _PerfilScreenState extends State<PerfilScreen>
   late GifController _fireController;
   final ProgresoService _progresoService = ProgresoService();
   final IdiomaService _idiomaService = IdiomaService();
+  // No necesita listener propio: al cambiar el tema, MaterialApp (main.dart)
+  // reconstruye con un nuevo Theme, y Theme.of(context) (usado por
+  // AppColors) se redibuja solo vía InheritedWidget — a diferencia del
+  // idioma, que sí usa un campo estático sin ese mecanismo automático.
+  final TemaService _temaService = TemaService();
 
   @override
   void initState() {
@@ -68,7 +75,7 @@ class _PerfilScreenState extends State<PerfilScreen>
   void _mostrarSelectorIdioma() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.card(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -82,7 +89,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: AppColors.cardBorder(context),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -96,7 +103,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                       'Interface language',
                     ),
                     style: AppFonts.poppins(
-                      color: kTextDark,
+                      color: AppColors.textPrimary(context),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -142,7 +149,7 @@ class _PerfilScreenState extends State<PerfilScreen>
               child: Text(
                 label,
                 style: AppFonts.poppins(
-                  color: kTextDark,
+                  color: AppColors.textPrimary(context),
                   fontSize: 15,
                   fontWeight: seleccionado ? FontWeight.w600 : FontWeight.w400,
                 ),
@@ -161,7 +168,7 @@ class _PerfilScreenState extends State<PerfilScreen>
     final usuario = widget.authService.usuarioActual;
     final programa = usuario?['facultad_programa'] ?? '';
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -431,7 +438,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                 child: Text(
                   AppStrings.tr('Configuración', 'Settings'),
                   style: AppFonts.poppins(
-                    color: kTextDark,
+                    color: AppColors.textPrimary(context),
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -444,9 +451,9 @@ class _PerfilScreenState extends State<PerfilScreen>
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.card(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey[200]!, width: 1),
+                  border: Border.all(color: AppColors.cardBorder(context), width: 1),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.04),
@@ -463,13 +470,25 @@ class _PerfilScreenState extends State<PerfilScreen>
                         'Notificaciones',
                         'Notifications',
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_right,
-                        color: Colors.grey,
+                        color: AppColors.iconMuted(context),
                         size: 20,
                       ),
                     ),
-                    Divider(height: 1, color: Colors.grey[200]),
+                    Divider(height: 1, color: AppColors.divider(context)),
+                    _settingsItem(
+                      icon: Icons.dark_mode_outlined,
+                      label: AppStrings.tr('Modo oscuro', 'Dark mode'),
+                      trailing: Switch(
+                        value: _temaService.tema == AppTema.oscuro,
+                        activeThumbColor: kPrimaryRed,
+                        onChanged: (activo) => _temaService.cambiarTema(
+                          activo ? AppTema.oscuro : AppTema.claro,
+                        ),
+                      ),
+                    ),
+                    Divider(height: 1, color: AppColors.divider(context)),
                     _settingsItem(
                       icon: Icons.language,
                       label: AppStrings.tr(
@@ -485,20 +504,20 @@ class _PerfilScreenState extends State<PerfilScreen>
                                 ? 'English'
                                 : 'Español',
                             style: AppFonts.poppins(
-                              color: Colors.grey[500],
+                              color: AppColors.textSecondary(context),
                               fontSize: 13,
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(
+                          Icon(
                             Icons.chevron_right,
-                            color: Colors.grey,
+                            color: AppColors.iconMuted(context),
                             size: 20,
                           ),
                         ],
                       ),
                     ),
-                    Divider(height: 1, color: Colors.grey[200]),
+                    Divider(height: 1, color: AppColors.divider(context)),
                     _settingsItem(
                       icon: Icons.logout,
                       label: AppStrings.tr('Cerrar sesión', 'Log out'),
@@ -562,14 +581,14 @@ class _PerfilScreenState extends State<PerfilScreen>
                 children: [
                   Icon(
                     Icons.school_outlined,
-                    color: Colors.grey[400],
+                    color: AppColors.textSecondary(context),
                     size: 14,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     'Universidad Libre',
                     style: AppFonts.poppins(
-                      color: Colors.grey[400],
+                      color: AppColors.textSecondary(context),
                       fontSize: 12,
                     ),
                   ),
@@ -624,13 +643,13 @@ class _PerfilScreenState extends State<PerfilScreen>
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, color: iconColor ?? Colors.grey[500], size: 21),
+            Icon(icon, color: iconColor ?? AppColors.iconMuted(context), size: 21),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 label,
                 style: AppFonts.poppins(
-                  color: labelColor ?? kTextDark,
+                  color: labelColor ?? AppColors.textPrimary(context),
                   fontSize: 14,
                 ),
               ),
