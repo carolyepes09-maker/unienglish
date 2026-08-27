@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ui/utils/app_fonts.dart';
@@ -139,6 +140,11 @@ void _sincronizarConCuentaEnSegundoPlano() {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Sincroniza la navegación de Flutter con el historial real del navegador
+  // (URLs sin '#'). Sin esto, el gesto de swipe-atrás del teléfono podía
+  // salirse de la app en vez de hacer un pop normal, dejándola colgada a
+  // medio cargar. No-op en Android/iOS nativo.
+  usePathUrlStrategy();
   runApp(const UniEnglishApp());
 }
 
@@ -530,10 +536,19 @@ class _MainNavigationState extends State<MainNavigation>
 
   @override
   Widget build(BuildContext context) {
-    if (isDesktop(context)) {
-      return _buildDesktopLayout(context);
-    }
-    return _buildMobileLayout(context);
+    // Gesto de "atrás" (swipe o botón del sistema): si no estamos en Home,
+    // primero volvemos ahí con la misma animación fluida del PageView en
+    // vez de dejar que el sistema intente salir sin tener a dónde volver
+    // — eso era lo que provocaba que el gesto dejara la app colgada.
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _irAPantalla(0);
+      },
+      child: isDesktop(context)
+          ? _buildDesktopLayout(context)
+          : _buildMobileLayout(context),
+    );
   }
 
   /// Layout de teléfono — ahora con PageView para poder deslizar el dedo

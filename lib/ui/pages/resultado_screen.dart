@@ -178,8 +178,12 @@ class ResultadoScreen extends StatelessWidget {
     bool esSimulacro,
     String? siguienteTema,
   ) {
-    return WillPopScope(
-      onWillPop: () async => false, // Deshabilita el botón atrás
+    return PopScope(
+      // Deshabilita el botón/gesto atrás: obliga a usar los botones propios
+      // de la pantalla. PopScope (a diferencia de WillPopScope) sí participa
+      // en la animación del gesto predictivo de Android, así que el swipe se
+      // ve fluido y "rebota" en vez de quedar la pantalla colgada a medias.
+      canPop: false,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -213,8 +217,8 @@ class ResultadoScreen extends StatelessWidget {
     bool esSimulacro,
     String? siguienteTema,
   ) {
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         backgroundColor: kDesktopCream,
         body: SingleChildScrollView(
