@@ -4,7 +4,7 @@ import '../../services/leccion_service.dart';
 import 'leccion_detalle_screen.dart';
 import '../utils/responsive.dart';
 import '../utils/app_strings.dart';
-import 'tema_detalle_screen.dart' show kGrammarTopicImages;
+import 'tema_detalle/tema_detalle_pages.dart' show kGrammarTopicImages;
 
 const Color kPrimaryRed = Color(0xFFCC0000);
 const Color kTextDark = Color(0xFF1A0000);
