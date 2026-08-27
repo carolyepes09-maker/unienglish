@@ -242,14 +242,34 @@ class ProgresoService extends ChangeNotifier {
     _saveData();
   }
 
-  void registrarExamen(int correctas, int total) {
-    _examenesRealizados++;
-    double porcentaje = correctas / total;
-    _habilidadesValues[0] += (porcentaje * 5);
-    _habilidadesValues[1] += (porcentaje * 5);
+  // Posición de cada habilidad del examen dentro de _habilidadesValues /
+  // habilidadesLabels ('Grammar', 'Reading', 'Listening', 'Writing',
+  // 'Speaking'). El examen nunca evalúa Speaking, así que esa posición (4)
+  // no tiene entrada aquí y queda intacta.
+  static const Map<String, int> _indicePorHabilidad = {
+    'grammar': 0,
+    'reading': 1,
+    'listening': 2,
+    'writing': 3,
+  };
 
-    for (int i = 0; i < _habilidadesValues.length; i++) {
-      if (_habilidadesValues[i] > 100) _habilidadesValues[i] = 100;
+  /// Actualiza el progreso por habilidad según los aciertos/total reales de
+  /// cada habilidad en el examen (no siempre las dos mismas posiciones).
+  void registrarExamen(
+    Map<String, int> correctasPorHabilidad,
+    Map<String, int> totalPorHabilidad,
+  ) {
+    _examenesRealizados++;
+
+    for (final habilidad in totalPorHabilidad.keys) {
+      final total = totalPorHabilidad[habilidad] ?? 0;
+      final indice = _indicePorHabilidad[habilidad];
+      if (total == 0 || indice == null) continue;
+
+      final correctas = correctasPorHabilidad[habilidad] ?? 0;
+      final porcentaje = correctas / total;
+      _habilidadesValues[indice] += porcentaje * 5;
+      if (_habilidadesValues[indice] > 100) _habilidadesValues[indice] = 100;
     }
 
     _saveData();

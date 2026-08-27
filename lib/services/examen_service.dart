@@ -46,6 +46,13 @@ class ExamenService extends ChangeNotifier {
   int _correctas = 0;
   bool _isLoading = true;
 
+  // Aciertos y total de preguntas respondidas, agrupados por habilidad
+  // ('grammar', 'reading', 'listening', 'writing'), para que al terminar el
+  // examen el progreso se reparta en la habilidad real de cada pregunta y no
+  // siempre en las mismas dos (ver ProgresoService.registrarExamen).
+  final Map<String, int> _correctasPorHabilidad = {};
+  final Map<String, int> _totalPorHabilidad = {};
+
   // Getters
   int get secondsRemaining => _secondsRemaining;
   int get currentQuestion => _preguntas.isEmpty ? 0 : _currentIndex + 1;
@@ -142,6 +149,8 @@ class ExamenService extends ChangeNotifier {
       _selectedAnswer = null;
       _respondida = false;
       _correctas = 0;
+      _correctasPorHabilidad.clear();
+      _totalPorHabilidad.clear();
       _secondsRemaining = _tiempoParaExamen(_preguntas.length);
       startTimer();
     } catch (e) {
@@ -234,8 +243,12 @@ class ExamenService extends ChangeNotifier {
     if (_respondida || _preguntas.isEmpty) return;
     _selectedAnswer = index;
     _respondida = true;
+
+    final skill = _preguntas[_currentIndex].skill;
+    _totalPorHabilidad[skill] = (_totalPorHabilidad[skill] ?? 0) + 1;
     if (index == _preguntas[_currentIndex].correctIndex) {
       _correctas++;
+      _correctasPorHabilidad[skill] = (_correctasPorHabilidad[skill] ?? 0) + 1;
     }
     notifyListeners();
   }
@@ -251,8 +264,12 @@ class ExamenService extends ChangeNotifier {
       return true;
     } else {
       stopTimer();
-      // Registrar en el progreso global
-      ProgresoService().registrarExamen(_correctas, _preguntas.length);
+      // Registrar en el progreso global, desglosado por habilidad real de
+      // cada pregunta (no solo el total agregado).
+      ProgresoService().registrarExamen(
+        _correctasPorHabilidad,
+        _totalPorHabilidad,
+      );
       return false;
     }
   }
