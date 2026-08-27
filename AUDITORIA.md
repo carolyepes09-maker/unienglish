@@ -13,7 +13,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 7 | Documentación desactualizada y contradictoria | Resuelto | ff183e9, 7368243 | 2026-08-26 |
 | 8 | Reglas de Firestore sin validación de esquema | Escrito, sin desplegar | 311e5a2 | 2026-08-26 |
 | 9 | Manejo de fallos de arranque se anula a sí mismo | Resuelto (con corrección) | 3a08f5f, efa4357 | 2026-08-26 |
-| 10 | Modelo de datos que no escala (doc único en Firestore) | Pendiente | — | — |
+| 10 | Modelo de datos que no escala (doc único en Firestore) | Diagnosticado (ver MIGRACION_DATOS.md) | — | 2026-08-27 |
 | 11 | Prácticamente cero pruebas automatizadas | Resuelto | 82783cf, c19b282, 7615a92, 496041f, a13f3a5 | 2026-08-26 |
 | 12 | Pantallas gigantes (login_screen.dart, etc.) | Pendiente | — | — |
 | 13 | print() en vez de logging real | Pendiente | — | — |
