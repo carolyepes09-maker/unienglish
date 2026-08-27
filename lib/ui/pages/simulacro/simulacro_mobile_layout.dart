@@ -1,0 +1,485 @@
+import 'package:flutter/material.dart';
+import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
+import '../../widgets/audio_player_card.dart';
+import '../../../services/examen_service.dart';
+import '../../../models/simulacro_model.dart';
+import 'simulacro_widgets.dart';
+
+/// =============================================================================
+/// WIDGET: lib/ui/pages/simulacro/simulacro_mobile_layout.dart
+/// =============================================================================
+/// Layout de teléfono de SimulacroScreen, extraído tal cual (sin cambiar
+/// ninguna propiedad visual) desde simulacro_screen.dart para reducir el
+/// tamaño de ese archivo. Toda la lógica de negocio (temporizador, avance de
+/// preguntas, navegación a resultados) se queda en SimulacroScreen; este
+/// widget solo recibe el estado ya resuelto.
+/// =============================================================================
+
+const Color _kTextDark = Color(0xFF1A0000);
+const Color _kCream = Color(0xFFF5E6D0);
+const Color _kCreamMuted = Color(0xAAF5E6D0);
+
+class SimulacroMobileLayout extends StatelessWidget {
+  final ExamenService examenService;
+  final SimulacroPregunta pregunta;
+  final dynamic authService;
+  final VoidCallback? onBack;
+  final VoidCallback onFinalizarExamen;
+
+  const SimulacroMobileLayout({
+    super.key,
+    required this.examenService,
+    required this.pregunta,
+    required this.authService,
+    required this.onBack,
+    required this.onFinalizarExamen,
+  });
+
+  // ─── TARJETA DE OPCIÓN CON FEEDBACK ─────────────────────────────────────
+  // Verde cuando es la correcta, rojo si el usuario marcó la incorrecta,
+  // gris para el resto — mismo esquema que usan las lecciones normales
+  // (ejercicios_screen.dart) para que el feedback se sienta consistente en
+  // toda la app.
+  Widget _opcionSimulacro({
+    required String texto,
+    required bool isSelected,
+    required bool mostrarResultado,
+    required bool esCorrecta,
+  }) {
+    Color bgColor;
+    Color borderColor;
+    Color textColor;
+    IconData? iconData;
+
+    if (mostrarResultado) {
+      if (esCorrecta) {
+        bgColor = Colors.green[100]!;
+        borderColor = Colors.green[400]!;
+        textColor = Colors.green[900]!;
+        iconData = Icons.check_circle_rounded;
+      } else if (isSelected) {
+        bgColor = Colors.red[100]!;
+        borderColor = Colors.red[400]!;
+        textColor = Colors.red[900]!;
+        iconData = Icons.close_rounded;
+      } else {
+        bgColor = Colors.grey[100]!;
+        borderColor = Colors.grey[300]!;
+        textColor = Colors.grey[700]!;
+      }
+    } else {
+      bgColor = Colors.white;
+      borderColor = Colors.grey[300]!;
+      textColor = _kTextDark;
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor, width: 1.5),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              texto,
+              style: AppFonts.poppins(
+                color: textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          if (iconData != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Icon(iconData, color: textColor, size: 20),
+            ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: _kTextDark),
+          onPressed: () {
+            if (onBack != null) {
+              onBack!();
+            } else {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        title: const SizedBox.shrink(),
+      ),
+
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+
+                  // ── TIMER con textura ──────────────────────────────────
+                  Center(
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Image.asset(
+                              'assets/images/fondo.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned.fill(
+                            child: Container(
+                              color: Colors.black.withOpacity(0.38),
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              examenService.formattedTime,
+                              style: AppFonts.poppins(
+                                color: examenService.secondsRemaining < 300
+                                    ? Colors.orange
+                                    : _kCream,
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // ── Título ─────────────────────────────────────────────
+                  Text(
+                    AppStrings.tr(
+                      'Simulacro ${authService?.usuarioActual?['nivel_actual'] ?? 'A1'}',
+                      'Mock Exam ${authService?.usuarioActual?['nivel_actual'] ?? 'A1'}',
+                    ),
+                    style: AppFonts.poppins(
+                      color: _kTextDark,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppStrings.tr(
+                          'Pregunta ${examenService.currentQuestion} de ${examenService.totalQuestions}',
+                          'Question ${examenService.currentQuestion} of ${examenService.totalQuestions}',
+                        ),
+                        style: AppFonts.poppins(
+                          color: Colors.grey[500],
+                          fontSize: 13,
+                        ),
+                      ),
+                      skillBadge(pregunta.skill),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // ── Barra de progreso ──────────────────────────────────
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: examenService.progress,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        kPrimaryRed,
+                      ),
+                      minHeight: 5,
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ── TARJETA PREGUNTA con textura ───────────────────────
+                  Container(
+                    width: double.infinity,
+                    clipBehavior: Clip.hardEdge,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(
+                            'assets/images/fondo.jpg',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withOpacity(0.42),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Instrucción de lectura: solo aplica cuando la
+                              // pregunta trae un pasaje (Reading). Grammar,
+                              // Listening y Writing no lo necesitan.
+                              if (pregunta.passage != null) ...[
+                                Text(
+                                  'Read the following passage and answer the question:',
+                                  style: AppFonts.poppins(
+                                    color: _kCreamMuted,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                              ],
+
+                              // Bloque de texto cita (solo si tiene passage)
+                              if (pregunta.passage != null)
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(14),
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.10),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.15),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    pregunta.passage!,
+                                    style: AppFonts.poppins(
+                                      color: _kCream,
+                                      fontSize: 13,
+                                      fontStyle: FontStyle.italic,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                ),
+
+                              // Reproductor de audio: solo aplica cuando la
+                              // pregunta es de Listening. Antes se preguntaba
+                              // por un audio que no aparecía en ningún lado;
+                              // ahora se puede escuchar aquí mismo.
+                              if (pregunta.audioFile != null) ...[
+                                Text(
+                                  AppStrings.tr(
+                                    'Escucha el audio y responde la pregunta:',
+                                    'Listen to the audio and answer the question:',
+                                  ),
+                                  style: AppFonts.poppins(
+                                    color: _kCreamMuted,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                AudioPlayerCard(
+                                  key: ValueKey(pregunta.audioFile),
+                                  audioFile: pregunta.audioFile,
+                                  standalone: false,
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+
+                              Text(
+                                pregunta.question,
+                                style: AppFonts.poppins(
+                                  color: _kCream,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── OPCIONES DE RESPUESTA ──────────────────────────────
+                  ...List.generate(examenService.answers.length, (index) {
+                    final isSelected = examenService.selectedAnswer == index;
+                    final esCorrecta = index == pregunta.correctIndex;
+                    final mostrarResultado = examenService.respondida;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: GestureDetector(
+                        onTap: !examenService.respondida
+                            ? () => examenService.selectAnswer(index)
+                            : null,
+                        child: _opcionSimulacro(
+                          texto: examenService.answers[index],
+                          isSelected: isSelected,
+                          mostrarResultado: mostrarResultado,
+                          esCorrecta: esCorrecta,
+                        ),
+                      ),
+                    );
+                  }),
+
+                  // ── RETROALIMENTACIÓN: EXPLICACIÓN PEDAGÓGICA ──────────
+                  // Solo se muestra apenas el usuario elige una respuesta,
+                  // igual que en las lecciones normales.
+                  if (examenService.respondida) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue[200]!, width: 1),
+                      ),
+                      padding: const EdgeInsets.all(14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppStrings.tr('💡 Explicación', '💡 Explanation'),
+                            style: AppFonts.poppins(
+                              color: _kTextDark,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            pregunta.explanation,
+                            style: AppFonts.poppins(
+                              color: _kTextDark,
+                              fontSize: 13,
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
+          ),
+
+          // ── BOTÓN SIGUIENTE con textura ────────────────────────────────
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, -3),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: examenService.respondida
+                  ? Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(26),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Image.asset(
+                              'assets/images/fondo.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned.fill(
+                            child: Container(
+                              color: Colors.black.withOpacity(0.35),
+                            ),
+                          ),
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                if (!examenService.nextQuestion()) {
+                                  onFinalizarExamen();
+                                }
+                              },
+                              child: Center(
+                                child: Text(
+                                  examenService.currentQuestion ==
+                                          examenService.totalQuestions
+                                      ? AppStrings.tr(
+                                          'Finalizar simulacro',
+                                          'Finish exam',
+                                        )
+                                      : AppStrings.tr(
+                                          'Siguiente pregunta',
+                                          'Next question',
+                                        ),
+                                  style: AppFonts.poppins(
+                                    color: _kCream,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ElevatedButton(
+                      onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                        disabledBackgroundColor: Colors.grey[200],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        AppStrings.tr('Siguiente pregunta', 'Next question'),
+                        style: AppFonts.poppins(
+                          color: Colors.grey[400],
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
