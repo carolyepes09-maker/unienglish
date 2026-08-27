@@ -196,7 +196,7 @@ class _AudioPlayerCardState extends State<AudioPlayerCard> {
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           activeTrackColor: _kPrimaryRed,
-                          inactiveTrackColor: Colors.white.withOpacity(0.2),
+                          inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
                           thumbColor: _kCream,
                           thumbShape: const RoundSliderThumbShape(
                             enabledThumbRadius: 6.0,
@@ -250,8 +250,8 @@ class _AudioPlayerCardState extends State<AudioPlayerCard> {
                       height: 8.0 + random.nextDouble() * 16.0,
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       decoration: BoxDecoration(
-                        color: _kPrimaryRed.withOpacity(
-                          0.5 + random.nextDouble() * 0.5,
+                        color: _kPrimaryRed.withValues(
+                          alpha: 0.5 + random.nextDouble() * 0.5,
                         ),
                         borderRadius: BorderRadius.circular(2),
                       ),
@@ -275,7 +275,7 @@ class _AudioPlayerCardState extends State<AudioPlayerCard> {
             child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.42)),
+            child: Container(color: Colors.black.withValues(alpha: 0.42)),
           ),
           controles,
         ],

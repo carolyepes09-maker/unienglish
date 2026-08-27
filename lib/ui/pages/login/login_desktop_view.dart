@@ -63,7 +63,7 @@ class LoginDesktopView extends StatelessWidget {
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                 ),
-                Container(color: const Color(0xFF1A0000).withOpacity(0.35)),
+                Container(color: const Color(0xFF1A0000).withValues(alpha: 0.35)),
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(48),
@@ -75,10 +75,10 @@ class LoginDesktopView extends StatelessWidget {
                           height: 180,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: const Color(0xFF6B1010).withOpacity(0.55),
+                            color: const Color(0xFF6B1010).withValues(alpha: 0.55),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.55),
+                                color: Colors.black.withValues(alpha: 0.55),
                                 blurRadius: 60,
                                 spreadRadius: 6,
                                 offset: const Offset(0, 16),
@@ -106,7 +106,7 @@ class LoginDesktopView extends StatelessWidget {
                         Text(
                           'UNIVERSIDAD LIBRE',
                           style: TextStyle(
-                            color: _creamColor.withOpacity(0.80),
+                            color: _creamColor.withValues(alpha: 0.80),
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 4,
@@ -129,7 +129,7 @@ class LoginDesktopView extends StatelessWidget {
                             'Learn English effectively',
                           ),
                           style: TextStyle(
-                            color: _creamColor.withOpacity(0.70),
+                            color: _creamColor.withValues(alpha: 0.70),
                             fontSize: 15,
                             fontWeight: FontWeight.w300,
                           ),
@@ -147,13 +147,13 @@ class LoginDesktopView extends StatelessWidget {
                             Container(
                               width: 10,
                               height: 3,
-                              color: const Color(0xFFD4A017).withOpacity(0.6),
+                              color: const Color(0xFFD4A017).withValues(alpha: 0.6),
                             ),
                             const SizedBox(width: 6),
                             Container(
                               width: 10,
                               height: 3,
-                              color: const Color(0xFFD4A017).withOpacity(0.3),
+                              color: const Color(0xFFD4A017).withValues(alpha: 0.3),
                             ),
                           ],
                         ),

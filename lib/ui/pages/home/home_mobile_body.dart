@@ -73,7 +73,7 @@ class HomeMobileBody extends StatelessWidget {
                   // "roto" que ignora el radius (eso era el cuadro gris feo).
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.42),
+                      color: Colors.black.withValues(alpha: 0.42),
                       offset: const Offset(5, 8),
                       blurRadius: 18,
                     ),
@@ -93,7 +93,7 @@ class HomeMobileBody extends StatelessWidget {
                     ),
                     // Capa 2: Filtro de legibilidad
                     Positioned.fill(
-                      child: Container(color: Colors.black.withOpacity(0.50)),
+                      child: Container(color: Colors.black.withValues(alpha: 0.50)),
                     ),
                     // Capa 2b: relieve sobre la textura — luz arriba-
                     // izquierda y sombra abajo-derecha en el mismo
@@ -107,9 +107,9 @@ class HomeMobileBody extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              Colors.white.withOpacity(0.18),
+                              Colors.white.withValues(alpha: 0.18),
                               Colors.transparent,
-                              Colors.black.withOpacity(0.22),
+                              Colors.black.withValues(alpha: 0.22),
                             ],
                             stops: const [0.0, 0.45, 1.0],
                           ),
@@ -125,7 +125,7 @@ class HomeMobileBody extends StatelessWidget {
                       right: 20,
                       child: Container(
                         height: 1.5,
-                        color: Colors.white.withOpacity(0.28),
+                        color: Colors.white.withValues(alpha: 0.28),
                       ),
                     ),
                     // Capa 3: Información del Usuario (Nombre y Nivel)
@@ -189,7 +189,7 @@ class HomeMobileBody extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.12),
+                              color: Colors.white.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -250,7 +250,7 @@ class HomeMobileBody extends StatelessWidget {
                             child: LinearProgressIndicator(
                               value:
                                   progresoService.progresoHaciaSiguienteNivel,
-                              backgroundColor: Colors.white.withOpacity(0.2),
+                              backgroundColor: Colors.white.withValues(alpha: 0.2),
                               valueColor: const AlwaysStoppedAnimation<Color>(
                                 _kPrimaryRed,
                               ),
@@ -389,7 +389,7 @@ class HomeMobileBody extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: Colors.white, size: 24),

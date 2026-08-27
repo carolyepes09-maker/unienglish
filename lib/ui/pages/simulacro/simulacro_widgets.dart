@@ -32,9 +32,9 @@ Widget skillBadge(String skill) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
     decoration: BoxDecoration(
-      color: kPrimaryRed.withOpacity(0.10),
+      color: kPrimaryRed.withValues(alpha: 0.10),
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: kPrimaryRed.withOpacity(0.25), width: 1),
+      border: Border.all(color: kPrimaryRed.withValues(alpha: 0.25), width: 1),
     ),
     child: Text(
       etiquetaHabilidad(skill),

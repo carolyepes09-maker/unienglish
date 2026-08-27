@@ -93,7 +93,7 @@ Widget buildPageTeoria(
                     height: 24,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                     ),
                     child: Center(
                       child: Text(
@@ -176,14 +176,14 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
                     contenido.estructura.positiva,
                   ),
                   const SizedBox(height: 10),
-                  Divider(color: Colors.white.withOpacity(0.2), thickness: 1),
+                  Divider(color: Colors.white.withValues(alpha: 0.2), thickness: 1),
                   const SizedBox(height: 10),
                   _estructuraRow(
                     AppStrings.tr('Negativa', 'Negative'),
                     contenido.estructura.negativa,
                   ),
                   const SizedBox(height: 10),
-                  Divider(color: Colors.white.withOpacity(0.2), thickness: 1),
+                  Divider(color: Colors.white.withValues(alpha: 0.2), thickness: 1),
                   const SizedBox(height: 10),
                   _estructuraRow(
                     AppStrings.tr('Pregunta', 'Question'),
@@ -375,7 +375,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Divider(color: Colors.white.withOpacity(0.2), thickness: 1),
+                  Divider(color: Colors.white.withValues(alpha: 0.2), thickness: 1),
                   const SizedBox(height: 10),
                   Text(
                     contenido.textoEjemplo.traduccion,
@@ -415,7 +415,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Divider(color: Colors.white.withOpacity(0.2), thickness: 1),
+                  Divider(color: Colors.white.withValues(alpha: 0.2), thickness: 1),
                   const SizedBox(height: 10),
                   Text(
                     contenido.transcript.traduccion,
@@ -455,7 +455,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Divider(color: Colors.white.withOpacity(0.2), thickness: 1),
+                  Divider(color: Colors.white.withValues(alpha: 0.2), thickness: 1),
                   const SizedBox(height: 10),
                   Text(
                     contenido.ejemploModelo.traduccion,
@@ -550,10 +550,10 @@ Widget buildPageRefuerzo(
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              color: _kGoldAccent.withOpacity(0.1),
+              color: _kGoldAccent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _kGoldAccent.withOpacity(0.3),
+                color: _kGoldAccent.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -670,7 +670,7 @@ Widget _textureCard({
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.35),
+          color: Colors.black.withValues(alpha: 0.35),
           offset: const Offset(4, 6),
           blurRadius: 14,
         ),
@@ -686,7 +686,7 @@ Widget _textureCard({
           ),
           // Capa oscura
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.42)),
+            child: Container(color: Colors.black.withValues(alpha: 0.42)),
           ),
           // Brillo sutil arriba-izquierda (simula luz sobre la superficie)
           Positioned.fill(
@@ -695,7 +695,7 @@ Widget _textureCard({
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.white.withOpacity(0.12), Colors.transparent],
+                  colors: [Colors.white.withValues(alpha: 0.12), Colors.transparent],
                   stops: const [0.0, 0.55],
                 ),
               ),

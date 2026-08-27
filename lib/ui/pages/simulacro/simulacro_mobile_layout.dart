@@ -151,7 +151,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                           ),
                           Positioned.fill(
                             child: Container(
-                              color: Colors.black.withOpacity(0.38),
+                              color: Colors.black.withValues(alpha: 0.38),
                             ),
                           ),
                           Center(
@@ -239,7 +239,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                         ),
                         Positioned.fill(
                           child: Container(
-                            color: Colors.black.withOpacity(0.42),
+                            color: Colors.black.withValues(alpha: 0.42),
                           ),
                         ),
                         Padding(
@@ -268,10 +268,10 @@ class SimulacroMobileLayout extends StatelessWidget {
                                   padding: const EdgeInsets.all(14),
                                   margin: const EdgeInsets.only(bottom: 16),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.10),
+                                    color: Colors.white.withValues(alpha: 0.10),
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
-                                      color: Colors.white.withOpacity(0.15),
+                                      color: Colors.white.withValues(alpha: 0.15),
                                       width: 1,
                                     ),
                                   ),
@@ -398,7 +398,7 @@ class SimulacroMobileLayout extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 10,
                   offset: const Offset(0, -3),
                 ),
@@ -423,7 +423,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                           ),
                           Positioned.fill(
                             child: Container(
-                              color: Colors.black.withOpacity(0.35),
+                              color: Colors.black.withValues(alpha: 0.35),
                             ),
                           ),
                           Material(

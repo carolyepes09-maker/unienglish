@@ -90,7 +90,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: kGoldAccent.withOpacity(0.15),
+                color: kGoldAccent.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -218,7 +218,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.25),
+                    color: Colors.white.withValues(alpha: 0.25),
                     width: 3,
                   ),
                 ),
@@ -354,7 +354,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: kPrimaryRed.withOpacity(0.20), width: 1.2),
+          border: Border.all(color: kPrimaryRed.withValues(alpha: 0.20), width: 1.2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -364,7 +364,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
               height: 26,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: kGoldAccent.withOpacity(0.18),
+                color: kGoldAccent.withValues(alpha: 0.18),
               ),
               child: const Icon(Icons.add, color: kGoldAccent, size: 18),
             ),
@@ -391,7 +391,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
           decoration: BoxDecoration(
-            color: seleccionado ? kDarkCard : kPrimaryRed.withOpacity(0.07),
+            color: seleccionado ? kDarkCard : kPrimaryRed.withValues(alpha: 0.07),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -474,7 +474,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
               border: Border.all(color: Colors.grey[200]!),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, 2),
@@ -568,11 +568,11 @@ class _VocabularioScreenState extends State<VocabularioScreen>
       fg = Colors.grey[700]!;
     } else if (nivel < 5) {
       texto = AppStrings.tr('Aprendiendo', 'Learning');
-      bg = kGoldAccent.withOpacity(0.18);
+      bg = kGoldAccent.withValues(alpha: 0.18);
       fg = const Color(0xFF8B6914);
     } else {
       texto = AppStrings.tr('Dominado', 'Mastered');
-      bg = Colors.green.withOpacity(0.15);
+      bg = Colors.green.withValues(alpha: 0.15);
       fg = Colors.green[800]!;
     }
     return Container(
@@ -601,7 +601,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
         borderRadius: BorderRadius.circular(radius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             offset: const Offset(4, 6),
             blurRadius: 14,
           ),
@@ -615,7 +615,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
               child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
             ),
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.42)),
+              child: Container(color: Colors.black.withValues(alpha: 0.42)),
             ),
             Positioned.fill(
               child: DecoratedBox(
@@ -623,7 +623,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.white.withOpacity(0.12), Colors.transparent],
+                    colors: [Colors.white.withValues(alpha: 0.12), Colors.transparent],
                     stops: const [0.0, 0.55],
                   ),
                 ),

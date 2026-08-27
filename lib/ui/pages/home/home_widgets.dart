@@ -30,7 +30,7 @@ Widget textureCard({
       // rectangular "roto" que ignora el radius).
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.42),
+          color: Colors.black.withValues(alpha: 0.42),
           offset: const Offset(5, 8),
           blurRadius: 18,
         ),
@@ -45,7 +45,7 @@ Widget textureCard({
           ),
           Positioned.fill(
             child: Container(
-              color: overlayColor ?? Colors.black.withOpacity(0.42),
+              color: overlayColor ?? Colors.black.withValues(alpha: 0.42),
             ),
           ),
           // Relieve sobre la textura: luz arriba-izquierda y sombra
@@ -59,9 +59,9 @@ Widget textureCard({
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(0.18),
+                    Colors.white.withValues(alpha: 0.18),
                     Colors.transparent,
-                    Colors.black.withOpacity(0.22),
+                    Colors.black.withValues(alpha: 0.22),
                   ],
                   stops: const [0.0, 0.45, 1.0],
                 ),
@@ -75,7 +75,7 @@ Widget textureCard({
             right: radius,
             child: Container(
               height: 1.5,
-              color: Colors.white.withOpacity(0.28),
+              color: Colors.white.withValues(alpha: 0.28),
             ),
           ),
           Padding(padding: padding, child: child),
@@ -101,15 +101,15 @@ Widget activityTile({
   if (val >= 80) {
     overlayColor = const Color(
       0xFF003300,
-    ).withOpacity(0.6); // Tinte verde oscuro
+    ).withValues(alpha: 0.6); // Tinte verde oscuro
   } else if (val >= 50) {
     overlayColor = const Color(
       0xFF442200,
-    ).withOpacity(0.6); // Tinte ámbar/marrón
+    ).withValues(alpha: 0.6); // Tinte ámbar/marrón
   } else {
     overlayColor = const Color(
       0xFF330000,
-    ).withOpacity(0.6); // Tinte rojo oscuro
+    ).withValues(alpha: 0.6); // Tinte rojo oscuro
   }
 
   return textureCard(
@@ -119,7 +119,7 @@ Widget activityTile({
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: iconColor, size: 24),
@@ -150,7 +150,7 @@ Widget activityTile({
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(

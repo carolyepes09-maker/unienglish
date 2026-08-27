@@ -261,7 +261,7 @@ class ResultadoScreen extends StatelessWidget {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colorDesempeno.withOpacity(0.15),
+                  color: colorDesempeno.withValues(alpha: 0.15),
                   border: Border.all(color: colorDesempeno, width: 3),
                 ),
                 child: Icon(iconDesempeno, color: colorDesempeno, size: 40),
@@ -284,10 +284,10 @@ class ResultadoScreen extends StatelessWidget {
               // PORCENTAJE
               Container(
                 decoration: BoxDecoration(
-                  color: colorDesempeno.withOpacity(0.1),
+                  color: colorDesempeno.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: colorDesempeno.withOpacity(0.3),
+                    color: colorDesempeno.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -440,10 +440,10 @@ class ResultadoScreen extends StatelessWidget {
                     width: double.infinity,
                     margin: const EdgeInsets.only(top: 12),
                     decoration: BoxDecoration(
-                      color: kGoldAccent.withOpacity(0.15),
+                      color: kGoldAccent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(26),
                       border: Border.all(
-                        color: kGoldAccent.withOpacity(0.4),
+                        color: kGoldAccent.withValues(alpha: 0.4),
                         width: 2,
                       ),
                     ),
@@ -519,9 +519,9 @@ class ResultadoScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -563,7 +563,7 @@ class ResultadoScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             offset: const Offset(4, 6),
             blurRadius: 14,
           ),
@@ -577,7 +577,7 @@ class ResultadoScreen extends StatelessWidget {
               child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
             ),
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.42)),
+              child: Container(color: Colors.black.withValues(alpha: 0.42)),
             ),
             Positioned.fill(
               child: DecoratedBox(
@@ -585,7 +585,7 @@ class ResultadoScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.white.withOpacity(0.12), Colors.transparent],
+                    colors: [Colors.white.withValues(alpha: 0.12), Colors.transparent],
                     stops: const [0.0, 0.55],
                   ),
                 ),

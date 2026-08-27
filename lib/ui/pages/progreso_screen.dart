@@ -202,7 +202,7 @@ class _ProgresoScreenState extends State<ProgresoScreen>
                         },
                         dataSets: [
                           RadarDataSet(
-                            fillColor: kPrimaryRed.withOpacity(0.35),
+                            fillColor: kPrimaryRed.withValues(alpha: 0.35),
                             borderColor: kCream,
                             borderWidth: 2,
                             dataEntries: _progresoService.habilidadesValues.map((v) => RadarEntry(value: v)).toList(),
@@ -214,11 +214,11 @@ class _ProgresoScreenState extends State<ProgresoScreen>
                           fontSize: 8,
                         ),
                         tickBorderData: BorderSide(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           width: 0.5,
                         ),
                         gridBorderData: BorderSide(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           width: 0.5,
                         ),
                       ),
@@ -251,7 +251,7 @@ class _ProgresoScreenState extends State<ProgresoScreen>
             child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.42)),
+            child: Container(color: Colors.black.withValues(alpha: 0.42)),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -300,7 +300,7 @@ class _ProgresoScreenState extends State<ProgresoScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             offset: const Offset(4, 6),
             blurRadius: 14,
           ),
@@ -314,7 +314,7 @@ class _ProgresoScreenState extends State<ProgresoScreen>
               child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
             ),
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.42)),
+              child: Container(color: Colors.black.withValues(alpha: 0.42)),
             ),
             Positioned.fill(
               child: DecoratedBox(
@@ -322,7 +322,7 @@ class _ProgresoScreenState extends State<ProgresoScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.white.withOpacity(0.12), Colors.transparent],
+                    colors: [Colors.white.withValues(alpha: 0.12), Colors.transparent],
                     stops: const [0.0, 0.55],
                   ),
                 ),
@@ -361,7 +361,7 @@ class Bar3DPainter extends CustomPainter {
 
       // Línea horizontal sutil
       final Paint linePaint = Paint()
-        ..color = const Color(0xFFF5E6D0).withOpacity(0.10)
+        ..color = const Color(0xFFF5E6D0).withValues(alpha: 0.10)
         ..strokeWidth = 1;
       canvas.drawLine(Offset(0, yPos), Offset(size.width, yPos), linePaint);
 
@@ -384,7 +384,7 @@ class Bar3DPainter extends CustomPainter {
 
       // ── Cara lateral derecha (más oscura) ──
       final Paint sidePaint = Paint()
-        ..color = const Color(0xFF8B6914).withOpacity(0.70)
+        ..color = const Color(0xFF8B6914).withValues(alpha: 0.70)
         ..style = PaintingStyle.fill;
 
       final Path sidePath = Path()
@@ -408,7 +408,7 @@ class Bar3DPainter extends CustomPainter {
 
       // ── Techo (más claro) ──
       final Paint topPaint = Paint()
-        ..color = const Color(0xFFF5E6D0).withOpacity(0.90)
+        ..color = const Color(0xFFF5E6D0).withValues(alpha: 0.90)
         ..style = PaintingStyle.fill;
 
       final Path topPath = Path()

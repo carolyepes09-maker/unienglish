@@ -439,7 +439,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
         borderRadius: BorderRadius.circular(radius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             offset: const Offset(4, 6),
             blurRadius: 14,
           ),
@@ -455,7 +455,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
             ),
             // Capa oscura
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.42)),
+              child: Container(color: Colors.black.withValues(alpha: 0.42)),
             ),
             // Brillo sutil arriba-izquierda (simula luz sobre la superficie)
             Positioned.fill(
@@ -464,7 +464,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.white.withOpacity(0.12), Colors.transparent],
+                    colors: [Colors.white.withValues(alpha: 0.12), Colors.transparent],
                     stops: const [0.0, 0.55],
                   ),
                 ),

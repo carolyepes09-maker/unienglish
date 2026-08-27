@@ -117,7 +117,7 @@ class LoginMobileView extends StatelessWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.80),
+                                color: Colors.black.withValues(alpha: 0.80),
                                 blurRadius: 60,
                                 spreadRadius: 10,
                                 offset: const Offset(0, 16),
@@ -125,7 +125,7 @@ class LoginMobileView extends StatelessWidget {
                               BoxShadow(
                                 color: const Color(
                                   0xFF880000,
-                                ).withOpacity(0.40),
+                                ).withValues(alpha: 0.40),
                                 blurRadius: 80,
                                 spreadRadius: 20,
                               ),
@@ -161,7 +161,7 @@ class LoginMobileView extends StatelessWidget {
                       Text(
                         'UNIVERSIDAD LIBRE',
                         style: TextStyle(
-                          color: _creamColor.withOpacity(0.80),
+                          color: _creamColor.withValues(alpha: 0.80),
                           fontSize: subtitleSize,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 3.2,
@@ -200,7 +200,7 @@ class LoginMobileView extends StatelessWidget {
                                 'Learn English effectively',
                               ),
                         style: TextStyle(
-                          color: _creamColor.withOpacity(0.67),
+                          color: _creamColor.withValues(alpha: 0.67),
                           fontSize: sloganSize,
                           fontWeight: FontWeight.w300,
                         ),
@@ -213,10 +213,10 @@ class LoginMobileView extends StatelessWidget {
                       // ─────────────────────────────────────────────────────────
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF6B2020).withOpacity(0.20),
+                          color: const Color(0xFF6B2020).withValues(alpha: 0.20),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: _creamColor.withOpacity(0.20),
+                            color: _creamColor.withValues(alpha: 0.20),
                             width: 1.0,
                           ),
                         ),
@@ -226,7 +226,7 @@ class LoginMobileView extends StatelessWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.white.withOpacity(0.08),
+                              Colors.white.withValues(alpha: 0.08),
                               Colors.transparent,
                             ],
                             stops: const [0.0, 0.3],
@@ -245,7 +245,7 @@ class LoginMobileView extends StatelessWidget {
                                 icon: Icons.person_outline,
                               ),
                               Divider(
-                                color: _creamColor.withOpacity(0.13),
+                                color: _creamColor.withValues(alpha: 0.13),
                                 height: 1,
                                 thickness: 1,
                               ),
@@ -262,7 +262,7 @@ class LoginMobileView extends StatelessWidget {
                               inputType: TextInputType.emailAddress,
                             ),
                             Divider(
-                              color: _creamColor.withOpacity(0.13),
+                              color: _creamColor.withValues(alpha: 0.13),
                               height: 1,
                               thickness: 1,
                             ),
@@ -291,7 +291,7 @@ class LoginMobileView extends StatelessWidget {
                             // Campo código estudiantil (solo en registro)
                             if (esRegistro) ...[
                               Divider(
-                                color: _creamColor.withOpacity(0.13),
+                                color: _creamColor.withValues(alpha: 0.13),
                                 height: 1,
                                 thickness: 1,
                               ),
@@ -304,7 +304,7 @@ class LoginMobileView extends StatelessWidget {
                                 icon: Icons.badge_outlined,
                               ),
                               Divider(
-                                color: _creamColor.withOpacity(0.13),
+                                color: _creamColor.withValues(alpha: 0.13),
                                 height: 1,
                                 thickness: 1,
                               ),
@@ -335,7 +335,7 @@ class LoginMobileView extends StatelessWidget {
                               'Forgot your password?',
                             ),
                             style: TextStyle(
-                              color: _creamColor.withOpacity(0.80),
+                              color: _creamColor.withValues(alpha: 0.80),
                               fontSize: linkSize,
                             ),
                           ),
@@ -394,7 +394,7 @@ class LoginMobileView extends StatelessWidget {
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.40),
+                                        color: Colors.black.withValues(alpha: 0.40),
                                         blurRadius: 10,
                                         offset: const Offset(0, 5),
                                       ),
@@ -460,10 +460,10 @@ class LoginMobileView extends StatelessWidget {
                             foregroundColor: _creamColor,
                             disabledForegroundColor: Colors.grey[500],
                             side: BorderSide(
-                              color: _creamColor.withOpacity(0.28),
+                              color: _creamColor.withValues(alpha: 0.28),
                               width: 1.2,
                             ),
-                            backgroundColor: Colors.black.withOpacity(0.08),
+                            backgroundColor: Colors.black.withValues(alpha: 0.08),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -496,14 +496,14 @@ class LoginMobileView extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.copyright,
-                            color: _creamColor.withOpacity(0.40),
+                            color: _creamColor.withValues(alpha: 0.40),
                             size: footerSize,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             'Universidad Libre  ·  Colombia',
                             style: TextStyle(
-                              color: _creamColor.withOpacity(0.40),
+                              color: _creamColor.withValues(alpha: 0.40),
                               fontSize: footerSize,
                               letterSpacing: 0.3,
                             ),

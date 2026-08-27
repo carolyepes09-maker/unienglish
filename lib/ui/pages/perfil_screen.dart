@@ -189,7 +189,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                   ),
                   // Capa oscura
                   Positioned.fill(
-                    child: Container(color: Colors.black.withOpacity(0.60)),
+                    child: Container(color: Colors.black.withValues(alpha: 0.60)),
                   ),
                   // Contenido
                   SafeArea(
@@ -227,7 +227,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.25),
+                                color: Colors.white.withValues(alpha: 0.25),
                                 width: 3,
                               ),
                               image: const DecorationImage(
@@ -239,7 +239,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                               children: [
                                 Positioned.fill(
                                   child: Container(
-                                    color: Colors.black.withOpacity(0.20),
+                                    color: Colors.black.withValues(alpha: 0.20),
                                   ),
                                 ),
                                 Center(
@@ -356,7 +356,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                       ),
                     ),
                     Positioned.fill(
-                      child: Container(color: Colors.black.withOpacity(0.42)),
+                      child: Container(color: Colors.black.withValues(alpha: 0.42)),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 18),
@@ -382,7 +382,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                           Container(
                             width: 1,
                             height: 40,
-                            color: Colors.white.withOpacity(0.15),
+                            color: Colors.white.withValues(alpha: 0.15),
                           ),
                           _statItem(
                             iconWidget: const Icon(
@@ -398,7 +398,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                           Container(
                             width: 1,
                             height: 40,
-                            color: Colors.white.withOpacity(0.15),
+                            color: Colors.white.withValues(alpha: 0.15),
                           ),
                           _statItem(
                             iconWidget: const Icon(
@@ -449,7 +449,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                   border: Border.all(color: Colors.grey[200]!, width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

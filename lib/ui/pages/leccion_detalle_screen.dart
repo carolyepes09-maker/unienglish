@@ -263,7 +263,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                   ),
                   // Capa oscura para legibilidad
                   Positioned.fill(
-                    child: Container(color: Colors.black.withOpacity(0.50)),
+                    child: Container(color: Colors.black.withValues(alpha: 0.50)),
                   ),
                   // Contenido del header
                   Padding(
@@ -276,10 +276,10 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.30),
+                                color: Colors.black.withValues(alpha: 0.30),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.15),
+                                  color: Colors.white.withValues(alpha: 0.15),
                                   width: 1,
                                 ),
                               ),
@@ -324,7 +324,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                           borderRadius: BorderRadius.circular(4),
                           child: LinearProgressIndicator(
                             value: widget.progress,
-                            backgroundColor: Colors.white.withOpacity(0.20),
+                            backgroundColor: Colors.white.withValues(alpha: 0.20),
                             valueColor: const AlwaysStoppedAnimation<Color>(
                               kPrimaryRed,
                             ),
@@ -482,7 +482,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                       ),
                     ),
                     Positioned.fill(
-                      child: Container(color: Colors.black.withOpacity(0.50)),
+                      child: Container(color: Colors.black.withValues(alpha: 0.50)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(28),
@@ -492,10 +492,10 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.30),
+                              color: Colors.black.withValues(alpha: 0.30),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.15),
+                                color: Colors.white.withValues(alpha: 0.15),
                                 width: 1,
                               ),
                             ),
@@ -526,8 +526,8 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                                   borderRadius: BorderRadius.circular(4),
                                   child: LinearProgressIndicator(
                                     value: widget.progress,
-                                    backgroundColor: Colors.white.withOpacity(
-                                      0.20,
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: 0.20,
                                     ),
                                     valueColor:
                                         const AlwaysStoppedAnimation<Color>(
@@ -637,7 +637,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             offset: const Offset(4, 6),
             blurRadius: 14,
           ),
@@ -653,7 +653,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
             ),
             // Capa oscura
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.42)),
+              child: Container(color: Colors.black.withValues(alpha: 0.42)),
             ),
             // Brillo sutil arriba-izquierda (simula luz sobre la superficie)
             Positioned.fill(
@@ -662,7 +662,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.white.withOpacity(0.12), Colors.transparent],
+                    colors: [Colors.white.withValues(alpha: 0.12), Colors.transparent],
                     stops: const [0.0, 0.55],
                   ),
                 ),
@@ -698,7 +698,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
             ),
             child: Center(
               child: Text(

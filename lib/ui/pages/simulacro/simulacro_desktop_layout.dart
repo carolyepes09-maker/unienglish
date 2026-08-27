@@ -169,7 +169,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                     ),
                     Positioned.fill(
                       child: Container(
-                        color: Colors.black.withOpacity(0.42),
+                        color: Colors.black.withValues(alpha: 0.42),
                       ),
                     ),
                     Padding(
@@ -193,10 +193,10 @@ class SimulacroDesktopLayout extends StatelessWidget {
                               padding: const EdgeInsets.all(14),
                               margin: const EdgeInsets.only(bottom: 16),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.10),
+                                color: Colors.white.withValues(alpha: 0.10),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.15),
+                                  color: Colors.white.withValues(alpha: 0.15),
                                   width: 1,
                                 ),
                               ),

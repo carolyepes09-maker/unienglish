@@ -178,7 +178,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   ),
                 ),
                 Positioned.fill(
-                  child: Container(color: Colors.black.withOpacity(0.50)),
+                  child: Container(color: Colors.black.withValues(alpha: 0.50)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -351,7 +351,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
             ),
             // Capa oscura
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.42)),
+              child: Container(color: Colors.black.withValues(alpha: 0.42)),
             ),
             // Contenido
             Padding(
@@ -362,10 +362,10 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.30),
+                      color: Colors.black.withValues(alpha: 0.30),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.15),
+                        color: Colors.white.withValues(alpha: 0.15),
                         width: 1,
                       ),
                     ),
@@ -397,7 +397,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                           borderRadius: BorderRadius.circular(4),
                           child: LinearProgressIndicator(
                             value: progress,
-                            backgroundColor: Colors.white.withOpacity(0.15),
+                            backgroundColor: Colors.white.withValues(alpha: 0.15),
                             valueColor: const AlwaysStoppedAnimation<Color>(
                               kPrimaryRed,
                             ),
@@ -675,7 +675,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(Icons.lock, color: Colors.grey[400], size: 20),
@@ -706,9 +706,9 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: 0,
-                      backgroundColor: Colors.white.withOpacity(0.6),
+                      backgroundColor: Colors.white.withValues(alpha: 0.6),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white.withOpacity(0.6),
+                        Colors.white.withValues(alpha: 0.6),
                       ),
                       minHeight: 5,
                     ),
@@ -734,7 +734,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
               child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
             ),
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.42)),
+              child: Container(color: Colors.black.withValues(alpha: 0.42)),
             ),
             Padding(
               padding: const EdgeInsets.all(18),
@@ -743,7 +743,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(icon, color: kCream, size: 20),
@@ -787,7 +787,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                           borderRadius: BorderRadius.circular(4),
                           child: LinearProgressIndicator(
                             value: progress,
-                            backgroundColor: Colors.white.withOpacity(0.15),
+                            backgroundColor: Colors.white.withValues(alpha: 0.15),
                             valueColor: const AlwaysStoppedAnimation<Color>(
                               Color(0xFFD4A017),
                             ),
