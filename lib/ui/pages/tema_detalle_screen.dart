@@ -6,6 +6,7 @@ import '../../models/reading_content.dart';
 import '../../models/listening_content.dart';
 import '../../models/writing_content.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import 'tema_detalle/tema_detalle_pages.dart';
 
 const Color kPrimaryRed = Color(0xFFCC0000);
@@ -89,7 +90,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
           title: Text(
             AppStrings.tr('Tema no encontrado', 'Topic not found'),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.background(context),
         ),
         body: Center(
           child: Text(
@@ -111,18 +112,18 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
   /// Layout original de teléfono — sin ningún cambio.
   Widget _buildMobileLayout(BuildContext context, dynamic contenido) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           contenido.titulo,
           style: AppFonts.poppins(
-            color: kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -132,7 +133,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
       body: Column(
         children: [
           _buildPaginationBar(),
-          const Divider(height: 1),
+          Divider(height: 1, color: AppColors.divider(context)),
           Expanded(
             child: PageView(
               controller: _pageController,
@@ -140,10 +141,11 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
               children: [
                 buildPageTeoria(
                   contenido,
+                  context,
                   leccion: widget.leccion,
                   temaNombre: widget.temaNombre,
                 ),
-                buildPagePractica(contenido, leccion: widget.leccion),
+                buildPagePractica(contenido, context, leccion: widget.leccion),
                 buildPageRefuerzo(
                   contenido,
                   context,
@@ -165,7 +167,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
   // ═══════════════════════════════════════════════════════════════════════
   Widget _buildDesktopLayout(BuildContext context, dynamic contenido) {
     return Scaffold(
-      backgroundColor: kDesktopCream,
+      backgroundColor: AppColors.background(context),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
@@ -177,14 +179,14 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
                 Row(
                   children: [
                     Material(
-                      color: Colors.white,
+                      color: AppColors.card(context),
                       borderRadius: BorderRadius.circular(12),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () => Navigator.pop(context),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(Icons.chevron_left, color: kTextDark),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Icon(Icons.chevron_left, color: AppColors.textPrimary(context)),
                         ),
                       ),
                     ),
@@ -192,7 +194,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
                     Text(
                       contenido.titulo,
                       style: AppFonts.poppins(
-                        color: kTextDark,
+                        color: AppColors.textPrimary(context),
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -201,7 +203,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
                 ),
                 const SizedBox(height: 12),
                 _buildPaginationBar(),
-                const Divider(height: 1),
+                Divider(height: 1, color: AppColors.divider(context)),
                 Expanded(
                   child: PageView(
                     controller: _pageController,
@@ -209,10 +211,11 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
                     children: [
                       buildPageTeoria(
                         contenido,
+                        context,
                         leccion: widget.leccion,
                         temaNombre: widget.temaNombre,
                       ),
-                      buildPagePractica(contenido, leccion: widget.leccion),
+                      buildPagePractica(contenido, context, leccion: widget.leccion),
                       buildPageRefuerzo(
                         contenido,
                         context,
@@ -243,7 +246,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
             children: [
               IconButton(
                 icon: const Icon(Icons.chevron_left_rounded),
-                color: _currentPage > 0 ? kPrimaryRed : Colors.grey[300],
+                color: _currentPage > 0 ? kPrimaryRed : AppColors.cardBorder(context),
                 onPressed: _currentPage > 0
                     ? () => _goToPage(_currentPage - 1)
                     : null,
@@ -259,7 +262,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
                   decoration: BoxDecoration(
                     color: (isActive || isDone)
                         ? kPrimaryRed
-                        : Colors.grey[300],
+                        : AppColors.cardBorder(context),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 );
@@ -268,7 +271,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
                 icon: const Icon(Icons.chevron_right_rounded),
                 color: _currentPage < _totalPages - 1
                     ? kPrimaryRed
-                    : Colors.grey[300],
+                    : AppColors.cardBorder(context),
                 onPressed: _currentPage < _totalPages - 1
                     ? () => _goToPage(_currentPage + 1)
                     : null,
@@ -283,7 +286,7 @@ class _TemaDetalleScreenState extends State<TemaDetalleScreen>
                 'Page ${_currentPage + 1} of $_totalPages',
               ),
               style: AppFonts.poppins(
-                color: kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),

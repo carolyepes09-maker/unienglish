@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gif/gif.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_strings.dart';
+import '../../utils/app_colors.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/vocabulario_service.dart';
 import '../../../services/progreso_service.dart';
@@ -21,7 +22,6 @@ import 'home_widgets.dart';
 
 const Color _kPrimaryRed = Color(0xFFCC0000);
 const Color _kGoldAccent = Color(0xFF8B6914);
-const Color _kTextDark = Color(0xFF1A0000);
 
 class HomeMobileBody extends StatelessWidget {
   final AuthService authService;
@@ -47,7 +47,7 @@ class HomeMobileBody extends StatelessWidget {
     final actividadesRecientes = actividadService.obtenerActividades();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       extendBody: true,
 
       body: SafeArea(
@@ -270,7 +270,7 @@ class HomeMobileBody extends StatelessWidget {
                 child: Text(
                   AppStrings.tr('Acceso Rápido', 'Quick Access'),
                   style: AppFonts.poppins(
-                    color: _kTextDark,
+                    color: AppColors.textPrimary(context),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -334,7 +334,7 @@ class HomeMobileBody extends StatelessWidget {
                 child: Text(
                   AppStrings.tr('Actividad Reciente', 'Recent Activity'),
                   style: AppFonts.poppins(
-                    color: _kTextDark,
+                    color: AppColors.textPrimary(context),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -351,7 +351,7 @@ class HomeMobileBody extends StatelessWidget {
                       'You haven\'t completed any activity yet.',
                     ),
                     style: AppFonts.poppins(
-                      color: Colors.grey,
+                      color: AppColors.textSecondary(context),
                       fontSize: 14,
                     ),
                   ),

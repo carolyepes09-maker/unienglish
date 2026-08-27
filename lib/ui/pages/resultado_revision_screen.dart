@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import 'package:fluter_app/models/palabra_model.dart';
 import 'package:fluter_app/services/vocabulario_service.dart';
 import 'package:fluter_app/ui/pages/agregar_palabra_screen.dart';
@@ -54,7 +55,7 @@ class ResultadoRevisionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

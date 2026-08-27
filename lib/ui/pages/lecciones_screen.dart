@@ -4,6 +4,7 @@ import '../../services/leccion_service.dart';
 import 'leccion_detalle_screen.dart';
 import '../utils/responsive.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import 'tema_detalle/tema_detalle_pages.dart' show kGrammarTopicImages;
 
 const Color kPrimaryRed = Color(0xFFCC0000);
@@ -86,12 +87,12 @@ class _LeccionesScreenState extends State<LeccionesScreen>
     List<LeccionInfo> lecciones,
   ) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () {
             if (widget.onBack != null) {
               widget.onBack!();
@@ -103,7 +104,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
         title: Text(
           AppStrings.tr('Lecciones', 'Lessons'),
           style: AppFonts.poppins(
-            color: kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -146,7 +147,9 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                     child: Text(
                       _leccionService.niveles[index],
                       style: AppFonts.poppins(
-                        color: isSelected ? kPrimaryRed : Colors.grey,
+                        color: isSelected
+                            ? kPrimaryRed
+                            : AppColors.textSecondary(context),
                         fontSize: 16,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -158,7 +161,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
               }),
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: AppColors.divider(context)),
 
           const SizedBox(height: 12),
 
@@ -273,19 +276,19 @@ class _LeccionesScreenState extends State<LeccionesScreen>
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
+          color: AppColors.card(context),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[300]!, width: 1),
+          border: Border.all(color: AppColors.cardBorder(context), width: 1),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: AppColors.cardBorder(context),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.lock, color: Colors.grey[400], size: 22),
+              child: Icon(Icons.lock, color: AppColors.iconMuted(context), size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -295,7 +298,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   Text(
                     title,
                     style: AppFonts.poppins(
-                      color: Colors.grey[400],
+                      color: AppColors.textSecondary(context),
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -303,7 +306,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   Text(
                     subtitle,
                     style: AppFonts.poppins(
-                      color: Colors.grey[400],
+                      color: AppColors.textSecondary(context),
                       fontSize: 12,
                     ),
                   ),
@@ -312,9 +315,9 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: 0,
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: AppColors.divider(context),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.grey[300]!,
+                        AppColors.cardBorder(context),
                       ),
                       minHeight: 5,
                     ),
@@ -326,7 +329,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
             Text(
               '0%',
               style: AppFonts.poppins(
-                color: Colors.grey[400],
+                color: AppColors.textSecondary(context),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -439,7 +442,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
     final activas = lecciones.where((l) => !l.isLocked).length;
 
     return Scaffold(
-      backgroundColor: kDesktopCream,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: ConstrainedBox(
@@ -451,7 +454,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
               Row(
                 children: [
                   Material(
-                    color: Colors.white,
+                    color: AppColors.card(context),
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
@@ -462,9 +465,9 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                           Navigator.pop(context);
                         }
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Icon(Icons.chevron_left, color: kTextDark),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(Icons.chevron_left, color: AppColors.textPrimary(context)),
                       ),
                     ),
                   ),
@@ -475,7 +478,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                       Text(
                         AppStrings.tr('Lecciones', 'Lessons'),
                         style: AppFonts.poppins(
-                          color: kTextDark,
+                          color: AppColors.textPrimary(context),
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
@@ -486,7 +489,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                           'Master each skill to level up.',
                         ),
                         style: AppFonts.poppins(
-                          color: Colors.brown[300],
+                          color: AppColors.textSecondary(context),
                           fontSize: 14,
                         ),
                       ),
@@ -506,7 +509,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   return Padding(
                     padding: const EdgeInsets.only(right: 10),
                     child: Material(
-                      color: isSelected ? kPrimaryRed : Colors.white,
+                      color: isSelected ? kPrimaryRed : AppColors.card(context),
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
@@ -529,7 +532,9 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                           child: Text(
                             _leccionService.niveles[index],
                             style: AppFonts.poppins(
-                              color: isSelected ? Colors.white : Colors.grey,
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppColors.textSecondary(context),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -667,7 +672,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
       return Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: kDesktopCream,
+          color: AppColors.card(context),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -675,10 +680,10 @@ class _LeccionesScreenState extends State<LeccionesScreen>
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: AppColors.cardBorder(context),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.lock, color: Colors.grey[400], size: 20),
+              child: Icon(Icons.lock, color: AppColors.iconMuted(context), size: 20),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -689,7 +694,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   Text(
                     title,
                     style: AppFonts.poppins(
-                      color: Colors.brown[300],
+                      color: AppColors.textSecondary(context),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -697,7 +702,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   Text(
                     AppStrings.tr('Próximamente', 'Coming soon'),
                     style: AppFonts.poppins(
-                      color: Colors.brown[200],
+                      color: AppColors.textSecondary(context),
                       fontSize: 12,
                     ),
                   ),
@@ -706,9 +711,9 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: 0,
-                      backgroundColor: Colors.white.withValues(alpha: 0.6),
+                      backgroundColor: AppColors.cardBorder(context),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white.withValues(alpha: 0.6),
+                        AppColors.cardBorder(context),
                       ),
                       minHeight: 5,
                     ),

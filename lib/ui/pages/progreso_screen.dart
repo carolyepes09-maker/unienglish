@@ -3,6 +3,7 @@ import '../utils/app_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../services/progreso_service.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 
 import 'package:gif/gif.dart';
 
@@ -46,13 +47,13 @@ class _ProgresoScreenState extends State<ProgresoScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () {
             if (widget.onBack != null) {
               widget.onBack!();
@@ -64,7 +65,7 @@ class _ProgresoScreenState extends State<ProgresoScreen>
         title: Text(
           AppStrings.tr('Mi Progreso', 'My Progress'),
           style: AppFonts.poppins(
-            color: kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),

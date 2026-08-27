@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import 'package:fluter_app/models/palabra_model.dart';
 import 'package:fluter_app/services/vocabulario_service.dart';
 import 'package:fluter_app/services/revision_service.dart';
@@ -86,20 +87,20 @@ class _RevisionScreenState extends State<RevisionScreen>
     final progreso = _revisionService.progreso;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       // ── BARRA DE PROGRESO VISUAL ───────────────────────────────────────────
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: kTextDark),
+          icon: Icon(Icons.close, color: AppColors.textPrimary(context)),
           onPressed: () => Navigator.pop(context),
         ),
         title: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
             value: progreso,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: AppColors.divider(context),
             valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryRed),
             minHeight: 8,
           ),
@@ -138,14 +139,14 @@ class _RevisionScreenState extends State<RevisionScreen>
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
+                            color: AppColors.card(context),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Center(
                             child: Text(
                               AppStrings.tr('No la sabía', "I didn't know it"),
                               style: AppFonts.poppins(
-                                color: kTextDark,
+                                color: AppColors.textPrimary(context),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

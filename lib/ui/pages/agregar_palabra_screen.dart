@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import 'package:fluter_app/models/palabra_model.dart';
 import 'package:fluter_app/services/vocabulario_service.dart';
 
@@ -88,19 +89,19 @@ class _AgregarPalabraScreenState extends State<AgregarPalabraScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       // ─── DISEÑO: BARRA SUPERIOR ──────────────────────────────────────────
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           AppStrings.tr('Agregar palabra', 'Add word'),
           style: AppFonts.poppins(
-            color: kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),

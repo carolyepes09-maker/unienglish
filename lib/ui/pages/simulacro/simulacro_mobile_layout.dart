@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_strings.dart';
+import '../../utils/app_colors.dart';
 import '../../widgets/audio_player_card.dart';
 import '../../../services/examen_service.dart';
 import '../../../models/simulacro_model.dart';
@@ -16,7 +17,6 @@ import 'simulacro_widgets.dart';
 /// widget solo recibe el estado ya resuelto.
 /// =============================================================================
 
-const Color _kTextDark = Color(0xFF1A0000);
 const Color _kCream = Color(0xFFF5E6D0);
 const Color _kCreamMuted = Color(0xAAF5E6D0);
 
@@ -42,11 +42,13 @@ class SimulacroMobileLayout extends StatelessWidget {
   // (ejercicios_screen.dart) para que el feedback se sienta consistente en
   // toda la app.
   Widget _opcionSimulacro({
+    required BuildContext context,
     required String texto,
     required bool isSelected,
     required bool mostrarResultado,
     required bool esCorrecta,
   }) {
+    final isDark = AppColors.isDark(context);
     Color bgColor;
     Color borderColor;
     Color textColor;
@@ -54,24 +56,24 @@ class SimulacroMobileLayout extends StatelessWidget {
 
     if (mostrarResultado) {
       if (esCorrecta) {
-        bgColor = Colors.green[100]!;
-        borderColor = Colors.green[400]!;
-        textColor = Colors.green[900]!;
+        bgColor = isDark ? Colors.green.withValues(alpha: 0.18) : Colors.green[100]!;
+        borderColor = isDark ? Colors.green.withValues(alpha: 0.6) : Colors.green[400]!;
+        textColor = isDark ? Colors.green[200]! : Colors.green[900]!;
         iconData = Icons.check_circle_rounded;
       } else if (isSelected) {
-        bgColor = Colors.red[100]!;
-        borderColor = Colors.red[400]!;
-        textColor = Colors.red[900]!;
+        bgColor = isDark ? Colors.red.withValues(alpha: 0.18) : Colors.red[100]!;
+        borderColor = isDark ? Colors.red.withValues(alpha: 0.6) : Colors.red[400]!;
+        textColor = isDark ? Colors.red[200]! : Colors.red[900]!;
         iconData = Icons.close_rounded;
       } else {
-        bgColor = Colors.grey[100]!;
-        borderColor = Colors.grey[300]!;
-        textColor = Colors.grey[700]!;
+        bgColor = AppColors.card(context);
+        borderColor = AppColors.cardBorder(context);
+        textColor = AppColors.textSecondary(context);
       }
     } else {
-      bgColor = Colors.white;
-      borderColor = Colors.grey[300]!;
-      textColor = _kTextDark;
+      bgColor = AppColors.card(context);
+      borderColor = AppColors.cardBorder(context);
+      textColor = AppColors.textPrimary(context);
     }
 
     return AnimatedContainer(
@@ -108,12 +110,12 @@ class SimulacroMobileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: _kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () {
             if (onBack != null) {
               onBack!();
@@ -184,7 +186,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                       'Mock Exam ${authService?.usuarioActual?['nivel_actual'] ?? 'A1'}',
                     ),
                     style: AppFonts.poppins(
-                      color: _kTextDark,
+                      color: AppColors.textPrimary(context),
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -201,7 +203,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                           'Question ${examenService.currentQuestion} of ${examenService.totalQuestions}',
                         ),
                         style: AppFonts.poppins(
-                          color: Colors.grey[500],
+                          color: AppColors.textSecondary(context),
                           fontSize: 13,
                         ),
                       ),
@@ -216,7 +218,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: examenService.progress,
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: AppColors.divider(context),
                       valueColor: const AlwaysStoppedAnimation<Color>(
                         kPrimaryRed,
                       ),
@@ -343,6 +345,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                             ? () => examenService.selectAnswer(index)
                             : null,
                         child: _opcionSimulacro(
+                          context: context,
                           texto: examenService.answers[index],
                           isSelected: isSelected,
                           mostrarResultado: mostrarResultado,
@@ -359,9 +362,16 @@ class SimulacroMobileLayout extends StatelessWidget {
                     const SizedBox(height: 8),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[50],
+                        color: AppColors.isDark(context)
+                            ? Colors.blue.withValues(alpha: 0.15)
+                            : Colors.blue[50],
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue[200]!, width: 1),
+                        border: Border.all(
+                          color: AppColors.isDark(context)
+                              ? Colors.blue.withValues(alpha: 0.40)
+                              : Colors.blue[200]!,
+                          width: 1,
+                        ),
                       ),
                       padding: const EdgeInsets.all(14),
                       child: Column(
@@ -370,7 +380,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                           Text(
                             AppStrings.tr('💡 Explicación', '💡 Explanation'),
                             style: AppFonts.poppins(
-                              color: _kTextDark,
+                              color: AppColors.textPrimary(context),
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
@@ -379,7 +389,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                           Text(
                             pregunta.explanation,
                             style: AppFonts.poppins(
-                              color: _kTextDark,
+                              color: AppColors.textPrimary(context),
                               fontSize: 13,
                               height: 1.6,
                             ),
@@ -406,7 +416,7 @@ class SimulacroMobileLayout extends StatelessWidget {
           Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.background(context),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.06),
@@ -472,7 +482,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                   : ElevatedButton(
                       onPressed: null,
                       style: ElevatedButton.styleFrom(
-                        disabledBackgroundColor: Colors.grey[200],
+                        disabledBackgroundColor: AppColors.card(context),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(26),
                         ),
@@ -481,7 +491,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                       child: Text(
                         AppStrings.tr('Siguiente pregunta', 'Next question'),
                         style: AppFonts.poppins(
-                          color: Colors.grey[400],
+                          color: AppColors.textSecondary(context),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),

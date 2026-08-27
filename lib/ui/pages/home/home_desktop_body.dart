@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gif/gif.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_strings.dart';
+import '../../utils/app_colors.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/vocabulario_service.dart';
 import '../../../services/progreso_service.dart';
@@ -19,8 +20,6 @@ import 'home_widgets.dart';
 /// =============================================================================
 
 const Color _kGoldAccent = Color(0xFF8B6914);
-const Color _kTextDark = Color(0xFF1A0000);
-const Color _kDesktopCream = Color(0xFFF7EEE0);
 
 class HomeDesktopBody extends StatelessWidget {
   final AuthService authService;
@@ -46,7 +45,7 @@ class HomeDesktopBody extends StatelessWidget {
         AppStrings.tr('Usuario', 'User');
 
     return Scaffold(
-      backgroundColor: _kDesktopCream,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: ConstrainedBox(
@@ -186,7 +185,7 @@ class HomeDesktopBody extends StatelessWidget {
                   Text(
                     AppStrings.tr('Acceso rápido', 'Quick access'),
                     style: AppFonts.poppins(
-                      color: _kTextDark,
+                      color: AppColors.textPrimary(context),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -194,7 +193,7 @@ class HomeDesktopBody extends StatelessWidget {
                   Text(
                     AppStrings.tr('4 secciones', '4 sections'),
                     style: AppFonts.poppins(
-                      color: Colors.brown[300],
+                      color: AppColors.textSecondary(context),
                       fontSize: 13,
                     ),
                   ),
@@ -275,7 +274,7 @@ class HomeDesktopBody extends StatelessWidget {
               Text(
                 AppStrings.tr('Actividad reciente', 'Recent activity'),
                 style: AppFonts.poppins(
-                  color: _kTextDark,
+                  color: AppColors.textPrimary(context),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -287,21 +286,21 @@ class HomeDesktopBody extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 48),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.card(context),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.brown.withValues(alpha: 0.08)),
+                    border: Border.all(color: AppColors.cardBorder(context)),
                   ),
                   child: Column(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: _kDesktopCream,
+                          color: AppColors.background(context),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.access_time,
-                          color: Colors.brown[300],
+                          color: AppColors.textSecondary(context),
                           size: 26,
                         ),
                       ),
@@ -312,7 +311,7 @@ class HomeDesktopBody extends StatelessWidget {
                           'You haven\'t completed any activity yet',
                         ),
                         style: AppFonts.poppins(
-                          color: _kTextDark,
+                          color: AppColors.textPrimary(context),
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),
@@ -324,7 +323,7 @@ class HomeDesktopBody extends StatelessWidget {
                           'Start a lesson to see your progress here.',
                         ),
                         style: AppFonts.poppins(
-                          color: Colors.grey[500],
+                          color: AppColors.textSecondary(context),
                           fontSize: 13,
                         ),
                       ),

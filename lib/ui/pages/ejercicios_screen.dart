@@ -4,6 +4,7 @@ import '../utils/responsive.dart';
 import '../../services/ejercicio_service.dart';
 import 'resultado_screen.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 
 const Color kPrimaryRed = Color(0xFFCC0000);
 const Color kCream = Color(0xFFF5E6D0);
@@ -85,19 +86,19 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
   /// Layout original de teléfono — sin ningún cambio.
   Widget _buildMobileLayout(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       // ── BARRA SUPERIOR DINÁMICA ──────────────────────────────────────────
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           _ejercicioService.contenido?.titulo ?? '',
           style: AppFonts.poppins(
-            color: kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -117,7 +118,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
   // ═══════════════════════════════════════════════════════════════════════
   Widget _buildDesktopLayout(BuildContext context) {
     return Scaffold(
-      backgroundColor: kDesktopCream,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: Center(
@@ -129,14 +130,14 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
                 Row(
                   children: [
                     Material(
-                      color: Colors.white,
+                      color: AppColors.card(context),
                       borderRadius: BorderRadius.circular(12),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () => Navigator.pop(context),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(Icons.chevron_left, color: kTextDark),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Icon(Icons.chevron_left, color: AppColors.textPrimary(context)),
                         ),
                       ),
                     ),
@@ -144,7 +145,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
                     Text(
                       _ejercicioService.contenido?.titulo ?? '',
                       style: AppFonts.poppins(
-                        color: kTextDark,
+                        color: AppColors.textPrimary(context),
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -176,7 +177,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
                     'Question ${_ejercicioService.preguntaActual + 1} of ${_ejercicioService.totalPreguntas}',
                   ),
                   style: AppFonts.poppins(
-                    color: kTextDark,
+                    color: AppColors.textPrimary(context),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -197,7 +198,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: _ejercicioService.progreso,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: AppColors.divider(context),
                 valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryRed),
                 minHeight: 6,
               ),
@@ -274,9 +275,16 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.blue[50],
+                      color: AppColors.isDark(context)
+                          ? Colors.blue.withValues(alpha: 0.15)
+                          : Colors.blue[50],
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.blue[200]!, width: 1),
+                      border: Border.all(
+                        color: AppColors.isDark(context)
+                            ? Colors.blue.withValues(alpha: 0.40)
+                            : Colors.blue[200]!,
+                        width: 1,
+                      ),
                     ),
                     padding: const EdgeInsets.all(14),
                     child: Column(
@@ -285,7 +293,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
                         Text(
                           AppStrings.tr('💡 Explicación', '💡 Explanation'),
                           style: AppFonts.poppins(
-                            color: kTextDark,
+                            color: AppColors.textPrimary(context),
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                           ),
@@ -298,7 +306,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
                                   .explicacion ??
                               '',
                           style: AppFonts.poppins(
-                            color: kTextDark,
+                            color: AppColors.textPrimary(context),
                             fontSize: 13,
                             height: 1.6,
                           ),
@@ -356,6 +364,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
     required bool mostrarResultado,
     required bool esCorrecta,
   }) {
+    final isDark = AppColors.isDark(context);
     Color bgColor;
     Color borderColor;
     Color textColor;
@@ -364,21 +373,21 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
     if (mostrarResultado) {
       if (esCorrecta) {
         // Opción correcta - verde
-        bgColor = Colors.green[100]!;
-        borderColor = Colors.green[400]!;
-        textColor = Colors.green[900]!;
+        bgColor = isDark ? Colors.green.withValues(alpha: 0.18) : Colors.green[100]!;
+        borderColor = isDark ? Colors.green.withValues(alpha: 0.6) : Colors.green[400]!;
+        textColor = isDark ? Colors.green[200]! : Colors.green[900]!;
         iconData = Icons.check_circle_rounded;
       } else if (isSelected) {
         // Opción seleccionada pero incorrecta - rojo
-        bgColor = Colors.red[100]!;
-        borderColor = Colors.red[400]!;
-        textColor = Colors.red[900]!;
+        bgColor = isDark ? Colors.red.withValues(alpha: 0.18) : Colors.red[100]!;
+        borderColor = isDark ? Colors.red.withValues(alpha: 0.6) : Colors.red[400]!;
+        textColor = isDark ? Colors.red[200]! : Colors.red[900]!;
         iconData = Icons.close_rounded;
       } else {
         // Opción no seleccionada
-        bgColor = Colors.grey[100]!;
-        borderColor = Colors.grey[300]!;
-        textColor = Colors.grey[700]!;
+        bgColor = AppColors.card(context);
+        borderColor = AppColors.cardBorder(context);
+        textColor = AppColors.textSecondary(context);
       }
     } else if (isSelected) {
       // Seleccionada pero sin responder aún
@@ -387,9 +396,9 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
       textColor = kCream;
       iconData = Icons.check_circle_rounded;
     } else {
-      bgColor = Colors.white;
-      borderColor = Colors.grey[300]!;
-      textColor = kTextDark;
+      bgColor = AppColors.card(context);
+      borderColor = AppColors.cardBorder(context);
+      textColor = AppColors.textPrimary(context);
     }
 
     return Container(

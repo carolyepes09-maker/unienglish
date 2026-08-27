@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../utils/app_fonts.dart';
 import '../utils/responsive.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import 'tema_detalle_screen.dart';
 
 const Color kPrimaryRed = Color(0xFFCC0000);
@@ -220,18 +221,18 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
   /// Layout original de teléfono — sin ningún cambio.
   Widget _buildMobileLayout(BuildContext context, List<Tema> temas) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.titulo,
           style: AppFonts.poppins(
-            color: kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -348,7 +349,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
               child: Text(
                 AppStrings.tr('Temas', 'Topics'),
                 style: AppFonts.poppins(
-                  color: kTextDark,
+                  color: AppColors.textPrimary(context),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -425,7 +426,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
   // ═══════════════════════════════════════════════════════════════════════
   Widget _buildDesktopLayout(BuildContext context, List<Tema> temas) {
     return Scaffold(
-      backgroundColor: kDesktopCream,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: ConstrainedBox(
@@ -437,14 +438,14 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
               Row(
                 children: [
                   Material(
-                    color: Colors.white,
+                    color: AppColors.card(context),
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () => Navigator.pop(context),
-                      child: const Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Icon(Icons.chevron_left, color: kTextDark),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(Icons.chevron_left, color: AppColors.textPrimary(context)),
                       ),
                     ),
                   ),
@@ -455,7 +456,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                       'Lessons · ${widget.titulo}',
                     ),
                     style: AppFonts.poppins(
-                      color: kTextDark,
+                      color: AppColors.textPrimary(context),
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -560,7 +561,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
               Text(
                 AppStrings.tr('Temas', 'Topics'),
                 style: AppFonts.poppins(
-                  color: kTextDark,
+                  color: AppColors.textPrimary(context),
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -776,9 +777,9 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: AppColors.card(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
+        border: Border.all(color: AppColors.cardBorder(context), width: 1),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -789,13 +790,13 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey[300],
+              color: AppColors.cardBorder(context),
             ),
             child: Center(
               child: Text(
                 '$numero',
                 style: AppFonts.poppins(
-                  color: Colors.grey[600],
+                  color: AppColors.textSecondary(context),
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
@@ -811,7 +812,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                 Text(
                   nombre,
                   style: AppFonts.poppins(
-                    color: Colors.grey[600],
+                    color: AppColors.textSecondary(context),
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -819,7 +820,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                 Text(
                   descripcion,
                   style: AppFonts.poppins(
-                    color: Colors.grey[500],
+                    color: AppColors.textSecondary(context),
                     fontSize: 12,
                   ),
                 ),
@@ -828,7 +829,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
           ),
           const SizedBox(width: 8),
           // Ícono de lock
-          Icon(Icons.lock_rounded, color: Colors.grey[500], size: 22),
+          Icon(Icons.lock_rounded, color: AppColors.iconMuted(context), size: 22),
         ],
       ),
     );

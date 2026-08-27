@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_strings.dart';
+import '../../utils/app_colors.dart';
 import '../../widgets/audio_player_card.dart';
 import '../../../services/examen_service.dart';
 import '../../../models/simulacro_model.dart';
@@ -16,10 +17,8 @@ import 'simulacro_widgets.dart';
 /// móvil, que se queda en SimulacroScreen.
 /// =============================================================================
 
-const Color _kTextDark = Color(0xFF1A0000);
 const Color _kCream = Color(0xFFF5E6D0);
 const Color _kCreamMuted = Color(0xAAF5E6D0);
-const Color _kDesktopCream = Color(0xFFF7EEE0);
 
 class SimulacroDesktopLayout extends StatelessWidget {
   final ExamenService examenService;
@@ -40,7 +39,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kDesktopCream,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: ConstrainedBox(
@@ -53,7 +52,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Material(
-                    color: Colors.white,
+                    color: AppColors.card(context),
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
@@ -64,9 +63,9 @@ class SimulacroDesktopLayout extends StatelessWidget {
                           Navigator.pop(context);
                         }
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Icon(Icons.chevron_left, color: _kTextDark),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(Icons.chevron_left, color: AppColors.textPrimary(context)),
                       ),
                     ),
                   ),
@@ -81,7 +80,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                             'Mock Exam ${authService?.usuarioActual?['nivel_actual'] ?? 'A1'}',
                           ),
                           style: AppFonts.poppins(
-                            color: _kTextDark,
+                            color: AppColors.textPrimary(context),
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
@@ -95,7 +94,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                                 'Question ${examenService.currentQuestion} of ${examenService.totalQuestions}',
                               ),
                               style: AppFonts.poppins(
-                                color: Colors.brown[300],
+                                color: AppColors.textSecondary(context),
                                 fontSize: 13,
                               ),
                             ),
@@ -144,7 +143,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: examenService.progress,
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.divider(context),
                   valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryRed),
                   minHeight: 6,
                 ),
@@ -256,28 +255,29 @@ class SimulacroDesktopLayout extends StatelessWidget {
                 final mostrarResultado = examenService.respondida;
                 final letra = String.fromCharCode(65 + index);
 
-                Color circleColor = _kDesktopCream;
-                Color letraColor = Colors.brown[400]!;
-                Color cardColor = Colors.white;
-                Color borderColor = Colors.grey[300]!;
+                final isDark = AppColors.isDark(context);
+                Color circleColor = AppColors.card(context);
+                Color letraColor = AppColors.textSecondary(context);
+                Color cardColor = AppColors.card(context);
+                Color borderColor = AppColors.cardBorder(context);
                 IconData? iconoResultado;
 
                 if (mostrarResultado && esCorrecta) {
                   circleColor = Colors.green[400]!;
                   letraColor = Colors.white;
-                  cardColor = Colors.green[50]!;
+                  cardColor = isDark ? Colors.green.withValues(alpha: 0.15) : Colors.green[50]!;
                   borderColor = Colors.green[400]!;
                   iconoResultado = Icons.check_circle_rounded;
                 } else if (mostrarResultado && isSelected) {
                   circleColor = kPrimaryRed;
                   letraColor = Colors.white;
-                  cardColor = const Color(0xFFFBEAEA);
+                  cardColor = isDark ? Colors.red.withValues(alpha: 0.15) : const Color(0xFFFBEAEA);
                   borderColor = kPrimaryRed;
                   iconoResultado = Icons.close_rounded;
                 } else if (isSelected) {
                   circleColor = kPrimaryRed;
                   letraColor = Colors.white;
-                  cardColor = const Color(0xFFFBEAEA);
+                  cardColor = isDark ? Colors.red.withValues(alpha: 0.15) : const Color(0xFFFBEAEA);
                   borderColor = kPrimaryRed;
                 }
 
@@ -324,7 +324,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                               child: Text(
                                 examenService.answers[index],
                                 style: AppFonts.poppins(
-                                  color: _kTextDark,
+                                  color: AppColors.textPrimary(context),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -351,9 +351,16 @@ class SimulacroDesktopLayout extends StatelessWidget {
                 const SizedBox(height: 4),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    color: AppColors.isDark(context)
+                        ? Colors.blue.withValues(alpha: 0.15)
+                        : Colors.blue[50],
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue[200]!, width: 1),
+                    border: Border.all(
+                      color: AppColors.isDark(context)
+                          ? Colors.blue.withValues(alpha: 0.40)
+                          : Colors.blue[200]!,
+                      width: 1,
+                    ),
                   ),
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -362,7 +369,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                       Text(
                         AppStrings.tr('💡 Explicación', '💡 Explanation'),
                         style: AppFonts.poppins(
-                          color: _kTextDark,
+                          color: AppColors.textPrimary(context),
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
@@ -371,7 +378,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                       Text(
                         pregunta.explanation,
                         style: AppFonts.poppins(
-                          color: _kTextDark,
+                          color: AppColors.textPrimary(context),
                           fontSize: 13,
                           height: 1.6,
                         ),
@@ -397,7 +404,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryRed,
-                    disabledBackgroundColor: _kDesktopCream,
+                    disabledBackgroundColor: AppColors.card(context),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(26),
@@ -414,7 +421,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
                     style: AppFonts.poppins(
                       color: examenService.respondida
                           ? Colors.white
-                          : Colors.grey[400],
+                          : AppColors.textSecondary(context),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),

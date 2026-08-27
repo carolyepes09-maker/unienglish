@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import '../utils/responsive.dart';
 import '../../models/grammar_content.dart';
 import '../../models/reading_content.dart';
@@ -185,15 +186,15 @@ class ResultadoScreen extends StatelessWidget {
       // ve fluido y "rebota" en vez de quedar la pantalla colgada a medias.
       canPop: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.background(context),
           elevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
             AppStrings.tr('Resultados', 'Results'),
             style: AppFonts.poppins(
-              color: kTextDark,
+              color: AppColors.textPrimary(context),
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
@@ -220,7 +221,7 @@ class ResultadoScreen extends StatelessWidget {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: kDesktopCream,
+        backgroundColor: AppColors.background(context),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
           child: Center(
@@ -232,7 +233,7 @@ class ResultadoScreen extends StatelessWidget {
                   Text(
                     AppStrings.tr('Resultados', 'Results'),
                     style: AppFonts.poppins(
-                      color: kTextDark,
+                      color: AppColors.textPrimary(context),
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                     ),
@@ -277,7 +278,7 @@ class ResultadoScreen extends StatelessWidget {
               Text(
                 '$correctas/$total',
                 style: AppFonts.poppins(
-                  color: kTextDark,
+                  color: AppColors.textPrimary(context),
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
                 ),
@@ -316,7 +317,7 @@ class ResultadoScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: total > 0 ? correctas / total : 0,
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: AppColors.divider(context),
                   valueColor: AlwaysStoppedAnimation<Color>(colorDesempeno),
                   minHeight: 8,
                 ),
@@ -363,6 +364,7 @@ class ResultadoScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _statCard(
+                      context: context,
                       icon: Icons.check_circle_rounded,
                       label: AppStrings.tr('Correctas', 'Correct'),
                       valor: '$correctas',
@@ -372,6 +374,7 @@ class ResultadoScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _statCard(
+                      context: context,
                       icon: Icons.close_rounded,
                       label: AppStrings.tr('Incorrectas', 'Incorrect'),
                       valor: '${total - correctas}',
@@ -484,9 +487,9 @@ class ResultadoScreen extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: AppColors.card(context),
                     borderRadius: BorderRadius.circular(26),
-                    border: Border.all(color: Colors.grey[300]!, width: 1.5),
+                    border: Border.all(color: AppColors.cardBorder(context), width: 1.5),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   child: Center(
@@ -501,7 +504,7 @@ class ResultadoScreen extends StatelessWidget {
                               'Back to lessons',
                             ),
                       style: AppFonts.poppins(
-                        color: kTextDark,
+                        color: AppColors.textPrimary(context),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -516,6 +519,7 @@ class ResultadoScreen extends StatelessWidget {
   }
 
   Widget _statCard({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String valor,
@@ -544,7 +548,7 @@ class ResultadoScreen extends StatelessWidget {
           Text(
             label,
             style: AppFonts.poppins(
-              color: kTextDark,
+              color: AppColors.textPrimary(context),
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_strings.dart';
+import '../../utils/app_colors.dart';
 import '../../widgets/audio_player_card.dart';
 import '../ejercicios_screen.dart';
 
@@ -18,7 +19,6 @@ import '../ejercicios_screen.dart';
 const Color _kGoldAccent = Color(0xFF8B6914);
 const Color _kCream = Color(0xFFF5E6D0);
 const Color _kCreamMuted = Color(0xAAF5E6D0);
-const Color _kTextDark = Color(0xFF1C1C1C);
 
 // Imagen ilustrativa por tema de Grammar (se muestra en la página de Teoría)
 const Map<String, String> kGrammarTopicImages = {
@@ -32,7 +32,8 @@ const Map<String, String> kGrammarTopicImages = {
 // PÁGINA 1 — Teoría: ¿Qué es? + ¿Cuándo se usa?
 // ═══════════════════════════════════════════════════════════════════════════
 Widget buildPageTeoria(
-  dynamic contenido, {
+  dynamic contenido,
+  BuildContext context, {
   required String leccion,
   required String temaNombre,
 }) {
@@ -47,7 +48,7 @@ Widget buildPageTeoria(
         Text(
           AppStrings.tr('¿Qué es?', 'What is it?'),
           style: AppFonts.poppins(
-            color: _kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -73,7 +74,7 @@ Widget buildPageTeoria(
         Text(
           AppStrings.tr('¿Cuándo se usa?', 'When is it used?'),
           style: AppFonts.poppins(
-            color: _kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -148,7 +149,7 @@ Widget buildPageTeoria(
 // ═══════════════════════════════════════════════════════════════════════════
 // PÁGINA 2 — Práctica: Estructura/Audio + Ejemplos/Textos
 // ═══════════════════════════════════════════════════════════════════════════
-Widget buildPagePractica(dynamic contenido, {required String leccion}) {
+Widget buildPagePractica(dynamic contenido, BuildContext context, {required String leccion}) {
   return SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -161,7 +162,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
             Text(
               AppStrings.tr('Estructura', 'Structure'),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -197,7 +198,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
             Text(
               AppStrings.tr('Estructura de lectura', 'Reading structure'),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -234,7 +235,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
             Text(
               AppStrings.tr('Transcripción', 'Transcript'),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -272,7 +273,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
                 'Evaluation criteria',
               ),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -310,7 +311,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
             Text(
               AppStrings.tr('Ejemplos', 'Examples'),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -354,7 +355,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
             Text(
               AppStrings.tr('Texto ejemplo', 'Sample text'),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -394,7 +395,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
             Text(
               AppStrings.tr('Transcripción', 'Transcript'),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -434,7 +435,7 @@ Widget buildPagePractica(dynamic contenido, {required String leccion}) {
             Text(
               AppStrings.tr('Ejemplo modelo', 'Model example'),
               style: AppFonts.poppins(
-                color: _kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -498,7 +499,7 @@ Widget buildPageRefuerzo(
           Text(
             AppStrings.tr('Errores comunes', 'Common mistakes'),
             style: AppFonts.poppins(
-              color: _kTextDark,
+              color: AppColors.textPrimary(context),
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -506,9 +507,16 @@ Widget buildPageRefuerzo(
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              color: Colors.red[50],
+              color: AppColors.isDark(context)
+                  ? Colors.red.withValues(alpha: 0.15)
+                  : Colors.red[50],
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.red[200]!, width: 1),
+              border: Border.all(
+                color: AppColors.isDark(context)
+                    ? Colors.red.withValues(alpha: 0.40)
+                    : Colors.red[200]!,
+                width: 1,
+              ),
             ),
             padding: const EdgeInsets.all(14),
             child: Column(
@@ -524,7 +532,7 @@ Widget buildPageRefuerzo(
                   child: Text(
                     contenido.erroresComunes[index],
                     style: AppFonts.poppins(
-                      color: _kTextDark,
+                      color: AppColors.textPrimary(context),
                       fontSize: 12,
                       height: 1.5,
                     ),
@@ -542,7 +550,7 @@ Widget buildPageRefuerzo(
           Text(
             AppStrings.tr('Tips para recordar', 'Tips to remember'),
             style: AppFonts.poppins(
-              color: _kTextDark,
+              color: AppColors.textPrimary(context),
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -583,7 +591,7 @@ Widget buildPageRefuerzo(
                         child: Text(
                           contenido.tipsParaRecordar[index],
                           style: AppFonts.poppins(
-                            color: _kTextDark,
+                            color: AppColors.textPrimary(context),
                             fontSize: 13,
                             height: 1.5,
                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_strings.dart';
+import '../utils/app_colors.dart';
 import 'package:gif/gif.dart';
 import 'package:fluter_app/models/palabra_model.dart';
 import 'package:fluter_app/services/vocabulario_service.dart';
@@ -76,18 +77,18 @@ class _VocabularioScreenState extends State<VocabularioScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: kTextDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           AppStrings.tr('Vocabulario', 'Vocabulary'),
           style: AppFonts.poppins(
-            color: kTextDark,
+            color: AppColors.textPrimary(context),
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -116,7 +117,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
                   Text(
                     '${_progresoService.rachaDias}',
                     style: AppFonts.poppins(
-                      color: kTextDark,
+                      color: AppColors.textPrimary(context),
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
@@ -192,7 +193,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
                 Text(
                   AppStrings.tr('Mis palabras', 'My words'),
                   style: AppFonts.poppins(
-                    color: kTextDark,
+                    color: AppColors.textPrimary(context),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -360,7 +361,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.card(context),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: kPrimaryRed.withValues(alpha: 0.20), width: 1.2),
         ),
@@ -380,7 +381,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
             Text(
               AppStrings.tr('Agregar palabra nueva', 'Add new word'),
               style: AppFonts.poppins(
-                color: kTextDark,
+                color: AppColors.textPrimary(context),
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -477,9 +478,9 @@ class _VocabularioScreenState extends State<VocabularioScreen>
             margin: const EdgeInsets.symmetric(vertical: 4),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.card(context),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: AppColors.cardBorder(context)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withValues(alpha: 0.1),
@@ -504,14 +505,14 @@ class _VocabularioScreenState extends State<VocabularioScreen>
                             style: AppFonts.poppins(
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
-                              color: kTextDark,
+                              color: AppColors.textPrimary(context),
                             ),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             palabra.espanol,
                             style: AppFonts.poppins(
-                              color: Colors.grey[500],
+                              color: AppColors.textSecondary(context),
                               fontSize: 13,
                             ),
                           ),
@@ -559,7 +560,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
           margin: const EdgeInsets.only(right: 3),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: relleno ? kGoldAccent : Colors.grey[300],
+            color: relleno ? kGoldAccent : AppColors.cardBorder(context),
           ),
         );
       }),
@@ -572,8 +573,8 @@ class _VocabularioScreenState extends State<VocabularioScreen>
     Color fg;
     if (nivel == 0) {
       texto = AppStrings.tr('Nuevo', 'New');
-      bg = Colors.grey[200]!;
-      fg = Colors.grey[700]!;
+      bg = AppColors.cardBorder(context);
+      fg = AppColors.textSecondary(context);
     } else if (nivel < 5) {
       texto = AppStrings.tr('Aprendiendo', 'Learning');
       bg = kGoldAccent.withValues(alpha: 0.18);

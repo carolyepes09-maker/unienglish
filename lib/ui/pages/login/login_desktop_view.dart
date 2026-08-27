@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/app_strings.dart';
+import '../../utils/app_colors.dart';
 
 /// =============================================================================
 /// WIDGET: lib/ui/pages/login/login_desktop_view.dart
@@ -49,7 +50,7 @@ class LoginDesktopView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _creamColor,
+      backgroundColor: AppColors.background(context),
       body: Row(
         children: [
           // ── Panel izquierdo: identidad institucional ──────────────────
@@ -194,8 +195,8 @@ class LoginDesktopView extends StatelessWidget {
                         esRegistro
                             ? AppStrings.tr('Crear cuenta', 'Create account')
                             : AppStrings.tr('Iniciar sesión', 'Sign in'),
-                        style: const TextStyle(
-                          color: Color(0xFF3A0A0A),
+                        style: TextStyle(
+                          color: AppColors.textPrimary(context),
                           fontSize: 32,
                           fontWeight: FontWeight.w800,
                         ),
@@ -212,7 +213,7 @@ class LoginDesktopView extends StatelessWidget {
                                 'Enter your credentials to continue',
                               ),
                         style: TextStyle(
-                          color: Colors.brown[300],
+                          color: AppColors.textSecondary(context),
                           fontSize: 14,
                         ),
                       ),
@@ -220,6 +221,7 @@ class LoginDesktopView extends StatelessWidget {
 
                       if (esRegistro) ...[
                         _desktopField(
+                          context: context,
                           label: AppStrings.tr(
                             'Nombre completo',
                             'Full name',
@@ -235,6 +237,7 @@ class LoginDesktopView extends StatelessWidget {
                       ],
 
                       _desktopField(
+                        context: context,
                         label: AppStrings.tr(
                           'Correo electrónico',
                           'Email address',
@@ -247,6 +250,7 @@ class LoginDesktopView extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       _desktopField(
+                        context: context,
                         label: AppStrings.tr('Contraseña', 'Password'),
                         ctrl: passwordController,
                         hint: '••••••••',
@@ -267,6 +271,7 @@ class LoginDesktopView extends StatelessWidget {
                       if (esRegistro) ...[
                         const SizedBox(height: 16),
                         _desktopField(
+                          context: context,
                           label: AppStrings.tr(
                             'Código estudiantil (opcional)',
                             'Student ID (optional)',
@@ -280,6 +285,7 @@ class LoginDesktopView extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         _desktopField(
+                          context: context,
                           label: AppStrings.tr(
                             'Programa o Facultad',
                             'Program or Faculty',
@@ -363,9 +369,9 @@ class LoginDesktopView extends StatelessWidget {
                         child: OutlinedButton(
                           onPressed: cargando ? null : onToggleModo,
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF3A0A0A),
-                            backgroundColor: Colors.white,
-                            side: BorderSide(color: Colors.grey[300]!),
+                            foregroundColor: AppColors.textPrimary(context),
+                            backgroundColor: AppColors.card(context),
+                            side: BorderSide(color: AppColors.cardBorder(context)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -394,7 +400,7 @@ class LoginDesktopView extends StatelessWidget {
                         child: Text(
                           '© Universidad Libre · Colombia',
                           style: TextStyle(
-                            color: Colors.brown[200],
+                            color: AppColors.textSecondary(context),
                             fontSize: 12,
                           ),
                         ),
@@ -412,6 +418,7 @@ class LoginDesktopView extends StatelessWidget {
 
   /// Campo con etiqueta encima, usado únicamente en el layout de escritorio.
   Widget _desktopField({
+    required BuildContext context,
     required String label,
     required TextEditingController ctrl,
     required String hint,
@@ -425,8 +432,8 @@ class LoginDesktopView extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Color(0xFF3A0A0A),
+          style: TextStyle(
+            color: AppColors.textPrimary(context),
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),
@@ -435,9 +442,9 @@ class LoginDesktopView extends StatelessWidget {
         Container(
           height: 48,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.card(context),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: AppColors.cardBorder(context)),
           ),
           child: Row(
             children: [
@@ -449,13 +456,13 @@ class LoginDesktopView extends StatelessWidget {
                   controller: ctrl,
                   obscureText: obscure,
                   keyboardType: inputType,
-                  style: const TextStyle(
-                    color: Color(0xFF3A0A0A),
+                  style: TextStyle(
+                    color: AppColors.textPrimary(context),
                     fontSize: 14,
                   ),
                   decoration: InputDecoration(
                     hintText: hint,
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                    hintStyle: TextStyle(color: AppColors.textSecondary(context), fontSize: 14),
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
