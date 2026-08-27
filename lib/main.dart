@@ -508,7 +508,6 @@ class _MainNavigationState extends State<MainNavigation>
       child: PerfilScreen(
         authService: _authService,
         onBack: () => _irAPantalla(0),
-        vocabularioServiceDemo: _vocabularioService, // TEMPORAL
       ),
     ),
   ];

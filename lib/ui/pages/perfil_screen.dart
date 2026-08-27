@@ -5,8 +5,6 @@ import 'package:gif/gif.dart';
 import '../../services/auth_service.dart';
 import '../../services/progreso_service.dart';
 import '../../services/idioma_service.dart';
-import '../../services/vocabulario_service.dart';
-import '../../services/actividad_service.dart';
 
 const Color kPrimaryRed = Color(0xFFCC0000);
 const Color kGoldAccent = Color(0xFF8B6914);
@@ -30,17 +28,8 @@ const Color kCreamMuted = Color(0xAAF5E6D0);
 class PerfilScreen extends StatefulWidget {
   final AuthService authService;
   final VoidCallback? onBack;
-  // TEMPORAL: solo la usa _confirmarYCargarDatosDemo() para poder refrescar
-  // el vocabulario al instante después de escribir los datos de
-  // demostración. Se quita junto con esa acción.
-  final VocabularioService? vocabularioServiceDemo;
 
-  const PerfilScreen({
-    super.key,
-    required this.authService,
-    this.onBack,
-    this.vocabularioServiceDemo,
-  });
+  const PerfilScreen({super.key, required this.authService, this.onBack});
 
   @override
   State<PerfilScreen> createState() => _PerfilScreenState();
@@ -73,218 +62,6 @@ class _PerfilScreenState extends State<PerfilScreen>
       return partes[0][0].toUpperCase();
     }
     return '';
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // TEMPORAL -- solo para que Ferek vea cómo se ve una cuenta avanzada.
-  // Sobrescribe el progreso/vocabulario/actividad de LA CUENTA CON SESIÓN
-  // ACTIVA con datos de demostración realistas (usando el mismo método que
-  // ya usa toda la app para guardar en Firestore, así que respeta las
-  // reglas de seguridad -- cada quien solo puede escribir su propio
-  // documento). Se borra de perfil_screen.dart en cuanto se confirme que
-  // se ve bien.
-  // ═══════════════════════════════════════════════════════════════════════
-  Future<void> _confirmarYCargarDatosDemo() async {
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cargar datos de demostración'),
-        content: const Text(
-          'Esto SOBRESCRIBE el progreso, vocabulario y actividad reciente '
-          'de la cuenta con la que tienes sesión iniciada ahora mismo, con '
-          'datos de ejemplo realistas. No se puede deshacer desde aquí.\n\n'
-          '¿Continuar?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Sí, cargar datos',
-              style: TextStyle(color: kPrimaryRed),
-            ),
-          ),
-        ],
-      ),
-    );
-    if (confirmar != true) return;
-
-    final usuarioId = widget.authService.usuarioActualId;
-    if (usuarioId == null) return;
-
-    final ahora = DateTime.now();
-
-    Map<String, dynamic> palabra({
-      required String id,
-      required String en,
-      required String es,
-      required String ejemplo,
-      required int facilidad,
-      required int diasParaProximaRevision,
-      required int correctas,
-      required int incorrectas,
-    }) {
-      return {
-        'id': id,
-        'palabra_termino': en,
-        'traduccion_definicion': es,
-        'ejemplo_uso': ejemplo,
-        'fecha_creacion': ahora
-            .subtract(Duration(days: 60 - correctas))
-            .toIso8601String(),
-        'tipo_tarjeta': 'usuario',
-      };
-    }
-
-    Map<String, dynamic> progresoPalabra({
-      required String id,
-      required int facilidad,
-      required int diasParaProximaRevision,
-      required int correctas,
-      required int incorrectas,
-    }) {
-      return {
-        'tarjeta_id': id,
-        'facilidad': facilidad,
-        'intervalo_dias': diasParaProximaRevision.abs(),
-        'repeticiones': correctas,
-        'proxima_revision': ahora
-            .add(Duration(days: diasParaProximaRevision))
-            .toIso8601String(),
-        'total_revisiones': correctas + incorrectas,
-        'total_correctas': correctas,
-        'total_incorrectas': incorrectas,
-      };
-    }
-
-    // (id, inglés, español, ejemplo, facilidad 0-5, días hasta el próximo
-    // repaso (negativo = ya venció), aciertos, fallos)
-    final vocabulario = <List<Object>>[
-      ['demo-1', 'nevertheless', 'sin embargo', 'The exam was hard; nevertheless, she passed.', 5, 25, 9, 1],
-      ['demo-2', 'furthermore', 'además', 'Furthermore, the results support our hypothesis.', 5, 20, 8, 0],
-      ['demo-3', 'outcome', 'resultado', 'The outcome of the experiment was unexpected.', 5, 18, 7, 1],
-      ['demo-4', 'curriculum', 'currículo', 'The university updated its curriculum this semester.', 5, 22, 8, 0],
-      ['demo-5', 'semester', 'semestre', 'I have four courses this semester.', 5, 14, 10, 0],
-      ['demo-6', 'assignment', 'tarea/trabajo', 'The assignment is due next Monday.', 5, 16, 9, 1],
-      ['demo-7', 'deadline', 'fecha límite', 'We missed the deadline for the report.', 4, 9, 6, 1],
-      ['demo-8', 'controversial', 'controvertido', 'It is a controversial topic among students.', 4, 7, 5, 2],
-      ['demo-9', 'assumption', 'suposición', 'That is a reasonable assumption to make.', 3, 4, 4, 2],
-      ['demo-10', 'feasible', 'factible', 'Is it feasible to finish this by Friday?', 3, 3, 3, 2],
-      ['demo-11', 'comprehensive', 'integral / completo', 'We need a comprehensive review of the data.', 3, 2, 3, 3],
-      ['demo-12', 'elaborate', 'elaborar / explicar', 'Could you elaborate on your last point?', 2, 1, 2, 3],
-      ['demo-13', 'thesis', 'tesis', 'Her thesis focuses on renewable energy.', 2, 1, 2, 2],
-      ['demo-14', 'plagiarism', 'plagio', 'Plagiarism is taken very seriously at this university.', 1, -1, 1, 3],
-      ['demo-15', 'citation', 'cita (referencia)', 'Every claim needs a proper citation.', 1, -1, 1, 4],
-      ['demo-16', 'peer review', 'revisión por pares', 'The article is currently under peer review.', 0, -2, 0, 3],
-      ['demo-17', 'albeit', 'aunque', 'The plan worked, albeit slowly.', 0, -3, 0, 4],
-      ['demo-18', 'subsequently', 'posteriormente', 'She studied abroad and subsequently found a job here.', 0, -2, 0, 3],
-    ];
-
-    final tarjetas = vocabulario
-        .map(
-          (w) => palabra(
-            id: w[0] as String,
-            en: w[1] as String,
-            es: w[2] as String,
-            ejemplo: w[3] as String,
-            facilidad: w[4] as int,
-            diasParaProximaRevision: w[5] as int,
-            correctas: w[6] as int,
-            incorrectas: w[7] as int,
-          ),
-        )
-        .toList();
-    final progresos = vocabulario
-        .map(
-          (w) => progresoPalabra(
-            id: w[0] as String,
-            facilidad: w[4] as int,
-            diasParaProximaRevision: w[5] as int,
-            correctas: w[6] as int,
-            incorrectas: w[7] as int,
-          ),
-        )
-        .toList();
-
-    final actividadesRecientes = [
-      {
-        'titulo': 'Present Perfect',
-        'subtitulo': 'Grammar · Ejercicios',
-        'porcentaje': '90%',
-        'esPerfecto': false,
-        'timestamp': ahora.subtract(const Duration(hours: 3)).toIso8601String(),
-      },
-      {
-        'titulo': 'Simulacro Global',
-        'subtitulo': 'Simulacro · B1',
-        'porcentaje': '78%',
-        'esPerfecto': false,
-        'timestamp': ahora.subtract(const Duration(days: 1)).toIso8601String(),
-      },
-      {
-        'titulo': 'Repaso de vocabulario',
-        'subtitulo': '12 palabras repasadas',
-        'porcentaje': '100%',
-        'esPerfecto': true,
-        'timestamp': ahora.subtract(const Duration(days: 2)).toIso8601String(),
-      },
-    ];
-
-    final exito = await widget.authService.actualizarUsuario(usuarioId, {
-      'nivel_actual': 'B1',
-      'racha_dias': 12,
-      'tiempo_total_horas': 27,
-      'lecciones_completadas': 34,
-      'examenes_realizados': 6,
-      'habilidades_values': [78.0, 71.0, 65.0, 69.0, 45.0],
-      'actividad_semanal': [40.0, 65.0, 30.0, 80.0, 55.0, 20.0, 70.0],
-      'progreso_siguiente_nivel': 0.62,
-      'siguiente_nivel': 'B2',
-      'progreso_actualizado_en': ahora.toIso8601String(),
-      'vocabulario_tarjetas_usuario': tarjetas,
-      'vocabulario_progreso_tarjetas': progresos,
-      'vocabulario_actualizado_en': ahora.toIso8601String(),
-      'actividades_recientes': actividadesRecientes,
-    });
-
-    // Escribir en Firestore no es suficiente: ProgresoService/
-    // VocabularioService/ActividadService ya tenían sus propios datos
-    // cargados en memoria desde que se abrió la app, y no se enteran solos
-    // de que algo cambió en la cuenta. Se les pide re-sincronizar aquí
-    // mismo (misma lógica de "gana el más reciente" del hallazgo 3 --
-    // como se acaba de escribir con el timestamp de "ahora", el lado
-    // remoto gana) para que la pantalla se actualice al instante, sin
-    // depender de cerrar y volver a abrir la app.
-    if (exito) {
-      await Future.wait([
-        _progresoService.sincronizarConCuenta(),
-        if (widget.vocabularioServiceDemo != null)
-          widget.vocabularioServiceDemo!.sincronizarConCuenta(),
-        ActividadService().sincronizarConCuenta(),
-      ]);
-      // PerfilScreen lee _progresoService.examenesRealizados (etc.)
-      // directo en build(), sin escuchar sus cambios -- a diferencia de
-      // HomeScreen/VocabularioScreen, que sí tienen su propio listener y
-      // ya se refrescan solas con el notifyListeners() de arriba. Este
-      // setState() fuerza que ESTA pantalla también se redibuje con los
-      // valores nuevos.
-      if (mounted) setState(() {});
-    }
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          exito
-              ? 'Datos de demostración cargados y aplicados.'
-              : 'No se pudo guardar -- revisa la conexión e inténtalo de nuevo.',
-        ),
-        backgroundColor: exito ? Colors.green[700] : Colors.red[700],
-      ),
-    );
   }
 
   /// Abre el selector de idioma de interfaz y aplica el cambio de inmediato.
@@ -769,17 +546,6 @@ class _PerfilScreenState extends State<PerfilScreen>
                           ),
                         );
                       },
-                    ),
-                    // TEMPORAL -- ver _confirmarYCargarDatosDemo(). Se quita
-                    // de aquí en cuanto se confirme que los datos se ven
-                    // bien.
-                    Divider(height: 1, color: Colors.grey[200]),
-                    _settingsItem(
-                      icon: Icons.construction,
-                      label: '🔧 Cargar datos de demostración (temporal)',
-                      iconColor: Colors.orange[800],
-                      labelColor: Colors.orange[800],
-                      onTap: _confirmarYCargarDatosDemo,
                     ),
                   ],
                 ),
