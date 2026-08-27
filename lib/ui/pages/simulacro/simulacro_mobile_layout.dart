@@ -135,38 +135,42 @@ class SimulacroMobileLayout extends StatelessWidget {
                   const SizedBox(height: 8),
 
                   // ── TIMER con textura ──────────────────────────────────
+                  // Recorte circular explícito con ClipOval (mismo patrón
+                  // que ya usa el sello del login), en vez de depender del
+                  // recorte automático de Container+BoxShape.circle.
                   Center(
                     child: Container(
                       width: 88,
                       height: 88,
-                      clipBehavior: Clip.hardEdge,
                       decoration: const BoxDecoration(shape: BoxShape.circle),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: Image.asset(
-                              'assets/images/fondo.jpg',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: Container(
-                              color: Colors.black.withValues(alpha: 0.38),
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              examenService.formattedTime,
-                              style: AppFonts.poppins(
-                                color: examenService.secondsRemaining < 300
-                                    ? Colors.orange
-                                    : _kCream,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                      child: ClipOval(
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: Image.asset(
+                                'assets/images/fondo.jpg',
+                                fit: BoxFit.cover,
                               ),
                             ),
-                          ),
-                        ],
+                            Positioned.fill(
+                              child: Container(
+                                color: Colors.black.withValues(alpha: 0.38),
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                examenService.formattedTime,
+                                style: AppFonts.poppins(
+                                  color: examenService.secondsRemaining < 300
+                                      ? Colors.orange
+                                      : _kCream,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -392,8 +396,15 @@ class SimulacroMobileLayout extends StatelessWidget {
           ),
 
           // ── BOTÓN SIGUIENTE con textura ────────────────────────────────
+          // Padding inferior de 80 (no 24): esta pantalla vive dentro de
+          // MainNavigation, cuya barra de navegación inferior es flotante y
+          // se superpone sobre el contenido (mismo motivo por el que
+          // HomeScreen reserva 80px al final de su scroll). Con solo 24px,
+          // el botón quedaba debajo de esa barra flotante -- la barra
+          // absorbía el toque antes de que llegara al botón, y por eso
+          // tampoco se sentía bien el gesto de scroll en esa zona.
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
