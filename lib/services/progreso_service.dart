@@ -20,15 +20,18 @@ class ProgresoService extends ChangeNotifier {
 
   late SharedPreferences _prefs;
 
-  // Datos internos
-  int _rachaDias = 7;
-  int _tiempoTotalHoras = 42;
-  int _leccionesCompletadas = 124;
-  int _examenesRealizados = 8;
-  List<double> _actividadSemanal = [45, 30, 65, 50, 25, 35, 20];
-  List<double> _habilidadesValues = [80, 65, 50, 40, 30];
-  double _progresoHaciaSiguienteNivel = 0.68;
-  String _siguienteNivel = 'B1';
+  // Datos internos — arrancan en cero: son los valores por defecto para una
+  // cuenta nueva sin nada aún guardado en SharedPreferences ni Firestore.
+  // Una cuenta ya existente nunca llega a usar estos defaults, porque
+  // _cargarDatos() encuentra sus propios valores guardados antes de caer aquí.
+  int _rachaDias = 0;
+  int _tiempoTotalHoras = 0;
+  int _leccionesCompletadas = 0;
+  int _examenesRealizados = 0;
+  List<double> _actividadSemanal = [0, 0, 0, 0, 0, 0, 0];
+  List<double> _habilidadesValues = [0, 0, 0, 0, 0];
+  double _progresoHaciaSiguienteNivel = 0.0;
+  String _siguienteNivel = 'A2';
 
   // Getters
   int get rachaDias => _rachaDias;
