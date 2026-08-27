@@ -2,6 +2,16 @@
 
 Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al cerrar cada hallazgo. No forma parte del build ni de la app.
 
+## Rendimiento del arranque (fuera de los 16 hallazgos originales, 2026-08-27)
+
+| # | Mejora | Estado | Commit |
+|---|--------|--------|--------|
+| P1 | Eliminar 4 lecturas redundantes del mismo documento de Firestore al arrancar | Resuelto y desplegado | 3d717bd |
+| P2 | Cargar SharedPreferences/assets en paralelo con Firebase.initializeApp() | Resuelto y desplegado | a1cd899 |
+| P3 | Mostrar la app apenas la sesión esté resuelta (sync con la cuenta en segundo plano) | Resuelto y desplegado | a91734a |
+| P4 | Activar persistencia offline de Firestore (IndexedDB en Web) | Resuelto y desplegado | 07ba406 |
+| P5 | Aligerar el paquete web cambiando el motor de renderizado (CanvasKit → HTML) | **Descartado** -- arriesga romper el blur de la barra de navegación (BackdropFilter) y el degradado del botón de login (ShaderMask), sin forma de verificarlo visualmente antes de producción. No hay alternativa de solo-código sin ese trade-off. | — |
+
 | # | Hallazgo | Estado | Commit | Fecha |
 |---|----------|--------|--------|-------|
 | 1 | Sin control de versiones (git init) | Resuelto | feaeea8 | 2026-08-26 |
