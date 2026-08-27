@@ -250,18 +250,6 @@ class AuthService {
   /// Obtiene el usuario actual ID
   Future<String?> obtenerUsuarioId() async => _usuarioActualId;
 
-  /// Obtiene un usuario por ID
-  Future<Map<String, dynamic>?> obtenerUsuarioPorId(String id) async {
-    try {
-      final doc = await _usuariosRef.doc(id).get().timeout(
-        _kFirestoreTimeout,
-      );
-      return doc.data();
-    } catch (e) {
-      return null;
-    }
-  }
-
   /// Muestra información de depuración
   Future<void> imprimirDebug() async {
     AppLogger.log('--- AUTH DEBUG INFO ---');

@@ -84,7 +84,13 @@ class ActividadService {
     if (usuarioId == null) return;
 
     try {
-      final usuario = await AuthService().obtenerUsuarioPorId(usuarioId);
+      // AuthService ya tiene el documento completo del usuario en memoria
+      // (lo cargó al iniciar/restaurar sesión) -- se reutiliza esa copia en
+      // vez de volver a pedirle lo mismo a Firestore. Antes, Progreso/
+      // Vocabulario/Actividad hacían cada uno su propia lectura del MISMO
+      // documento en cada arranque: 4 viajes de red para leer 4 partes de
+      // un solo documento.
+      final usuario = AuthService().usuarioActual;
       final remotas = usuario?['actividades_recientes'];
       if (remotas is List) {
         _actividades = List<Map<String, dynamic>>.from(
