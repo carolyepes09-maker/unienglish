@@ -3,7 +3,93 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /usuarios/{usuarioId} {
-      allow read, write: if request.auth != null && request.auth.uid == usuarioId;
+
+      // ─── Helpers de validación ──────────────────────────────────────────
+      function esNumeroEnRango(valor, minimo, maximo) {
+        return valor is number && valor >= minimo && valor <= maximo;
+      }
+
+      function nivelValido(valor) {
+        return valor is string && valor in ['A1', 'A2', 'B1', 'B2'];
+      }
+
+      function idiomaValido(valor) {
+        return valor is string && valor in ['es', 'en'];
+      }
+
+      // Valida tipo y rango de cada campo conocido SI está presente en el
+      // documento resultante -- no exige que todos existan (los servicios
+      // escriben de a poco, con SetOptions(merge: true)), pero si un campo
+      // está, tiene que tener un tipo/rango razonable. Así se evita que
+      // alguien con las devtools abiertas se escriba directamente
+      // puntos_totales: 999999999 o nivel_actual: "nivel inventado".
+      function datosValidos(datos) {
+        return
+          (!('racha_dias' in datos) || esNumeroEnRango(datos.racha_dias, 0, 100000)) &&
+          (!('tiempo_total_horas' in datos) || esNumeroEnRango(datos.tiempo_total_horas, 0, 100000)) &&
+          (!('lecciones_completadas' in datos) || esNumeroEnRango(datos.lecciones_completadas, 0, 100000)) &&
+          (!('examenes_realizados' in datos) || esNumeroEnRango(datos.examenes_realizados, 0, 100000)) &&
+          (!('puntos_totales' in datos) || esNumeroEnRango(datos.puntos_totales, 0, 10000000)) &&
+          (!('progreso_siguiente_nivel' in datos) || esNumeroEnRango(datos.progreso_siguiente_nivel, 0, 1)) &&
+          (!('nivel_actual' in datos) || nivelValido(datos.nivel_actual)) &&
+          (!('siguiente_nivel' in datos) || nivelValido(datos.siguiente_nivel)) &&
+          (!('idioma_preferido' in datos) || idiomaValido(datos.idioma_preferido)) &&
+          // Solo se valida el TIPO (lista) y un tope máximo laxo, no un
+          // tamaño exacto: una cuenta ya existente cuyo array tenga hoy una
+          // longitud distinta (por cualquier motivo histórico) no debe
+          // quedar bloqueada para volver a guardar progreso el día que
+          // estas reglas se desplieguen. El tamaño "correcto" (5 y 7) ya lo
+          // garantiza el propio código de ProgresoService, no la regla.
+          (!('habilidades_values' in datos) || (
+            datos.habilidades_values is list &&
+            datos.habilidades_values.size() <= 10
+          )) &&
+          (!('actividad_semanal' in datos) || (
+            datos.actividad_semanal is list &&
+            datos.actividad_semanal.size() <= 14
+          )) &&
+          // Topes de tamaño en las listas dinámicas (vocabulario, actividad
+          // reciente): no validan cada elemento uno por uno (impráctico en
+          // reglas de Firestore), pero evitan que el documento crezca sin
+          // límite por un cliente malicioso o con un bug.
+          (!('vocabulario_tarjetas_usuario' in datos) || (
+            datos.vocabulario_tarjetas_usuario is list &&
+            datos.vocabulario_tarjetas_usuario.size() <= 2000
+          )) &&
+          (!('vocabulario_progreso_tarjetas' in datos) || (
+            datos.vocabulario_progreso_tarjetas is list &&
+            datos.vocabulario_progreso_tarjetas.size() <= 2000
+          )) &&
+          (!('actividades_recientes' in datos) || (
+            datos.actividades_recientes is list &&
+            datos.actividades_recientes.size() <= 50
+          ));
+      }
+
+      // El usuario_id (metadato descriptivo dentro del documento) debe
+      // seguir apuntando a la misma cuenta si se incluye en la escritura --
+      // aunque la ruta del documento (usuarios/{usuarioId}) ya impide por sí
+      // sola escribir en el documento de otra persona.
+      function usuarioIdConsistente(datos) {
+        return !('usuario_id' in datos) || datos.usuario_id == usuarioId;
+      }
+
+      allow read: if request.auth != null && request.auth.uid == usuarioId;
+
+      // Registro: el documento debe pertenecer al mismo uid que lo crea.
+      allow create: if request.auth != null
+        && request.auth.uid == usuarioId
+        && request.resource.data.usuario_id == usuarioId
+        && datosValidos(request.resource.data);
+
+      allow update: if request.auth != null
+        && request.auth.uid == usuarioId
+        && usuarioIdConsistente(request.resource.data)
+        && datosValidos(request.resource.data);
+
+      // Nada en la app borra el documento de un usuario -- se deja explícito
+      // en vez de depender del "denegado por defecto" implícito.
+      allow delete: if false;
     }
   }
 }
