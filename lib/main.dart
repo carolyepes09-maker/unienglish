@@ -46,6 +46,17 @@ const kTextDark = Color(0xFF1C1C1C);
 // inmediato y este Future se espera dentro del árbol de widgets (ver
 // _AppBootstrap), mostrando una pantalla de carga mientras tanto.
 Future<void> _inicializarServicios() async {
+  // Los servicios se construyen SIEMPRE, pase lo que pase con Firebase más
+  // abajo: son solo instancias de singleton (sin I/O en el constructor). Si
+  // esto quedara dentro del try y Firebase.initializeApp() fallara antes de
+  // llegar aquí, estas variables late final nunca se asignarían, y
+  // AuthWrapper truena con LateInitializationError apenas las lee -- el
+  // "seguir funcionando a pesar del error" de más abajo no serviría de nada.
+  _authService = AuthService();
+  _progresoService = ProgresoService();
+  _vocabularioService = VocabularioService(_authService);
+  _actividadService = ActividadService();
+
   try {
     print('🔄 Inicializando Firebase...');
     await Firebase.initializeApp(
@@ -53,18 +64,12 @@ Future<void> _inicializarServicios() async {
     ).timeout(const Duration(seconds: 8));
     print('✅ Firebase inicializado');
 
-    // Inicializar servicios locales
-    print('🔄 Inicializando servicios...');
-    _authService = AuthService();
-    _progresoService = ProgresoService();
-    _vocabularioService = VocabularioService(_authService);
-    _actividadService = ActividadService();
-
     // ActividadService necesita el uid que restaura AuthService.initialize()
     // para poder sincronizar 'actividades_recientes' desde Firestore, así que
     // se espera primero. Los otros 3 no dependen entre sí durante su
     // initialize() (cada uno solo toca SharedPreferences/rootBundle/Firestore
     // de forma aislada), así que siguen en paralelo entre ellos.
+    print('🔄 Inicializando servicios...');
     await _authService.initialize();
     await Future.wait([
       _progresoService.initialize(),
