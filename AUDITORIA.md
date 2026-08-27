@@ -6,7 +6,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 |---|----------|--------|--------|-------|
 | 1 | Sin control de versiones (git init) | Resuelto | feaeea8 | 2026-08-26 |
 | 2 | Firebase solo configurado para Web (Android/iOS rotos) | Resuelto | 34fbe67, 31f73d2 | 2026-08-26 |
-| 3 | Sincronización con pérdida silenciosa de progreso | Pendiente | — | — |
+| 3 | Sincronización con pérdida silenciosa de progreso | Resuelto | c38ed13 | 2026-08-26 |
 | 4 | "¿Olvidaste tu contraseña?" es un botón muerto | Resuelto | 7617789 | 2026-08-26 |
 | 5 | Bug en el progreso del examen (solo Grammar/Reading) | Resuelto | 197cbf0 | 2026-08-26 |
 | 6 | Usuario nuevo arranca con estadísticas inventadas | Resuelto | 0a6f339 | 2026-08-26 |
@@ -27,3 +27,11 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 - Identificador de app definitivo: `com.unilibre.unienglish` (Android package name + iOS bundle id).
 - Hallazgo 6: valores en cero solo para cuentas **nuevas**; las cuentas ya existentes se dejan tal cual están.
 - Hallazgo 3: estrategia de "gana el más reciente" comparando timestamps (no merge completo).
+
+## Hallazgo detectado durante el trabajo (pendiente de decidir si entra en el 11)
+
+`test/widget_test.dart` (el único test que existe) ya fallaba en el commit inicial, antes de cualquier
+cambio: busca el texto "Iniciar sesión" inmediatamente después de `pumpWidget`, pero la app muestra
+primero `_LoadingScreen` mientras `_AppBootstrap` espera su `FutureBuilder` -- el test nunca llega a
+esperar (`pumpAndSettle`) a que esa carga termine. No es una regresión de esta reparación; queda para
+cuando se aborde el hallazgo 11.
