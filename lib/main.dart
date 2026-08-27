@@ -55,24 +55,37 @@ Future<void> _inicializarServicios() async {
   _actividadService = ActividadService();
 
   try {
-    AppLogger.log('🔄 Inicializando Firebase...');
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    ).timeout(const Duration(seconds: 8));
-    AppLogger.log('✅ Firebase inicializado');
+    // Fase local: SharedPreferences/assets no dependen de Firebase ni de
+    // que haya sesión, así que corren en PARALELO con
+    // Firebase.initializeApp() en vez de esperarlo primero como antes --
+    // se ahorra ese tiempo en vez de gastarlo en serie. Future.wait espera
+    // a que las 5 terminen (una por una, aunque alguna falle) antes de
+    // seguir, así que además, si Firebase llegara a fallar, la carga local
+    // de los 3 servicios ya quedó lista de todas formas.
+    AppLogger.log('🔄 Inicializando Firebase y carga local en paralelo...');
+    await Future.wait([
+      Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ).timeout(const Duration(seconds: 8)),
+      _progresoService.precargarLocal(),
+      _vocabularioService.precargarLocal(),
+      _actividadService.precargarLocal(),
+      _idiomaService.initialize(),
+    ]);
+    AppLogger.log('✅ Firebase y carga local listos');
 
-    // ActividadService necesita el uid que restaura AuthService.initialize()
-    // para poder sincronizar 'actividades_recientes' desde Firestore, así que
-    // se espera primero. Los otros 3 no dependen entre sí durante su
-    // initialize() (cada uno solo toca SharedPreferences/rootBundle/Firestore
-    // de forma aislada), así que siguen en paralelo entre ellos.
-    AppLogger.log('🔄 Inicializando servicios...');
+    // A partir de aquí sí hace falta que Firebase (y la sesión) estén
+    // listos. ActividadService necesita el uid que restaura
+    // AuthService.initialize() para poder sincronizar
+    // 'actividades_recientes' desde Firestore, así que se espera primero.
+    // Los otros 2 no dependen entre sí durante su sincronización, así que
+    // siguen en paralelo entre ellos.
+    AppLogger.log('🔄 Sincronizando con la cuenta...');
     await _authService.initialize();
     await Future.wait([
-      _progresoService.initialize(),
-      _vocabularioService.initialize(),
-      _actividadService.initialize(),
-      _idiomaService.initialize(),
+      _progresoService.sincronizarConCuenta(),
+      _vocabularioService.sincronizarConCuenta(),
+      _actividadService.sincronizarConCuenta(),
     ]);
 
     AppLogger.log('✅ Todos los servicios inicializados exitosamente');

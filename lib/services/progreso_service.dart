@@ -54,29 +54,18 @@ class ProgresoService extends ChangeNotifier {
   String get siguienteNivel => _siguienteNivel;
 
   Future<void> initialize() async {
+    await precargarLocal();
+    await sincronizarConCuenta();
+  }
+
+  /// Fase 1: solo SharedPreferences -- no depende de Firebase ni de que haya
+  /// sesión, así que puede correr en paralelo con Firebase.initializeApp()
+  /// en vez de esperarlo primero.
+  Future<void> precargarLocal() async {
     try {
       AppLogger.log('⏳ ProgresoService: Obteniendo SharedPreferences...');
       _prefs = await SharedPreferences.getInstance();
       AppLogger.log('✅ ProgresoService: SharedPreferences obtenido');
-      AppLogger.log('⏳ ProgresoService: Cargando datos...');
-      await _cargarDatos();
-      AppLogger.log('✅ ProgresoService: Datos cargados');
-    } catch (e) {
-      AppLogger.log('❌ ProgresoService initialize error: $e');
-      AppLogger.log('⚠️ Continuando con valores por defecto');
-    }
-  }
-
-  Future<void> _cargarDatos() async {
-    try {
-      // Carga primero lo que haya localmente (caché rápida/offline), pero
-      // solo cuenta como "de este usuario" si el uid guardado coincide con
-      // el que tiene sesión ahora (si no, es de otra cuenta que usó este
-      // mismo navegador/dispositivo antes).
-      final usuarioIdActual = AuthService().usuarioActualId;
-      final uidLocal = _prefs.getString('progreso_uid');
-      final localEsDeEsteUsuario =
-          uidLocal != null && uidLocal == usuarioIdActual;
 
       _rachaDias = _prefs.getInt('racha_dias') ?? _rachaDias;
       _tiempoTotalHoras =
@@ -100,6 +89,27 @@ class ProgresoService extends ChangeNotifier {
           _prefs.getDouble('progreso_siguiente_nivel') ??
           _progresoHaciaSiguienteNivel;
       _siguienteNivel = _prefs.getString('siguiente_nivel') ?? _siguienteNivel;
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.log('❌ ProgresoService precargarLocal error: $e');
+      AppLogger.log('⚠️ Continuando con valores por defecto');
+    }
+  }
+
+  /// Fase 2: decide si la caché local es de esta cuenta y sincroniza con
+  /// Firestore. Necesita que AuthService ya haya restaurado/iniciado sesión
+  /// (usuarioActualId/usuarioActual poblados), así que se llama después de
+  /// esperar eso.
+  Future<void> sincronizarConCuenta() async {
+    try {
+      // Solo cuenta como "de este usuario" si el uid guardado coincide con
+      // el que tiene sesión ahora (si no, es de otra cuenta que usó este
+      // mismo navegador/dispositivo antes).
+      final usuarioIdActual = AuthService().usuarioActualId;
+      final uidLocal = _prefs.getString('progreso_uid');
+      final localEsDeEsteUsuario =
+          uidLocal != null && uidLocal == usuarioIdActual;
 
       // "Última modificación real" de estos datos en este dispositivo (no
       // "última vez que se sincronizó" -- eso importa para la comparación

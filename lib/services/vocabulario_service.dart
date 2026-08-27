@@ -24,6 +24,14 @@ class VocabularioService {
 
   /// Inicializa el servicio cargando datos desde Assets y SharedPreferences
   Future<void> initialize() async {
+    await precargarLocal();
+    await sincronizarConCuenta();
+  }
+
+  /// Fase 1: SharedPreferences + vocabulario del sistema (assets) -- no
+  /// depende de Firebase ni de que haya sesión, así que puede correr en
+  /// paralelo con Firebase.initializeApp() en vez de esperarlo primero.
+  Future<void> precargarLocal() async {
     try {
       AppLogger.log('⏳ VocabularioService: Obteniendo SharedPreferences...');
       _prefs = await SharedPreferences.getInstance();
@@ -31,39 +39,6 @@ class VocabularioService {
       AppLogger.log('⏳ VocabularioService: Cargando palabras del sistema...');
       await _cargarPalabrasSistema();
       AppLogger.log('✅ VocabularioService: Palabras del sistema cargadas');
-      AppLogger.log('⏳ VocabularioService: Cargando datos del usuario...');
-      await _cargarDatosUsuarioLocal();
-      AppLogger.log('✅ VocabularioService: Datos del usuario cargados');
-    } catch (e) {
-      AppLogger.log('❌ VocabularioService initialize error: $e');
-      AppLogger.log('⚠️ Continuando con valores por defecto');
-    }
-  }
-
-  Future<void> _cargarPalabrasSistema() async {
-    try {
-      AppLogger.log('📄 Cargando palabras.json desde assets...');
-      final String jsonString = await rootBundle.loadString(
-        'assets/data/palabras.json',
-      );
-      final List<dynamic> list = jsonDecode(jsonString);
-      _tarjetasSistema = List<Map<String, dynamic>>.from(list);
-      AppLogger.log('✅ ${_tarjetasSistema.length} palabras del sistema cargadas');
-    } catch (e) {
-      AppLogger.log('❌ Error cargando palabras sistema: $e');
-      _tarjetasSistema = [];
-    }
-  }
-
-  Future<void> _cargarDatosUsuarioLocal() async {
-    try {
-      // El vocabulario local solo cuenta como "de este usuario" si el uid
-      // guardado coincide con el que tiene sesión ahora (si no, es de otra
-      // cuenta que usó este mismo navegador/dispositivo antes).
-      final usuarioIdActual = _authService.usuarioActualId;
-      final uidLocal = _prefs.getString('vocabulario_uid');
-      final localEsDeEsteUsuario =
-          uidLocal != null && uidLocal == usuarioIdActual;
 
       final palabrasJson = _prefs.getString('palabras_usuario') ?? '[]';
       _tarjetasUsuario = List<Map<String, dynamic>>.from(
@@ -74,6 +49,24 @@ class VocabularioService {
       _progresoTarjetas = List<Map<String, dynamic>>.from(
         jsonDecode(progresoJson),
       );
+    } catch (e) {
+      AppLogger.log('❌ VocabularioService precargarLocal error: $e');
+      AppLogger.log('⚠️ Continuando con valores por defecto');
+    }
+  }
+
+  /// Fase 2: decide si el vocabulario local es de esta cuenta y sincroniza
+  /// con Firestore. Necesita que _authService ya haya restaurado/iniciado
+  /// sesión (usuarioActualId/usuarioActual poblados).
+  Future<void> sincronizarConCuenta() async {
+    try {
+      // El vocabulario local solo cuenta como "de este usuario" si el uid
+      // guardado coincide con el que tiene sesión ahora (si no, es de otra
+      // cuenta que usó este mismo navegador/dispositivo antes).
+      final usuarioIdActual = _authService.usuarioActualId;
+      final uidLocal = _prefs.getString('vocabulario_uid');
+      final localEsDeEsteUsuario =
+          uidLocal != null && uidLocal == usuarioIdActual;
 
       // "Última modificación real" del vocabulario en este dispositivo (no
       // "última vez que se sincronizó"). Si el vocabulario local es de otra
@@ -89,6 +82,21 @@ class VocabularioService {
       AppLogger.log('✅ ${_tarjetasUsuario.length} palabras del usuario cargadas');
     } catch (e) {
       AppLogger.log('❌ Error cargando vocabulario local: $e');
+    }
+  }
+
+  Future<void> _cargarPalabrasSistema() async {
+    try {
+      AppLogger.log('📄 Cargando palabras.json desde assets...');
+      final String jsonString = await rootBundle.loadString(
+        'assets/data/palabras.json',
+      );
+      final List<dynamic> list = jsonDecode(jsonString);
+      _tarjetasSistema = List<Map<String, dynamic>>.from(list);
+      AppLogger.log('✅ ${_tarjetasSistema.length} palabras del sistema cargadas');
+    } catch (e) {
+      AppLogger.log('❌ Error cargando palabras sistema: $e');
+      _tarjetasSistema = [];
     }
   }
 
