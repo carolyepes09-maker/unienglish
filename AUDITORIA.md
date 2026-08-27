@@ -15,7 +15,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 9 | Manejo de fallos de arranque se anula a sí mismo | Resuelto (con corrección) | 3a08f5f, efa4357 | 2026-08-26 |
 | 10 | Modelo de datos que no escala (doc único en Firestore) | Diagnosticado (ver MIGRACION_DATOS.md) | — | 2026-08-27 |
 | 11 | Prácticamente cero pruebas automatizadas | Resuelto | 82783cf, c19b282, 7615a92, 496041f, a13f3a5 | 2026-08-26 |
-| 12 | Pantallas gigantes (login_screen.dart, etc.) | Pendiente | — | — |
+| 12 | Pantallas gigantes (login_screen.dart, etc.) | Resuelto | 6b65f5d, bfe3060, 4d78e44, a49d5aa, 5b6fd35 | 2026-08-27 |
 | 13 | print() en vez de logging real | Pendiente | — | — |
 | 14 | Rutas nombradas muertas en main.dart | Pendiente | — | — |
 | 15 | Archivos de log viejos en la raíz | Pendiente | — | — |
