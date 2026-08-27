@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../models/palabra_model.dart';
+import '../utils/app_logger.dart';
 import 'auth_service.dart';
 
 /// =============================================================================
@@ -25,32 +25,32 @@ class VocabularioService {
   /// Inicializa el servicio cargando datos desde Assets y SharedPreferences
   Future<void> initialize() async {
     try {
-      print('⏳ VocabularioService: Obteniendo SharedPreferences...');
+      AppLogger.log('⏳ VocabularioService: Obteniendo SharedPreferences...');
       _prefs = await SharedPreferences.getInstance();
-      print('✅ VocabularioService: SharedPreferences obtenido');
-      print('⏳ VocabularioService: Cargando palabras del sistema...');
+      AppLogger.log('✅ VocabularioService: SharedPreferences obtenido');
+      AppLogger.log('⏳ VocabularioService: Cargando palabras del sistema...');
       await _cargarPalabrasSistema();
-      print('✅ VocabularioService: Palabras del sistema cargadas');
-      print('⏳ VocabularioService: Cargando datos del usuario...');
+      AppLogger.log('✅ VocabularioService: Palabras del sistema cargadas');
+      AppLogger.log('⏳ VocabularioService: Cargando datos del usuario...');
       await _cargarDatosUsuarioLocal();
-      print('✅ VocabularioService: Datos del usuario cargados');
+      AppLogger.log('✅ VocabularioService: Datos del usuario cargados');
     } catch (e) {
-      print('❌ VocabularioService initialize error: $e');
-      print('⚠️ Continuando con valores por defecto');
+      AppLogger.log('❌ VocabularioService initialize error: $e');
+      AppLogger.log('⚠️ Continuando con valores por defecto');
     }
   }
 
   Future<void> _cargarPalabrasSistema() async {
     try {
-      print('📄 Cargando palabras.json desde assets...');
+      AppLogger.log('📄 Cargando palabras.json desde assets...');
       final String jsonString = await rootBundle.loadString(
         'assets/data/palabras.json',
       );
       final List<dynamic> list = jsonDecode(jsonString);
       _tarjetasSistema = List<Map<String, dynamic>>.from(list);
-      print('✅ ${_tarjetasSistema.length} palabras del sistema cargadas');
+      AppLogger.log('✅ ${_tarjetasSistema.length} palabras del sistema cargadas');
     } catch (e) {
-      print('❌ Error cargando palabras sistema: $e');
+      AppLogger.log('❌ Error cargando palabras sistema: $e');
       _tarjetasSistema = [];
     }
   }
@@ -86,9 +86,9 @@ class VocabularioService {
 
       await _sincronizarPorTimestamp(actualizadoLocal);
 
-      print('✅ ${_tarjetasUsuario.length} palabras del usuario cargadas');
+      AppLogger.log('✅ ${_tarjetasUsuario.length} palabras del usuario cargadas');
     } catch (e) {
-      print('❌ Error cargando vocabulario local: $e');
+      AppLogger.log('❌ Error cargando vocabulario local: $e');
     }
   }
 
@@ -138,7 +138,7 @@ class VocabularioService {
         await _guardarDatosLocal(actualizadoRemoto);
       }
     } catch (e) {
-      print('❌ Error sincronizando vocabulario por timestamp: $e');
+      AppLogger.log('❌ Error sincronizando vocabulario por timestamp: $e');
     }
   }
 
@@ -162,7 +162,7 @@ class VocabularioService {
         await _prefs.setString('vocabulario_uid', usuarioId);
       }
     } catch (e) {
-      print('❌ Error guardando vocabulario: $e');
+      AppLogger.log('❌ Error guardando vocabulario: $e');
     }
   }
 
@@ -177,7 +177,7 @@ class VocabularioService {
         'vocabulario_actualizado_en': marcaDeTiempo.toIso8601String(),
       });
     } catch (e) {
-      print('❌ Error guardando vocabulario en Firestore: $e');
+      AppLogger.log('❌ Error guardando vocabulario en Firestore: $e');
     }
   }
 
@@ -280,7 +280,7 @@ class VocabularioService {
       await _guardarDatosUsuarioLocal();
       return true;
     } catch (e) {
-      print('❌ Error al guardar palabra: $e');
+      AppLogger.log('❌ Error al guardar palabra: $e');
       return false;
     }
   }

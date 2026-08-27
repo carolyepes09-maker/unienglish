@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/app_logger.dart';
 import 'auth_service.dart';
 
 /// =============================================================================
@@ -25,14 +26,14 @@ class ActividadService {
   // ─── INICIALIZACIÓN DEL SISTEMA ──────────────────────────────────────────
   Future<void> initialize() async {
     try {
-      print('📝 ActividadService: Inicializando SharedPreferences...');
+      AppLogger.log('📝 ActividadService: Inicializando SharedPreferences...');
       _prefs = await SharedPreferences.getInstance();
-      print('✅ ActividadService: SharedPreferences lista');
-      print('📝 ActividadService: Cargando datos base...');
+      AppLogger.log('✅ ActividadService: SharedPreferences lista');
+      AppLogger.log('📝 ActividadService: Cargando datos base...');
       await _cargarDatosBase();
-      print('✅ ActividadService: Datos base cargados');
+      AppLogger.log('✅ ActividadService: Datos base cargados');
     } catch (e) {
-      print('❌ ActividadService: Error durante initialize: $e');
+      AppLogger.log('❌ ActividadService: Error durante initialize: $e');
       rethrow;
     }
   }
@@ -67,7 +68,7 @@ class ActividadService {
         _actividades = [];
       }
     } catch (e) {
-      print('❌ Error cargando actividades: $e');
+      AppLogger.log('❌ Error cargando actividades: $e');
       _actividades = [];
     }
 
@@ -92,7 +93,7 @@ class ActividadService {
         await _guardarLocal();
       }
     } catch (e) {
-      print('❌ Error sincronizando actividades desde Firestore: $e');
+      AppLogger.log('❌ Error sincronizando actividades desde Firestore: $e');
     }
   }
 
@@ -132,7 +133,7 @@ class ActividadService {
     try {
       await _guardarLocal();
     } catch (e) {
-      print('❌ Error guardando actividad localmente: $e');
+      AppLogger.log('❌ Error guardando actividad localmente: $e');
     }
 
     final usuarioId = AuthService().usuarioActualId;
@@ -142,7 +143,7 @@ class ActividadService {
           'actividades_recientes': _actividades,
         });
       } catch (e) {
-        print('❌ Error guardando actividad en Firestore: $e');
+        AppLogger.log('❌ Error guardando actividad en Firestore: $e');
       }
     }
   }

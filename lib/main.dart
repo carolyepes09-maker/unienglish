@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'ui/utils/app_fonts.dart';
 import 'ui/utils/app_strings.dart';
+import 'utils/app_logger.dart';
 import 'firebase_options.dart';
 import 'services/auth_service.dart';
 import 'services/progreso_service.dart';
@@ -58,18 +59,18 @@ Future<void> _inicializarServicios() async {
   _actividadService = ActividadService();
 
   try {
-    print('🔄 Inicializando Firebase...');
+    AppLogger.log('🔄 Inicializando Firebase...');
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ).timeout(const Duration(seconds: 8));
-    print('✅ Firebase inicializado');
+    AppLogger.log('✅ Firebase inicializado');
 
     // ActividadService necesita el uid que restaura AuthService.initialize()
     // para poder sincronizar 'actividades_recientes' desde Firestore, así que
     // se espera primero. Los otros 3 no dependen entre sí durante su
     // initialize() (cada uno solo toca SharedPreferences/rootBundle/Firestore
     // de forma aislada), así que siguen en paralelo entre ellos.
-    print('🔄 Inicializando servicios...');
+    AppLogger.log('🔄 Inicializando servicios...');
     await _authService.initialize();
     await Future.wait([
       _progresoService.initialize(),
@@ -78,11 +79,11 @@ Future<void> _inicializarServicios() async {
       _idiomaService.initialize(),
     ]);
 
-    print('✅ Todos los servicios inicializados exitosamente');
+    AppLogger.log('✅ Todos los servicios inicializados exitosamente');
   } catch (e, stackTrace) {
-    print('❌ ERROR DURANTE INICIALIZACION: $e');
-    print('Stack trace: $stackTrace');
-    print('⚠️ IMPORTANTE: Continuando con la app a pesar del error');
+    AppLogger.log('❌ ERROR DURANTE INICIALIZACION: $e');
+    AppLogger.log('Stack trace: $stackTrace');
+    AppLogger.log('⚠️ IMPORTANTE: Continuando con la app a pesar del error');
     // NO hacer rethrow - continuamos con la app de todas formas
   }
 }
@@ -113,7 +114,7 @@ class _AppBootstrapState extends State<_AppBootstrap> {
   late final Future<void> _initFuture = _inicializarServicios().timeout(
     const Duration(seconds: 15),
     onTimeout: () {
-      print('⚠️ Timeout general inicializando la app, continuando de todas formas');
+      AppLogger.log('⚠️ Timeout general inicializando la app, continuando de todas formas');
     },
   );
 
@@ -659,17 +660,17 @@ class AuthWrapper extends StatefulWidget {
 class _AuthWrapperState extends State<AuthWrapper> {
   @override
   Widget build(BuildContext context) {
-    print('🎨 AuthWrapper building...');
-    print('   estaAutenticado: ${_authService.estaAutenticado}');
-    print('   usuarioActualId: ${_authService.usuarioActualId}');
+    AppLogger.log('🎨 AuthWrapper building...');
+    AppLogger.log('   estaAutenticado: ${_authService.estaAutenticado}');
+    AppLogger.log('   usuarioActualId: ${_authService.usuarioActualId}');
     // Verificar si hay usuario autenticado
     if (_authService.estaAutenticado) {
-      print('✅ AuthWrapper: Usuario autenticado, mostrando MainNavigation');
+      AppLogger.log('✅ AuthWrapper: Usuario autenticado, mostrando MainNavigation');
       return const MainNavigation();
     }
 
     // Usuario no autenticado - pasar el AuthService global
-    print('❌ AuthWrapper: Usuario no autenticado, mostrando LoginScreen');
+    AppLogger.log('❌ AuthWrapper: Usuario no autenticado, mostrando LoginScreen');
     return LoginScreen(
       authService: _authService,
       vocabularioService: _vocabularioService,

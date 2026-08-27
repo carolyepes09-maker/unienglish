@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/app_logger.dart';
 import 'auth_service.dart';
 
 /// =============================================================================
@@ -54,15 +55,15 @@ class ProgresoService extends ChangeNotifier {
 
   Future<void> initialize() async {
     try {
-      print('⏳ ProgresoService: Obteniendo SharedPreferences...');
+      AppLogger.log('⏳ ProgresoService: Obteniendo SharedPreferences...');
       _prefs = await SharedPreferences.getInstance();
-      print('✅ ProgresoService: SharedPreferences obtenido');
-      print('⏳ ProgresoService: Cargando datos...');
+      AppLogger.log('✅ ProgresoService: SharedPreferences obtenido');
+      AppLogger.log('⏳ ProgresoService: Cargando datos...');
       await _cargarDatos();
-      print('✅ ProgresoService: Datos cargados');
+      AppLogger.log('✅ ProgresoService: Datos cargados');
     } catch (e) {
-      print('❌ ProgresoService initialize error: $e');
-      print('⚠️ Continuando con valores por defecto');
+      AppLogger.log('❌ ProgresoService initialize error: $e');
+      AppLogger.log('⚠️ Continuando con valores por defecto');
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../utils/app_logger.dart';
 
 /// =============================================================================
 /// 🔐 SERVICIO: lib/services/auth_service.dart
@@ -69,7 +70,7 @@ class AuthService {
         await _cargarPerfil(usuarioFirebase.uid);
       }
     } catch (e) {
-      print('❌ Error restaurando sesión: $e');
+      AppLogger.log('❌ Error restaurando sesión: $e');
     }
   }
 
@@ -81,7 +82,7 @@ class AuthService {
     if (doc.exists) {
       _usuarioActualId = usuarioId;
       _usuarioActualData = doc.data();
-      print('✅ Perfil restaurado desde Firestore: $usuarioId');
+      AppLogger.log('✅ Perfil restaurado desde Firestore: $usuarioId');
     }
   }
 
@@ -242,7 +243,7 @@ class AuthService {
         await _cargarPerfil(usuarioId);
       }
     } catch (e) {
-      print('Error incrementando puntos: $e');
+      AppLogger.log('Error incrementando puntos: $e');
     }
   }
 
@@ -263,10 +264,10 @@ class AuthService {
 
   /// Muestra información de depuración
   Future<void> imprimirDebug() async {
-    print('--- AUTH DEBUG INFO ---');
-    print('Usuario ID: $_usuarioActualId');
-    print('Autenticado: $estaAutenticado');
-    print('Datos: $_usuarioActualData');
-    print('-----------------------');
+    AppLogger.log('--- AUTH DEBUG INFO ---');
+    AppLogger.log('Usuario ID: $_usuarioActualId');
+    AppLogger.log('Autenticado: $estaAutenticado');
+    AppLogger.log('Datos: $_usuarioActualData');
+    AppLogger.log('-----------------------');
   }
 }
