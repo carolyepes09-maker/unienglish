@@ -74,27 +74,41 @@ Future<void> _inicializarServicios() async {
     ]);
     AppLogger.log('✅ Firebase y carga local listos');
 
-    // A partir de aquí sí hace falta que Firebase (y la sesión) estén
-    // listos. ActividadService necesita el uid que restaura
-    // AuthService.initialize() para poder sincronizar
-    // 'actividades_recientes' desde Firestore, así que se espera primero.
-    // Los otros 2 no dependen entre sí durante su sincronización, así que
-    // siguen en paralelo entre ellos.
-    AppLogger.log('🔄 Sincronizando con la cuenta...');
+    // Solo se espera que la sesión quede restaurada (o confirmada como
+    // inexistente) -- es lo único que AuthWrapper necesita para decidir
+    // entre Login y Home. Ya con esto la app se puede mostrar: los 3
+    // servicios tienen su caché local lista (fase de arriba), así que Home
+    // ya tiene algo real que mostrar sin esperar a la cuenta.
     await _authService.initialize();
-    await Future.wait([
-      _progresoService.sincronizarConCuenta(),
-      _vocabularioService.sincronizarConCuenta(),
-      _actividadService.sincronizarConCuenta(),
-    ]);
-
-    AppLogger.log('✅ Todos los servicios inicializados exitosamente');
+    AppLogger.log('✅ Sesión restaurada (o confirmado que no hay ninguna)');
   } catch (e, stackTrace) {
     AppLogger.log('❌ ERROR DURANTE INICIALIZACION: $e');
     AppLogger.log('Stack trace: $stackTrace');
     AppLogger.log('⚠️ IMPORTANTE: Continuando con la app a pesar del error');
     // NO hacer rethrow - continuamos con la app de todas formas
   }
+
+  // La sincronización con la cuenta (Firestore) YA NO se espera aquí: sigue
+  // corriendo en segundo plano mientras el usuario ya ve Home con sus datos
+  // locales, en vez de tenerlo mirando la pantalla de carga hasta que la
+  // cuenta completa termine de bajar. ProgresoService y VocabularioService
+  // son ChangeNotifier y avisan solas cuando termina, para refrescar la
+  // pantalla que ya esté abierta; ActividadService no notifica por sí
+  // misma, pero HomeScreen vuelve a leerla cada vez que ProgresoService
+  // avisa, así que también queda al día.
+  _sincronizarConCuentaEnSegundoPlano();
+}
+
+void _sincronizarConCuentaEnSegundoPlano() {
+  Future.wait([
+    _progresoService.sincronizarConCuenta(),
+    _vocabularioService.sincronizarConCuenta(),
+    _actividadService.sincronizarConCuenta(),
+  ]).then((_) {
+    AppLogger.log('✅ Sincronización con la cuenta completada en segundo plano');
+  }).catchError((e, stackTrace) {
+    AppLogger.log('❌ Error sincronizando con la cuenta en segundo plano: $e');
+  });
 }
 
 void main() {

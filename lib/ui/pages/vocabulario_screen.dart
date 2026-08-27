@@ -47,11 +47,18 @@ class _VocabularioScreenState extends State<VocabularioScreen>
   void initState() {
     super.initState();
     _fireController = GifController(vsync: this);
+    // La sincronización con la cuenta puede seguir corriendo en segundo
+    // plano cuando esta pantalla ya está abierta con la caché local (ver
+    // hallazgo de rendimiento 3) -- este listener refresca la lista sola
+    // apenas esa sincronización traiga algo nuevo, en vez de quedarse con
+    // datos incompletos hasta salir y volver a entrar.
+    widget.vocabularioService.addListener(_loadData);
     _loadData(); // Carga inicial de datos al abrir la pantalla.
   }
 
   @override
   void dispose() {
+    widget.vocabularioService.removeListener(_loadData);
     _fireController.dispose();
     super.dispose();
   }
@@ -60,6 +67,7 @@ class _VocabularioScreenState extends State<VocabularioScreen>
   // Refresca la lista de palabras cuando el usuario vuelve de agregar una nueva
   // o después de una sesión de repaso.
   void _loadData() {
+    if (!mounted) return;
     setState(() {
       _palabrasFuture = widget.vocabularioService.cargarPalabras();
     });

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -10,9 +11,15 @@ import 'auth_service.dart';
 ///  SERVICIO: lib/services/vocabulario_service.dart
 /// =============================================================================
 /// Este servicio gestiona el Diccionario Personalizado localmente.
+///
+/// Extiende ChangeNotifier para avisar cuando la sincronización con la
+/// cuenta (Firestore) termina en segundo plano -- así, si la pantalla de
+/// Vocabulario ya estaba abierta con la caché local, se refresca sola en
+/// vez de quedarse con datos incompletos hasta que el usuario salga y
+/// vuelva a entrar.
 /// ============================================================================
 
-class VocabularioService {
+class VocabularioService extends ChangeNotifier {
   final AuthService _authService;
   late SharedPreferences _prefs;
 
@@ -80,6 +87,10 @@ class VocabularioService {
       await _sincronizarPorTimestamp(actualizadoLocal);
 
       AppLogger.log('✅ ${_tarjetasUsuario.length} palabras del usuario cargadas');
+      // Avisa a quien esté escuchando (ej. VocabularioScreen ya abierta con
+      // la caché local) que hay datos nuevos, por si la sincronización
+      // trajo algo de otra cuenta/dispositivo.
+      notifyListeners();
     } catch (e) {
       AppLogger.log('❌ Error cargando vocabulario local: $e');
     }
