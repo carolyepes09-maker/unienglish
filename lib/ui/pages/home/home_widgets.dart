@@ -94,26 +94,19 @@ Widget activityTile({
   required String subtitle,
   required String percentage,
 }) {
-  // Calcular color de fondo según el porcentaje
+  // Color según el porcentaje: solo tiñe el chip del porcentaje, no la
+  // tarjeta completa (antes todo el fondo de la tarjeta cambiaba de color).
   final int val = int.tryParse(percentage.replaceAll('%', '')) ?? 0;
-  Color overlayColor;
-
+  final Color colorChip;
   if (val >= 80) {
-    overlayColor = const Color(
-      0xFF003300,
-    ).withValues(alpha: 0.6); // Tinte verde oscuro
+    colorChip = const Color(0xFF2E7D32); // verde
   } else if (val >= 50) {
-    overlayColor = const Color(
-      0xFF442200,
-    ).withValues(alpha: 0.6); // Tinte ámbar/marrón
+    colorChip = const Color(0xFFB8860B); // ámbar
   } else {
-    overlayColor = const Color(
-      0xFF330000,
-    ).withValues(alpha: 0.6); // Tinte rojo oscuro
+    colorChip = const Color(0xFFC62828); // rojo
   }
 
   return textureCard(
-    overlayColor: overlayColor,
     child: Row(
       children: [
         Container(
@@ -150,13 +143,13 @@ Widget activityTile({
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
+            color: colorChip,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             percentage,
             style: AppFonts.poppins(
-              color: const Color(0xFFF5E6D0),
+              color: Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
