@@ -10,7 +10,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 4 | "¿Olvidaste tu contraseña?" es un botón muerto | Resuelto | 7617789 | 2026-08-26 |
 | 5 | Bug en el progreso del examen (solo Grammar/Reading) | Resuelto | 197cbf0 | 2026-08-26 |
 | 6 | Usuario nuevo arranca con estadísticas inventadas | Resuelto | 0a6f339 | 2026-08-26 |
-| 7 | Documentación desactualizada y contradictoria | Pendiente | — | — |
+| 7 | Documentación desactualizada y contradictoria | Resuelto | ff183e9, 7368243 | 2026-08-26 |
 | 8 | Reglas de Firestore sin validación de esquema | Pendiente | — | — |
 | 9 | Manejo de fallos de arranque se anula a sí mismo | Resuelto | 3a08f5f | 2026-08-26 |
 | 10 | Modelo de datos que no escala (doc único en Firestore) | Pendiente | — | — |
