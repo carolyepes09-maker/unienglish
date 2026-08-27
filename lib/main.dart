@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ui/utils/app_fonts.dart';
 import 'ui/utils/app_strings.dart';
 import 'utils/app_logger.dart';
@@ -73,6 +74,20 @@ Future<void> _inicializarServicios() async {
       _idiomaService.initialize(),
     ]);
     AppLogger.log('✅ Firebase y carga local listos');
+
+    // Activa el caché persistente de Firestore (IndexedDB en Web) para que
+    // una lectura pueda resolverse desde el caché si el dispositivo se
+    // queda sin conexión, en vez de quedarse esperando hasta el timeout de
+    // 6s de cada llamada. No cambia el comportamiento con conexión: .get()
+    // sigue consultando primero al servidor igual que antes: esto solo
+    // mejora el caso sin conexión, no la velocidad normal de arranque.
+    try {
+      FirebaseFirestore.instance.settings = const Settings(
+        persistenceEnabled: true,
+      );
+    } catch (e) {
+      AppLogger.log('⚠️ No se pudo activar la persistencia de Firestore: $e');
+    }
 
     // Solo se espera que la sesión quede restaurada (o confirmada como
     // inexistente) -- es lo único que AuthWrapper necesita para decidir
