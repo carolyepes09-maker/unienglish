@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -26,6 +27,14 @@ late final ProgresoService _progresoService;
 late final VocabularioService _vocabularioService;
 late final ActividadService _actividadService;
 final IdiomaService _idiomaService = IdiomaService();
+
+// Etapas reales del arranque, para que la pantalla de carga (_LoadingScreen)
+// pueda mostrar un texto que avanza de verdad en vez de un spinner mudo.
+enum _EtapaArranque { iniciando, datosLocales, sesionResuelta }
+
+final ValueNotifier<_EtapaArranque> _etapaArranque = ValueNotifier(
+  _EtapaArranque.iniciando,
+);
 
 // =============================================================================
 // CONSTANTES DE COLORES - UniEnglish Design System
@@ -74,6 +83,7 @@ Future<void> _inicializarServicios() async {
       _idiomaService.initialize(),
     ]);
     AppLogger.log('✅ Firebase y carga local listos');
+    _etapaArranque.value = _EtapaArranque.datosLocales;
 
     // Activa el caché persistente de Firestore (IndexedDB en Web) para que
     // una lectura pueda resolverse desde el caché si el dispositivo se
@@ -96,6 +106,7 @@ Future<void> _inicializarServicios() async {
     // ya tiene algo real que mostrar sin esperar a la cuenta.
     await _authService.initialize();
     AppLogger.log('✅ Sesión restaurada (o confirmado que no hay ninguna)');
+    _etapaArranque.value = _EtapaArranque.sesionResuelta;
   } catch (e, stackTrace) {
     AppLogger.log('❌ ERROR DURANTE INICIALIZACION: $e');
     AppLogger.log('Stack trace: $stackTrace');
@@ -172,29 +183,179 @@ class _AppBootstrapState extends State<_AppBootstrap> {
 
 // ─── PANTALLA DE CARGA ───────────────────────────────────────────────────────
 // Se muestra mientras se resuelven Firebase.initializeApp() y los servicios
-// globales (auth, progreso, vocabulario, actividad).
-class _LoadingScreen extends StatelessWidget {
+// globales (auth, progreso, vocabulario, actividad). Reutiliza el mismo
+// sello institucional del login (mismo asset, misma sombra) para que la
+// identidad de marca sea consistente desde el primer instante, con un
+// texto de estado que avanza según las etapas reales del arranque
+// (_etapaArranque) en vez de un spinner mudo.
+class _LoadingScreen extends StatefulWidget {
   const _LoadingScreen();
+
+  @override
+  State<_LoadingScreen> createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<_LoadingScreen>
+    with SingleTickerProviderStateMixin {
+  // "Respiración" del sello: opacidad que sube y baja en bucle mientras se
+  // sigue esperando, para que la pantalla se sienta viva incluso cuando el
+  // arranque real no tiene un progreso medible en porcentaje entre una
+  // etapa y la siguiente.
+  late final AnimationController _pulseController =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 1400))
+        ..repeat(reverse: true);
+  late final Animation<double> _pulseAnimation = CurvedAnimation(
+    parent: _pulseController,
+    curve: Curves.easeInOut,
+  ).drive(Tween<double>(begin: 0.55, end: 1.0));
+
+  // Si el arranque se está tardando más de lo normal (conexión lenta), se
+  // avisa en vez de dejar al usuario adivinando si la app se congeló.
+  static const _umbralTardanza = Duration(seconds: 6);
+  Timer? _timerTardanza;
+  bool _tardandoMucho = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _timerTardanza = Timer(_umbralTardanza, () {
+      if (mounted) setState(() => _tardandoMucho = true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timerTardanza?.cancel();
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  String _textoEtapa(_EtapaArranque etapa) {
+    switch (etapa) {
+      case _EtapaArranque.iniciando:
+        return AppStrings.tr('Iniciando...', 'Starting...');
+      case _EtapaArranque.datosLocales:
+        return AppStrings.tr(
+          'Conectando con tu cuenta...',
+          'Connecting to your account...',
+        );
+      case _EtapaArranque.sesionResuelta:
+        return AppStrings.tr('¡Listo!', 'Ready!');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kDarkCard,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'UniEnglish',
-              style: AppFonts.poppins(
-                color: kBackground,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+        // Fundido de entrada: la pantalla completa aparece suavemente en
+        // vez de de golpe, una sola vez (no se repite en rebuilds
+        // posteriores porque este State ya existe para entonces).
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeOut,
+          builder: (context, entrada, child) =>
+              Opacity(opacity: entrada, child: child),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FadeTransition(
+                opacity: _pulseAnimation,
+                child: Container(
+                  width: 130,
+                  height: 130,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.80),
+                        blurRadius: 60,
+                        spreadRadius: 10,
+                        offset: const Offset(0, 16),
+                      ),
+                      BoxShadow(
+                        color: const Color(0xFF880000).withValues(alpha: 0.40),
+                        blurRadius: 80,
+                        spreadRadius: 20,
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/logo.recortado.webp',
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: const Color(0xFF4A3000),
+                        child: const Center(
+                          child: Text(
+                            'UL',
+                            style: TextStyle(
+                              color: Color(0xFFD4A017),
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            const CircularProgressIndicator(color: kGoldAccent),
-          ],
+              const SizedBox(height: 20),
+              Text(
+                'UNIVERSIDAD LIBRE',
+                style: AppFonts.poppins(
+                  color: kBackground.withValues(alpha: 0.80),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 3,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'UniEnglish',
+                style: AppFonts.poppins(
+                  color: kBackground,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 28),
+              ValueListenableBuilder<_EtapaArranque>(
+                valueListenable: _etapaArranque,
+                builder: (context, etapa, _) {
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: Text(
+                      _textoEtapa(etapa),
+                      key: ValueKey(etapa),
+                      style: AppFonts.poppins(
+                        color: kGoldAccent,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              if (_tardandoMucho) ...[
+                const SizedBox(height: 10),
+                Text(
+                  AppStrings.tr(
+                    'Esto está tardando más de lo normal — revisa tu conexión',
+                    'This is taking longer than usual — check your connection',
+                  ),
+                  textAlign: TextAlign.center,
+                  style: AppFonts.poppins(
+                    color: kBackground.withValues(alpha: 0.55),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
