@@ -18,9 +18,13 @@ Crear una plataforma móvil moderna, intuitiva y visualmente atractiva que permi
 ```
 lib/
 	main.dart                # Punto de entrada, configuración de rutas y tema
-	models/                  # Modelos de datos educativos y servicios
-	screens/                 # Pantallas principales de la app
-	widgets/                 # Widgets reutilizables y visuales personalizados
+	firebase_options.dart    # Configuración de Firebase (web, Android, iOS)
+	models/                  # Modelos de datos educativos
+	services/                # Lógica de negocio y acceso a datos (Firebase Auth/Firestore, SharedPreferences)
+	ui/
+	  pages/                 # Pantallas principales de la app
+	  widgets/               # Widgets reutilizables
+	  utils/                 # Utilidades de UI (fuentes, textos, responsivo)
 assets/images/             # Recursos gráficos y fondos
 pubspec.yaml               # Dependencias y configuración Flutter
 ```
@@ -31,22 +35,30 @@ pubspec.yaml               # Dependencias y configuración Flutter
 - **contenido_tema.dart**: Modelo central para representar un tema educativo (título, descripción, estructura, ejemplos, errores comunes, tips, ejercicios, etc.).
 - **grammar_content.dart, reading_content.dart, listening_content.dart, writing_content.dart**: Definen el contenido específico de cada habilidad, con ejemplos, ejercicios y explicaciones adaptadas.
 - **palabra_model.dart**: Modelo para la gestión de vocabulario personalizado, con algoritmo de repetición espaciada (SM-2 simplificado).
-- **vocabulario_service.dart**: Servicio para guardar, cargar y actualizar el vocabulario del usuario usando `shared_preferences`.
+- **simulacro_model.dart**: Modelo de pregunta para el Simulacro de examen.
 
-### 2. Pantallas Principales (`lib/screens/`)
+### 2. Servicios (`lib/services/`)
+- **auth_service.dart**: Autenticación (Firebase Authentication) y perfil de usuario (Cloud Firestore).
+- **progreso_service.dart**: Estadísticas de progreso del usuario (racha, horas, lecciones, exámenes, gráfico de habilidades).
+- **vocabulario_service.dart**: Guarda, carga y sincroniza el vocabulario personalizado del usuario.
+- **ejercicio_service.dart, leccion_service.dart, examen_service.dart, revision_service.dart, actividad_service.dart, idioma_service.dart**: Lógica de ejercicios, lecciones, el Simulacro de examen, repaso de vocabulario, actividad reciente e idioma de interfaz.
+
+### 3. Pantallas Principales (`lib/ui/pages/`)
 - **login_screen.dart**: Pantalla de autenticación con diseño responsivo y fondo personalizado.
 - **home_screen.dart**: Pantalla principal con acceso a lecciones, progreso y vocabulario.
 - **lecciones_screen.dart**: Lista de lecciones organizadas por nivel (A1, A2, B1, B2).
 - **leccion_detalle_screen.dart**: Detalle de cada lección, mostrando temas y progreso.
 - **tema_detalle_screen.dart**: Explicación detallada de un tema (estructura, ejemplos, errores, tips).
 - **ejercicios_screen.dart**: Ejercicios interactivos autocorregibles para cada tema.
-- **resultado_screen.dart**: Resultados y retroalimentación tras ejercicios.
+- **resultado_screen.dart, resultado_revision_screen.dart**: Resultados y retroalimentación tras ejercicios/repasos.
+- **simulacro_screen.dart**: Examen de simulacro cronometrado.
 - **progreso_screen.dart**: Visualización gráfica del avance del usuario (usando `fl_chart`).
 - **perfil_screen.dart**: Perfil del usuario, avatar, nivel y estadísticas.
-- **agregar_palabra_screen.dart, vocabulario_screen.dart**: Gestión de vocabulario personalizado.
+- **agregar_palabra_screen.dart, vocabulario_screen.dart, revision_screen.dart**: Gestión y repaso de vocabulario personalizado.
 
-### 3. Widgets Personalizados (`lib/widgets/`)
-- **noise_overlay.dart**: Overlay visual para simular textura de fondo tipo cuero/terciopelo, mejorando la estética premium.
+### 4. Widgets y utilidades de UI (`lib/ui/widgets/`, `lib/ui/utils/`)
+- **audio_player_card.dart**: Reproductor de audio con transcripción, usado en las lecciones de Listening.
+- **app_fonts.dart, app_strings.dart, responsive.dart**: Tipografía (Poppins, empaquetada localmente), textos bilingües (ES/EN) y utilidades de diseño responsivo (móvil/escritorio).
 
 ## Navegación y Flujo de la App
 
@@ -58,7 +70,7 @@ El usuario puede consultar su progreso, acceder a su perfil y gestionar su vocab
 
 ## Diseño y Experiencia de Usuario
 
-- **Colores y tipografía**: Basados en un sistema de diseño propio (ver constantes en `main.dart`), usando Google Fonts y paleta universitaria (rojo, dorado, crema, blanco, negro).
+- **Colores y tipografía**: Basados en un sistema de diseño propio (ver constantes en `main.dart`), usando la tipografía Poppins (empaquetada localmente) y paleta universitaria (rojo, dorado, crema, blanco, negro).
 - **Visuales**: Uso de imágenes, overlays y animaciones GIF para motivar y dar feedback visual.
 - **Responsivo**: Adaptado a móvil y desktop, con tamaños y paddings dinámicos.
 
@@ -73,10 +85,12 @@ El usuario puede consultar su progreso, acceder a su perfil y gestionar su vocab
 ## Dependencias Principales
 
 - **Flutter SDK**
-- **google_fonts**: Tipografía personalizada.
+- **firebase_core, firebase_auth, cloud_firestore**: Autenticación y base de datos en la nube (ver sección "Arquitectura y stack tecnológico" más abajo).
 - **fl_chart**: Gráficas de progreso.
-- **shared_preferences**: Persistencia local de vocabulario y progreso.
+- **shared_preferences**: Persistencia local (caché rápida/offline) de vocabulario y progreso.
+- **audioplayers**: Reproducción de audio para las lecciones de Listening.
 - **lottie, gif**: Animaciones y feedback visual.
+- Tipografía Poppins empaquetada como fuente local del proyecto (no usa el paquete `google_fonts`).
 
 ## ¿Qué busca lograr UniEnglish?
 
@@ -85,14 +99,9 @@ El usuario puede consultar su progreso, acceder a su perfil y gestionar su vocab
 - Facilitar la práctica realista y contextualizada.
 - Medir y visualizar el avance para mantener la motivación.
 
-## Créditos y Licencia
+## Licencia
 
-Desarrollado por [Tu Nombre o Equipo].
-Licencia: MIT (o la que corresponda).
-
----
-
-Para dudas, sugerencias o contribuciones, contacta a [tu_email@dominio.com].
+MIT.
 
 ---
 
@@ -147,7 +156,7 @@ Cuatro módulos de habilidad — **Grammar, Reading, Listening, Writing** — ca
 - Al finalizar, el estudiante es dirigido a una pantalla de **Resultados** con puntaje, porcentaje de acierto, desglose de correctas/incorrectas, y accesos directos para reintentar o continuar con el siguiente tema.
 
 ### 4.5 Simulacro de examen (funcionalidad central para el problema que resuelve el proyecto)
-- Examen global cronometrado de **60 minutos** que mezcla preguntas de las distintas habilidades, incluyendo comprensión de lectura con pasajes de texto ("passages"), replicando el formato y la presión de tiempo de un examen real de validación.
+- Examen global cronometrado (entre 10 y 60 minutos, según la cantidad de preguntas del nivel del estudiante) que mezcla preguntas de las distintas habilidades, incluyendo comprensión de lectura con pasajes de texto ("passages"), replicando el formato y la presión de tiempo de un examen real de validación.
 - Las preguntas se aleatorizan en cada intento.
 - Al finalizar (o al agotarse el tiempo), se calculan y muestran los resultados, y se actualiza el progreso general del estudiante (estadísticas de exámenes realizados, habilidades).
 - Este módulo es el que traduce directamente el objetivo del proyecto: darle al estudiante una experiencia de práctica lo más parecida posible al examen real de validación de la universidad, antes de presentarlo.
