@@ -19,7 +19,7 @@ Checklist de trabajo para la reparación guiada del proyecto. Se actualiza al ce
 | 13 | print() en vez de logging real | Resuelto | 23481f2 | 2026-08-27 |
 | 14 | Rutas nombradas muertas en main.dart | Resuelto | df92165 | 2026-08-27 |
 | 15 | Archivos de log viejos en la raíz | Resuelto | 9c9302d | 2026-08-27 |
-| 16 | Warnings de lint acumulados (withOpacity, etc.) | Pendiente | — | — |
+| 16 | Warnings de lint acumulados (withOpacity, etc.) | Migrado, pendiente de revisión visual | a29e9c8 | 2026-08-27 |
 
 ## Decisiones ya tomadas con Ferek
 
