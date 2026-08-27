@@ -18,13 +18,14 @@ class AppColors {
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
 
-  /// Fondo de pantalla (Scaffold).
+  /// Fondo de pantalla (Scaffold). Negro neutro a propósito — las tarjetas
+  /// con textura roja ya aportan el color de marca, el fondo no debe competir.
   static Color background(BuildContext context) =>
-      isDark(context) ? const Color(0xFF1A0000) : Colors.white;
+      isDark(context) ? const Color(0xFF121212) : Colors.white;
 
   /// Tarjeta "limpia" (sin textura), como la de Configuración en Perfil.
   static Color card(BuildContext context) =>
-      isDark(context) ? const Color(0xFF2A0F0F) : Colors.white;
+      isDark(context) ? const Color(0xFF1E1E1E) : Colors.white;
 
   static Color cardBorder(BuildContext context) =>
       isDark(context) ? Colors.white.withValues(alpha: 0.10) : Colors.grey[200]!;

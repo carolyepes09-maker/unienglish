@@ -432,11 +432,11 @@ class _UniEnglishAppState extends State<UniEnglishApp> {
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF1A0000),
+        scaffoldBackgroundColor: const Color(0xFF121212),
         primaryColor: kPrimaryRed,
         textTheme: AppFonts.poppinsTextTheme(ThemeData.dark().textTheme),
         appBarTheme: AppBarTheme(
-          backgroundColor: const Color(0xFF1A0000),
+          backgroundColor: const Color(0xFF121212),
           elevation: 0,
           iconTheme: const IconThemeData(color: Color(0xFFF5E6D0)),
           titleTextStyle: AppFonts.poppins(
