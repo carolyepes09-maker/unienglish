@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../../utils/app_strings.dart';
+import '../politica_privacidad_screen.dart';
 import '../../utils/app_colors.dart';
 
 /// =============================================================================
@@ -19,12 +21,14 @@ class LoginDesktopView extends StatelessWidget {
   final bool esRegistro;
   final bool cargando;
   final bool obscurePassword;
+  final bool aceptaPolitica;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final TextEditingController nombreController;
   final TextEditingController codigoController;
   final TextEditingController programaController;
   final VoidCallback onTogglePassword;
+  final VoidCallback onToggleAceptaPolitica;
   final VoidCallback onOlvideContrasena;
   final VoidCallback onIniciarSesion;
   final VoidCallback onRegistrar;
@@ -35,12 +39,14 @@ class LoginDesktopView extends StatelessWidget {
     required this.esRegistro,
     required this.cargando,
     required this.obscurePassword,
+    required this.aceptaPolitica,
     required this.emailController,
     required this.passwordController,
     required this.nombreController,
     required this.codigoController,
     required this.programaController,
     required this.onTogglePassword,
+    required this.onToggleAceptaPolitica,
     required this.onOlvideContrasena,
     required this.onIniciarSesion,
     required this.onRegistrar,
@@ -320,13 +326,80 @@ class LoginDesktopView extends StatelessWidget {
                         ),
                       ],
 
+                      // ── CHECKBOX — Aceptación de política de datos ──────
+                      if (esRegistro) ...[
+                        const SizedBox(height: 16),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: Checkbox(
+                                value: aceptaPolitica,
+                                onChanged: (_) => onToggleAceptaPolitica(),
+                                activeColor: const Color(0xFFB71C1C),
+                                side: BorderSide(
+                                  color: AppColors.cardBorder(context),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: onToggleAceptaPolitica,
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary(context),
+                                      fontSize: 13,
+                                      height: 1.3,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: AppStrings.tr(
+                                          'Confirmo que soy mayor de edad y he leído y acepto la ',
+                                          'I confirm I am of legal age and I have read and accept the ',
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: AppStrings.tr(
+                                          'Política de Tratamiento de Datos y los Términos de Uso',
+                                          'Data Policy and Terms of Use',
+                                        ),
+                                        style: TextStyle(
+                                          color: AppColors.textPrimary(context),
+                                          decoration: TextDecoration.underline,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    const PoliticaPrivacidadScreen(),
+                                              ),
+                                            );
+                                          },
+                                      ),
+                                      const TextSpan(text: '.'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+
                       const SizedBox(height: 24),
 
                       SizedBox(
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
-                          onPressed: cargando
+                          onPressed: cargando || (esRegistro && !aceptaPolitica)
                               ? null
                               : (esRegistro ? onRegistrar : onIniciarSesion),
                           style: ElevatedButton.styleFrom(

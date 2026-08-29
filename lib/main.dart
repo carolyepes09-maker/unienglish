@@ -468,6 +468,62 @@ class _MainNavigationState extends State<MainNavigation>
   int _currentIndex = 0;
   final PageController _pageController = PageController();
 
+  @override
+  void initState() {
+    super.initState();
+    // Cuentas creadas antes de que existiera la Política de Tratamiento de
+    // Datos no dieron ese consentimiento todavía. Se les pide una única vez
+    // (queda guardado en Firestore); las cuentas nuevas ya lo aceptaron en
+    // el registro, así que para ellas esto nunca se muestra.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _verificarConsentimientoDatos(),
+    );
+  }
+
+  void _verificarConsentimientoDatos() {
+    if (!mounted) return;
+    final usuario = _authService.usuarioActual;
+    final usuarioId = _authService.usuarioActualId;
+    if (usuario == null || usuarioId == null) return;
+    if (usuario['acepto_politica_datos'] == true) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          AppStrings.tr(
+            'Actualizamos nuestra política de datos',
+            'We updated our data policy',
+          ),
+        ),
+        content: Text(
+          AppStrings.tr(
+            'Para seguir usando UniEnglish, acepta la Política de '
+            'Tratamiento de Datos Personales y los Términos de Uso. '
+            'Puedes leer el texto completo en cualquier momento desde '
+            'Perfil → Privacidad y términos.',
+            'To keep using UniEnglish, please accept the Data Processing '
+            'Policy and Terms of Use. You can read the full text anytime '
+            'from Profile → Privacy & terms.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await _authService.actualizarUsuario(usuarioId, {
+                'acepto_politica_datos': true,
+                'fecha_aceptacion_politica': DateTime.now().toIso8601String(),
+              });
+              if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+            },
+            child: Text(AppStrings.tr('Aceptar y continuar', 'Accept and continue')),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _navLabel(int index) {
     switch (index) {
       case 0:

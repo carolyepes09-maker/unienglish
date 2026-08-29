@@ -7,6 +7,7 @@ import '../../services/progreso_service.dart';
 import '../../services/idioma_service.dart';
 import '../../services/tema_service.dart';
 import '../utils/app_colors.dart';
+import 'politica_privacidad_screen.dart';
 
 const Color kPrimaryRed = Color(0xFFCC0000);
 const Color kGoldAccent = Color(0xFF8B6914);
@@ -515,6 +516,27 @@ class _PerfilScreenState extends State<PerfilScreen>
                             size: 20,
                           ),
                         ],
+                      ),
+                    ),
+                    Divider(height: 1, color: AppColors.divider(context)),
+                    _settingsItem(
+                      icon: Icons.privacy_tip_outlined,
+                      label: AppStrings.tr(
+                        'Privacidad y términos',
+                        'Privacy & terms',
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PoliticaPrivacidadScreen(),
+                          ),
+                        );
+                      },
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: AppColors.iconMuted(context),
+                        size: 20,
                       ),
                     ),
                     Divider(height: 1, color: AppColors.divider(context)),

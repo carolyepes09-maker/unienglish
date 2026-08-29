@@ -139,6 +139,11 @@ class AuthService {
         'fecha_registro': DateTime.now().toIso8601String(),
         'ultima_conexion': DateTime.now().toIso8601String(),
         'notificaciones_activas': true,
+        // El formulario de registro ya bloquea el botón hasta que se marca
+        // el checkbox de aceptación (ver login_screen.dart), así que si
+        // llegamos aquí es porque el usuario ya aceptó.
+        'acepto_politica_datos': true,
+        'fecha_aceptacion_politica': DateTime.now().toIso8601String(),
       };
 
       await _usuariosRef

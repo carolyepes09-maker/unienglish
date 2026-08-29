@@ -49,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen>
   bool _obscurePassword = true;
   bool _esRegistro = false;
   bool _cargando = false;
+  bool _aceptaPolitica = false;
 
   @override
   void initState() {
@@ -113,6 +114,15 @@ class _LoginScreenState extends State<LoginScreen>
           AppStrings.tr(
             'Por favor ingresa tu programa o facultad',
             'Please enter your program or faculty',
+          ),
+        );
+        return false;
+      }
+      if (!_aceptaPolitica) {
+        _mostrarError(
+          AppStrings.tr(
+            'Debes aceptar la Política de Tratamiento de Datos y confirmar que eres mayor de edad',
+            'You must accept the Data Policy and confirm you are of legal age',
           ),
         );
         return false;
@@ -305,6 +315,9 @@ class _LoginScreenState extends State<LoginScreen>
   void _onTogglePassword() =>
       setState(() => _obscurePassword = !_obscurePassword);
 
+  void _onToggleAceptaPolitica() =>
+      setState(() => _aceptaPolitica = !_aceptaPolitica);
+
   void _onToggleModo() {
     setState(() => _esRegistro = !_esRegistro);
     _passwordController.clear();
@@ -317,12 +330,14 @@ class _LoginScreenState extends State<LoginScreen>
         esRegistro: _esRegistro,
         cargando: _cargando,
         obscurePassword: _obscurePassword,
+        aceptaPolitica: _aceptaPolitica,
         emailController: _emailController,
         passwordController: _passwordController,
         nombreController: _nombreController,
         codigoController: _codigoController,
         programaController: _programaController,
         onTogglePassword: _onTogglePassword,
+        onToggleAceptaPolitica: _onToggleAceptaPolitica,
         onOlvideContrasena: _olvideContrasena,
         onIniciarSesion: _iniciarSesion,
         onRegistrar: _registrar,
@@ -333,12 +348,14 @@ class _LoginScreenState extends State<LoginScreen>
       esRegistro: _esRegistro,
       cargando: _cargando,
       obscurePassword: _obscurePassword,
+      aceptaPolitica: _aceptaPolitica,
       emailController: _emailController,
       passwordController: _passwordController,
       nombreController: _nombreController,
       codigoController: _codigoController,
       programaController: _programaController,
       onTogglePassword: _onTogglePassword,
+      onToggleAceptaPolitica: _onToggleAceptaPolitica,
       onOlvideContrasena: _olvideContrasena,
       onIniciarSesion: _iniciarSesion,
       onRegistrar: _registrar,
