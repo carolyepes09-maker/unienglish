@@ -14,9 +14,9 @@ import '../utils/app_colors.dart';
 /// =============================================================================
 
 // ─── DATOS A COMPLETAR ──────────────────────────────────────────────────────
-const String kNombreResponsable = '[Tu nombre completo]';
+const String kNombreResponsable = 'Ferek Romero';
 const String kProgramaAcademico = '[Tu programa académico]';
-const String kCorreoContacto = '[tu-correo-de-contacto@ejemplo.com]';
+const String kCorreoContacto = 'romeroferek@gmail.com';
 
 class PoliticaPrivacidadScreen extends StatelessWidget {
   const PoliticaPrivacidadScreen({super.key});
