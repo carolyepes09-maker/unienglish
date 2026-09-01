@@ -780,17 +780,19 @@ class _MainNavigationState extends State<MainNavigation>
     return Scaffold(
       body: Row(
         children: [
-          Container(
+          // Misma textura (fondo.webp + capa oscura) que el panel izquierdo
+          // del Login de escritorio -- antes era un degradado plano sin
+          // ninguna imagen, la barra lateral desentonaba con el resto de la
+          // estética institucional de la app.
+          SizedBox(
             width: 260,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF6B1010), Color(0xFF2E0808)],
-              ),
-            ),
-            child: SafeArea(
-              child: Column(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
+                Container(color: Colors.black.withValues(alpha: 0.55)),
+                SafeArea(
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
@@ -932,7 +934,9 @@ class _MainNavigationState extends State<MainNavigation>
                 ],
               ),
             ),
-          ),
+                ],
+              ),
+            ),
           Expanded(child: _screens[_currentIndex]),
         ],
       ),
