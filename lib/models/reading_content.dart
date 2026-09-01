@@ -339,10 +339,207 @@ final ContenidoTema inference = ContenidoTema(
 );
 
 // ══════════════════════════════════════════════════════════════════════════════
+// CONTENIDO READING - CRITICAL READING
+// ══════════════════════════════════════════════════════════════════════════════
+final ContenidoTema criticalReading = ContenidoTema(
+  titulo: 'Critical Reading',
+  descripcion: 'Análisis y evaluación',
+  queEs:
+      'Critical Reading es evaluar un texto, no solo entenderlo. Preguntas: ¿el autor tiene evidencia suficiente? ¿hay sesgo (bias)? ¿la conclusión realmente se sigue de los argumentos? Es la habilidad de lectura más avanzada, esencial en la universidad.',
+  cuandoSeUsa: [
+    'Leer artículos de opinión y detectar el punto de vista del autor',
+    'Evaluar fuentes para un trabajo de investigación académico',
+    'Analizar argumentos en debates o ensayos persuasivos',
+  ],
+  estructura: [
+    '1. Identifica la TESIS o argumento principal del autor',
+    '2. Busca la EVIDENCIA: ¿son datos, opiniones, o ejemplos anecdóticos?',
+    '3. Detecta el SESGO: ¿el autor favorece un lado sin mencionar el otro?',
+    '4. Evalúa la CONCLUSIÓN: ¿se sostiene lógicamente con la evidencia presentada?',
+  ],
+  textoEjemplo: const Texto(
+    ingles:
+        'Some universities have started replacing traditional exams with AI-monitored take-home assessments, claiming this reduces student stress. Supporters argue that students perform better without time pressure. However, critics point out that these systems rely on facial recognition and browser tracking, raising serious privacy concerns. Moreover, no independent study has confirmed that take-home assessments actually measure learning as effectively as supervised exams. Despite this lack of evidence, several institutions are adopting the technology quickly, driven partly by marketing from the companies that sell it.',
+    traduccion:
+        'Algunas universidades han empezado a reemplazar los exámenes tradicionales por evaluaciones en casa monitoreadas por IA, alegando que esto reduce el estrés estudiantil. Los defensores argumentan que los estudiantes rinden mejor sin presión de tiempo. Sin embargo, los críticos señalan que estos sistemas dependen de reconocimiento facial y rastreo del navegador, lo cual genera serias preocupaciones de privacidad. Además, ningún estudio independiente ha confirmado que las evaluaciones en casa midan el aprendizaje tan efectivamente como los exámenes supervisados. A pesar de esta falta de evidencia, varias instituciones están adoptando la tecnología rápidamente, impulsadas en parte por el marketing de las empresas que la venden.',
+    tema: 'AI-Monitored Exams: A Critical Look',
+  ),
+  erroresComunes: [
+    'Aceptar toda afirmación como un hecho. Un texto puede sonar seguro sin tener evidencia real detrás.',
+    'No notar cuando el autor solo presenta UN lado del argumento (sesgo/bias).',
+    'Confundir OPINIÓN del autor con HECHO objetivo. Frases como "critics point out" señalan que es un punto de vista, no una verdad absoluta.',
+  ],
+  tipsParaRecordar: [
+    'Pregúntate siempre: "¿Cómo sabe esto el autor? ¿Cuál es su fuente?"',
+    'Palabras como "sin embargo", "a pesar de", "aunque" señalan que hay un contraargumento — no lo ignores.',
+    'Si el texto no menciona el lado opuesto en absoluto, sospecha de sesgo.',
+  ],
+  ejercicios: [
+    const Pregunta(
+      pregunta: 'What is the author\'s main criticism of AI-monitored assessments?',
+      opciones: [
+        'They are too expensive for universities',
+        'They lack independent evidence of effectiveness and raise privacy concerns',
+        'Students dislike using computers',
+        'They take too long to grade',
+      ],
+      correcta: 1,
+      explicacion:
+          'El texto señala dos críticas específicas: falta de evidencia independiente y preocupaciones de privacidad (facial recognition, browser tracking). Critical Reading identifica los argumentos exactos, no una impresión vaga.',
+    ),
+    const Pregunta(
+      pregunta: 'Which phrase in the text signals a SHIFT to a counterargument?',
+      opciones: [
+        '"Some universities have started"',
+        '"However, critics point out"',
+        '"Supporters argue that"',
+        '"driven partly by marketing"',
+      ],
+      correcta: 1,
+      explicacion:
+          '"However" es una palabra clave que marca contraste — el texto pasa de presentar el argumento a favor a presentar la crítica. Reconocer estos marcadores es esencial en Critical Reading.',
+    ),
+    const Pregunta(
+      pregunta:
+          'What EVIDENCE does the author give that adoption might be driven by something other than proven results?',
+      opciones: [
+        'Independent studies confirming effectiveness',
+        'Student surveys showing satisfaction',
+        'The fact that no independent study confirms effectiveness, yet adoption continues, partly due to marketing',
+        'Government regulations requiring it',
+      ],
+      correcta: 2,
+      explicacion:
+          'El texto explícitamente dice que NO hay evidencia independiente, pero la adopción continúa "impulsada en parte por el marketing". Esto sugiere que decisiones institucionales no siempre siguen la evidencia — un punto crítico clave.',
+    ),
+    const Pregunta(
+      pregunta: 'Is this text biased toward one side, or balanced?',
+      opciones: [
+        'Completely biased in favor of AI monitoring',
+        'Relatively balanced — presents both supporter and critic viewpoints',
+        'Completely biased against universities',
+        'Only presents facts with no viewpoints at all',
+      ],
+      correcta: 1,
+      explicacion:
+          'El texto presenta AMBOS lados: "supporters argue" y "critics point out". Esto es relativamente balanceado — buen ejercicio de Critical Reading es notar CUÁNDO un texto sí presenta ambos lados.',
+    ),
+    const Pregunta(
+      pregunta:
+          'What can you INFER about the author\'s own stance, based on word choice like "despite this lack of evidence"?',
+      opciones: [
+        'The author strongly supports AI-monitored exams',
+        'The author is neutral and has no opinion at all',
+        'The author is somewhat skeptical of the rapid adoption without proven results',
+        'The author works for a company that sells this technology',
+      ],
+      correcta: 2,
+      explicacion:
+          'La frase "despite this lack of evidence" sugiere escepticismo del autor sobre la adopción rápida sin resultados comprobados — el lenguaje revela una postura sutil, incluso en un texto "balanceado". Esto es inferencia crítica avanzada.',
+    ),
+  ],
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CONTENIDO READING - ACADEMIC TEXTS
+// ══════════════════════════════════════════════════════════════════════════════
+final ContenidoTema academicTexts = ContenidoTema(
+  titulo: 'Academic Texts',
+  descripcion: 'Textos universitarios',
+  queEs:
+      'Los textos académicos (artículos, abstracts, papers) tienen una estructura formal y predecible: Introduction, Methodology, Results/Findings, Discussion, Conclusion. Reconocer esta estructura te ayuda a leer más rápido y encontrar la información que necesitas.',
+  cuandoSeUsa: [
+    'Leer papers o artículos científicos para una investigación',
+    'Revisar el abstract de un artículo para decidir si es relevante',
+    'Entender textos de tus clases universitarias en inglés',
+  ],
+  estructura: [
+    '1. ABSTRACT: resumen breve de todo el estudio (léelo primero siempre)',
+    '2. INTRODUCTION: contexto y pregunta de investigación',
+    '3. METHODOLOGY: cómo se hizo el estudio',
+    '4. FINDINGS/RESULTS: qué se encontró (datos)',
+    '5. DISCUSSION/CONCLUSION: qué significan los resultados',
+  ],
+  textoEjemplo: const Texto(
+    ingles:
+        'Abstract: This study examines the relationship between sleep duration and academic performance among 340 undergraduate students. Methodology: Participants completed a sleep diary for four weeks alongside standard academic assessments. Findings: Students who slept fewer than six hours per night scored, on average, 12 percent lower on assessments than those who slept seven to eight hours. Discussion: These results suggest that sleep duration is a significant, modifiable factor in academic performance, and universities should consider promoting healthy sleep habits as part of student wellness programs.',
+    traduccion:
+        'Resumen: Este estudio examina la relación entre la duración del sueño y el rendimiento académico entre 340 estudiantes universitarios. Metodología: Los participantes completaron un diario de sueño durante cuatro semanas junto con evaluaciones académicas estándar. Hallazgos: Los estudiantes que dormían menos de seis horas por noche obtuvieron, en promedio, un 12 por ciento menos en las evaluaciones que quienes dormían de siete a ocho horas. Discusión: Estos resultados sugieren que la duración del sueño es un factor significativo y modificable en el rendimiento académico, y las universidades deberían considerar promover hábitos de sueño saludables como parte de los programas de bienestar estudiantil.',
+    tema: 'Academic Abstract: Sleep and Performance',
+  ),
+  erroresComunes: [
+    'Leer el paper completo de principio a fin como una novela — pierdes tiempo. Lee el Abstract primero para decidir si te sirve.',
+    'Ignorar la sección de Methodology, pensando que solo importan los resultados. La metodología te dice qué tan confiable es el estudio.',
+    'Confundir "Findings" (datos objetivos) con "Discussion" (interpretación/opinión de los autores sobre esos datos).',
+  ],
+  tipsParaRecordar: [
+    'Abstract = todo el estudio en un párrafo. Si el abstract no te sirve, el artículo probablemente tampoco.',
+    'Busca números y porcentajes en Findings — son los datos duros del estudio.',
+    'La Discussion conecta los datos con el "por qué importa" — ahí está la relevancia práctica.',
+  ],
+  ejercicios: [
+    const Pregunta(
+      pregunta: 'What is the main finding of this study?',
+      opciones: [
+        'Students who sleep more study less',
+        'Students sleeping fewer than six hours scored 12% lower on average than those sleeping 7-8 hours',
+        'Sleep has no effect on academic performance',
+        'Universities do not care about student sleep',
+      ],
+      correcta: 1,
+      explicacion:
+          'La sección de Findings da el dato exacto: "12 percent lower" para quienes duermen menos de 6 horas. Los textos académicos ponen los resultados objetivos en Findings, no en Discussion.',
+    ),
+    const Pregunta(
+      pregunta: 'How many participants were in this study?',
+      opciones: ['12', '340', '4', '8'],
+      correcta: 1,
+      explicacion:
+          'El Abstract lo dice directamente: "340 undergraduate students". En textos académicos, el tamaño de muestra siempre aparece en el Abstract o Methodology.',
+    ),
+    const Pregunta(
+      pregunta:
+          'Which section would tell you HOW the researchers collected their data?',
+      opciones: ['Abstract', 'Methodology', 'Findings', 'Discussion'],
+      correcta: 1,
+      explicacion:
+          'Methodology explica el PROCESO: "completed a sleep diary for four weeks alongside standard academic assessments". Es la sección que evalúa qué tan confiable es el estudio.',
+    ),
+    const Pregunta(
+      pregunta: 'What RECOMMENDATION do the authors make in the Discussion?',
+      opciones: [
+        'Universities should eliminate exams',
+        'Students should sleep exactly 8 hours every night',
+        'Universities should consider promoting healthy sleep habits in wellness programs',
+        'No recommendation is made',
+      ],
+      correcta: 2,
+      explicacion:
+          'La Discussion conecta el hallazgo con una aplicación práctica: "universities should consider promoting healthy sleep habits". Esto es interpretación/recomendación, distinto del dato objetivo en Findings.',
+    ),
+    const Pregunta(
+      pregunta:
+          'If you only had 30 seconds to decide if this article is useful for your research on student wellness, which section would you read?',
+      opciones: [
+        'The full Methodology section',
+        'The Abstract',
+        'Only the last sentence of the Discussion',
+        'The reference list',
+      ],
+      correcta: 1,
+      explicacion:
+          'El Abstract resume TODO el estudio en un párrafo — es la forma más rápida de decidir relevancia. Investigadores experimentados leen decenas de abstracts antes de elegir qué artículos leer completos.',
+    ),
+  ],
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
 // MAPA UNIFICADO DE TEMAS PARA READING
 // ══════════════════════════════════════════════════════════════════════════════
 final Map<String, ContenidoTema> readingTopics = {
   'Skimming': skimming,
   'Scanning': scanning,
   'Inference': inference,
+  'Critical Reading': criticalReading,
+  'Academic Texts': academicTexts,
 };

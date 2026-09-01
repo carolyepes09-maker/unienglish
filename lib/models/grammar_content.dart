@@ -547,6 +547,201 @@ final ContenidoTema futureTenses = ContenidoTema(
 );
 
 // ══════════════════════════════════════════════════════════════════════════════
+// CONTENIDO GRAMMAR - MODAL VERBS
+// ══════════════════════════════════════════════════════════════════════════════
+final ContenidoTema modalVerbs = ContenidoTema(
+  titulo: 'Modal Verbs',
+  descripcion: 'Habilidad, posibilidad y obligación',
+  queEs:
+      'Los modal verbs (can, could, may, might, must, should, have to) expresan habilidad, posibilidad, permiso, obligación o consejo. Van siempre seguidos del verbo base, sin "to" y sin "s" en 3ª persona.',
+  cuandoSeUsa: [
+    'Habilidad: "I can speak two languages"',
+    'Posibilidad: "It might rain this afternoon"',
+    'Obligación/consejo: "You must submit the essay by Friday" / "You should study more"',
+  ],
+  estructura: const Estructura(
+    positiva: 'Subject + modal + base verb (can go, must study, should ask)',
+    negativa: 'Subject + modal + not + base verb (cannot go, must not study)',
+    pregunta: 'Modal + Subject + base verb? (Can you go? Should I ask?)',
+  ),
+  ejemplos: [
+    const Ejemplo(
+      ingles: 'Students must register before the semester starts.',
+      traduccion: 'Los estudiantes deben registrarse antes de que empiece el semestre.',
+    ),
+    const Ejemplo(
+      ingles: 'You should ask the professor if you have doubts.',
+      traduccion: 'Deberías preguntarle al profesor si tienes dudas.',
+    ),
+    const Ejemplo(
+      ingles: 'She might join the study group tonight.',
+      traduccion: 'Puede que ella se una al grupo de estudio esta noche.',
+    ),
+  ],
+  erroresComunes: [
+    'Agrega "to" después del modal: MAL: "I can to speak" BIEN: "I can speak"',
+    'Agrega "s" en 3ª persona: MAL: "She cans swim" BIEN: "She can swim"',
+    'Confunde "must" (obligación fuerte, interna) con "have to" (obligación externa): ambos son válidos, pero no son intercambiables en todos los contextos.',
+  ],
+  tipsParaRecordar: [
+    'Los modales NUNCA cambian de forma: I can, he can, they can (nunca "cans")',
+    '"Must" = regla que tú mismo impones o es muy fuerte. "Have to" = regla externa (la universidad, la ley)',
+    '"Should" = consejo, no obligación. "Must" = obligación',
+  ],
+  ejercicios: [
+    const Pregunta(
+      pregunta: 'Complete: "All students _______ submit their ID before the exam."',
+      opciones: ['must', 'must to', 'musts', 'are must'],
+      correcta: 0,
+      explicacion:
+          'Modal "must" + base verb, sin "to" y sin cambios de forma. Es una regla obligatoria de la universidad.',
+    ),
+    const Pregunta(
+      pregunta: 'Which sentence is correct?',
+      opciones: [
+        'He can speaks three languages.',
+        'He can to speak three languages.',
+        'He can speak three languages.',
+        'He cans speak three languages.',
+      ],
+      correcta: 2,
+      explicacion:
+          'Modal + base verb, sin "s" ni "to". "Can speak" es correcto incluso con "he" (3ª persona).',
+    ),
+    const Pregunta(
+      pregunta: 'Choose the best modal for ADVICE (not obligation): "_______ you talk to your advisor about this?"',
+      opciones: ['Must', 'Should', 'Have to', 'Can\'t'],
+      correcta: 1,
+      explicacion:
+          '"Should" es para consejo/sugerencia, no obligación estricta. "Must"/"have to" implican que es obligatorio, no una simple recomendación.',
+    ),
+    const Pregunta(
+      pregunta: 'Transform to negative: "You must use your phone during the exam."',
+      opciones: [
+        'You must not use your phone during the exam.',
+        'You not must use your phone during the exam.',
+        'You don\'t must use your phone during the exam.',
+        'You mustn\'t to use your phone during the exam.',
+      ],
+      correcta: 0,
+      explicacion:
+          'Negativa de modales: modal + not + base verb. "Must not" (mustn\'t) indica prohibición, no simple ausencia de obligación.',
+    ),
+    const Pregunta(
+      pregunta:
+          'Translate: "Puede que el profesor cancele la clase mañana" (uncertain possibility)',
+      opciones: [
+        'The professor must cancel class tomorrow.',
+        'The professor might cancel class tomorrow.',
+        'The professor should cancel class tomorrow.',
+        'The professor can cancel class tomorrow.',
+      ],
+      correcta: 1,
+      explicacion:
+          '"Might" expresa posibilidad incierta, no confirmada — exactamente "puede que". "Must" sería una conclusión casi segura, no una posibilidad.',
+    ),
+  ],
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CONTENIDO GRAMMAR - CONDITIONALS
+// ══════════════════════════════════════════════════════════════════════════════
+final ContenidoTema conditionals = ContenidoTema(
+  titulo: 'Conditionals',
+  descripcion: 'Oraciones condicionales (if)',
+  queEs:
+      'Las oraciones condicionales usan "if" para hablar de situaciones reales, probables o hipotéticas. El Zero Conditional habla de hechos generales, el First Conditional de situaciones futuras probables, y el Second Conditional de situaciones hipotéticas o improbables.',
+  cuandoSeUsa: [
+    'Zero Conditional (hechos generales): "If you heat water, it boils"',
+    'First Conditional (futuro probable): "If I study hard, I will pass the exam"',
+    'Second Conditional (hipotético): "If I had more time, I would learn another language"',
+  ],
+  estructura: const Estructura(
+    positiva: 'If + present simple, present simple (zero) | If + present simple, will + base verb (first) | If + past simple, would + base verb (second)',
+    negativa: 'If + subject + do/does not..., ... not... (según el tipo de condicional)',
+    pregunta: 'What will you do if...? / What would you do if...?',
+  ),
+  ejemplos: [
+    const Ejemplo(
+      ingles: 'If students attend all classes, they usually understand the material better.',
+      traduccion: 'Si los estudiantes asisten a todas las clases, generalmente entienden mejor el material.',
+    ),
+    const Ejemplo(
+      ingles: 'If I finish my project early, I will help you with yours.',
+      traduccion: 'Si termino mi proyecto temprano, te ayudaré con el tuyo.',
+    ),
+    const Ejemplo(
+      ingles: 'If I had a scholarship, I would study abroad.',
+      traduccion: 'Si tuviera una beca, estudiaría en el extranjero.',
+    ),
+  ],
+  erroresComunes: [
+    'Usa "will" en la cláusula con "if": MAL: "If it will rain, I will stay home" BIEN: "If it rains, I will stay home"',
+    'Confunde First y Second Conditional: First = probable ("if I study" + will); Second = hipotético ("if I studied" + would)',
+    'Olvida "would" en la Second Conditional: MAL: "If I had money, I buy a car" BIEN: "If I had money, I would buy a car"',
+  ],
+  tipsParaRecordar: [
+    'Zero: hecho siempre cierto → present + present',
+    'First: probable en el futuro → if + present, will + base verb',
+    'Second: hipotético/improbable → if + past simple, would + base verb (aunque hable de presente/futuro)',
+  ],
+  ejercicios: [
+    const Pregunta(
+      pregunta: 'Complete (First Conditional): "If she _______ hard, she will pass the course."',
+      opciones: ['will study', 'studies', 'studied', 'would study'],
+      correcta: 1,
+      explicacion:
+          'En First Conditional, la cláusula con "if" usa present simple ("studies"), NUNCA "will". El "will" va en la otra cláusula.',
+    ),
+    const Pregunta(
+      pregunta: 'Which is a Zero Conditional (general fact)?',
+      opciones: [
+        'If you mix red and blue, you get purple.',
+        'If I have time tomorrow, I will call you.',
+        'If I were you, I would apologize.',
+        'If she had studied, she would have passed.',
+      ],
+      correcta: 0,
+      explicacion:
+          'Zero Conditional describe un hecho siempre verdadero: present simple + present simple. Mezclar rojo y azul SIEMPRE da morado.',
+    ),
+    const Pregunta(
+      pregunta:
+          'Complete (Second Conditional, hypothetical): "If I _______ more free time, I would join a sports team."',
+      opciones: ['have', 'had', 'will have', 'would have'],
+      correcta: 1,
+      explicacion:
+          'Second Conditional: if + PAST SIMPLE ("had"), aunque hable del presente/futuro hipotético. Es una situación improbable o imaginaria.',
+    ),
+    const Pregunta(
+      pregunta: 'Which sentence correctly uses First Conditional?',
+      opciones: [
+        'If it rains tomorrow, we will cancel the trip.',
+        'If it will rain tomorrow, we cancel the trip.',
+        'If it rained tomorrow, we will cancel the trip.',
+        'If it rains tomorrow, we would cancel the trip.',
+      ],
+      correcta: 0,
+      explicacion:
+          'If + present simple ("rains"), will + base verb ("will cancel"). Es una situación futura real y probable.',
+    ),
+    const Pregunta(
+      pregunta:
+          'Translate: "Si tuviera un trabajo de tiempo completo, no podría estudiar tanto" (hypothetical)',
+      opciones: [
+        'If I have a full-time job, I cannot study as much.',
+        'If I had a full-time job, I would not be able to study as much.',
+        'If I will have a full-time job, I will not study as much.',
+        'If I have had a full-time job, I would not study as much.',
+      ],
+      correcta: 1,
+      explicacion:
+          'Situación hipotética (no tiene el trabajo): Second Conditional. If + past simple ("had"), would + base verb ("would not be able").',
+    ),
+  ],
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
 // MAP CENTRAL DE TEMAS GRAMMAR
 // ══════════════════════════════════════════════════════════════════════════════
 final Map<String, ContenidoTema> grammarTopics = {
@@ -555,4 +750,6 @@ final Map<String, ContenidoTema> grammarTopics = {
   'Past Simple': pastSimple,
   'Present Perfect': presentPerfect,
   'Future Tenses': futureTenses,
+  'Modal Verbs': modalVerbs,
+  'Conditionals': conditionals,
 };
