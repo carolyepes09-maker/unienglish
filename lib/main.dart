@@ -592,6 +592,7 @@ class _MainNavigationState extends State<MainNavigation>
     RepaintBoundary(
       child: PerfilScreen(
         authService: _authService,
+        vocabularioService: _vocabularioService,
         onBack: () => _irAPantalla(0),
       ),
     ),

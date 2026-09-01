@@ -35,6 +35,25 @@ class VocabularioService extends ChangeNotifier {
     await sincronizarConCuenta();
   }
 
+  /// Borra la caché local (SharedPreferences) y reinicia el estado en
+  /// memoria. Se llama al cerrar sesión: sin esto, la próxima persona que
+  /// use este mismo navegador/dispositivo vería por un instante el
+  /// vocabulario de la cuenta anterior durante la precarga local (que
+  /// corre antes de saber quién inició sesión).
+  Future<void> limpiarCacheLocal() async {
+    try {
+      await _prefs.remove('palabras_usuario');
+      await _prefs.remove('progreso_vocabulario');
+      await _prefs.remove('vocabulario_actualizado_en');
+      await _prefs.remove('vocabulario_uid');
+    } catch (e) {
+      AppLogger.log('❌ Error limpiando caché local de vocabulario: $e');
+    }
+    _tarjetasUsuario = [];
+    _progresoTarjetas = [];
+    notifyListeners();
+  }
+
   /// Fase 1: SharedPreferences + vocabulario del sistema (assets) -- no
   /// depende de Firebase ni de que haya sesión, así que puede correr en
   /// paralelo con Firebase.initializeApp() en vez de esperarlo primero.

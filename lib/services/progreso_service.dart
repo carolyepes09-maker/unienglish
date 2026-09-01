@@ -58,6 +58,37 @@ class ProgresoService extends ChangeNotifier {
     await sincronizarConCuenta();
   }
 
+  /// Borra la caché local (SharedPreferences) y reinicia el estado en
+  /// memoria a los valores por defecto. Se llama al cerrar sesión: sin
+  /// esto, la próxima persona que use este mismo navegador/dispositivo
+  /// vería por un instante el progreso de la cuenta anterior durante la
+  /// precarga local (que corre antes de saber quién inició sesión).
+  Future<void> limpiarCacheLocal() async {
+    try {
+      await _prefs.remove('racha_dias');
+      await _prefs.remove('tiempo_total_horas');
+      await _prefs.remove('lecciones_completadas');
+      await _prefs.remove('examenes_realizados');
+      await _prefs.remove('actividad_semanal');
+      await _prefs.remove('habilidades_values');
+      await _prefs.remove('progreso_siguiente_nivel');
+      await _prefs.remove('siguiente_nivel');
+      await _prefs.remove('progreso_actualizado_en');
+      await _prefs.remove('progreso_uid');
+    } catch (e) {
+      AppLogger.log('❌ Error limpiando caché local de progreso: $e');
+    }
+    _rachaDias = 0;
+    _tiempoTotalHoras = 0;
+    _leccionesCompletadas = 0;
+    _examenesRealizados = 0;
+    _actividadSemanal = [0, 0, 0, 0, 0, 0, 0];
+    _habilidadesValues = [0, 0, 0, 0, 0];
+    _progresoHaciaSiguienteNivel = 0.0;
+    _siguienteNivel = 'A2';
+    notifyListeners();
+  }
+
   /// Fase 1: solo SharedPreferences -- no depende de Firebase ni de que haya
   /// sesión, así que puede correr en paralelo con Firebase.initializeApp()
   /// en vez de esperarlo primero.

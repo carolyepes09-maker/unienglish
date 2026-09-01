@@ -90,16 +90,19 @@ class _LoginScreenState extends State<LoginScreen>
       );
       return false;
     }
-    if (_passwordController.text.length < 6) {
-      _mostrarError(
-        AppStrings.tr(
-          'La contraseña debe tener al menos 6 caracteres',
-          'Password must be at least 6 characters long',
-        ),
-      );
-      return false;
-    }
     if (_esRegistro) {
+      // Mínimo más alto solo para cuentas NUEVAS -- no se aplica al login,
+      // para no bloquear a quien ya se registró con una contraseña más
+      // corta (el mínimo de Firebase Auth en sí sigue siendo 6).
+      if (_passwordController.text.length < 8) {
+        _mostrarError(
+          AppStrings.tr(
+            'La contraseña debe tener al menos 8 caracteres',
+            'Password must be at least 8 characters long',
+          ),
+        );
+        return false;
+      }
       if (_nombreController.text.isEmpty) {
         _mostrarError(
           AppStrings.tr(
@@ -277,9 +280,6 @@ class _LoginScreenState extends State<LoginScreen>
           'Registration successful! Signing you in automatically...',
         ),
       );
-
-      // Imprimir información de debug después de registrarse
-      await _authService.imprimirDebug();
 
       // Iniciar sesión automáticamente después del registro
       await Future.delayed(const Duration(milliseconds: 800));

@@ -17,6 +17,14 @@ service cloud.firestore {
         return valor is string && valor in ['es', 'en'];
       }
 
+      // Tope laxo de longitud para campos de texto libre (nombre, correo,
+      // código, programa): el límite de 1MB por documento de Firestore ya
+      // acota el peor caso, pero esto evita que un cliente con las devtools
+      // abiertas escriba un texto desproporcionado en un solo campo.
+      function textoRazonable(valor, maximo) {
+        return valor is string && valor.size() <= maximo;
+      }
+
       // Valida tipo y rango de cada campo conocido SI está presente en el
       // documento resultante -- no exige que todos existan (los servicios
       // escriben de a poco, con SetOptions(merge: true)), pero si un campo
@@ -34,6 +42,10 @@ service cloud.firestore {
           (!('nivel_actual' in datos) || nivelValido(datos.nivel_actual)) &&
           (!('siguiente_nivel' in datos) || nivelValido(datos.siguiente_nivel)) &&
           (!('idioma_preferido' in datos) || idiomaValido(datos.idioma_preferido)) &&
+          (!('nombre_completo' in datos) || textoRazonable(datos.nombre_completo, 200)) &&
+          (!('correo_electronico' in datos) || textoRazonable(datos.correo_electronico, 200)) &&
+          (!('codigo_estudiante' in datos) || textoRazonable(datos.codigo_estudiante, 50)) &&
+          (!('facultad_programa' in datos) || textoRazonable(datos.facultad_programa, 200)) &&
           // Solo se valida el TIPO (lista) y un tope máximo laxo, no un
           // tamaño exacto: una cuenta ya existente cuyo array tenga hoy una
           // longitud distinta (por cualquier motivo histórico) no debe

@@ -179,6 +179,21 @@ class ActividadService {
   List<Map<String, dynamic>> obtenerActividades() {
     return _actividades;
   }
+
+  /// Borra la caché local (SharedPreferences) y reinicia el estado en
+  /// memoria. Se llama al cerrar sesión: sin esto, la próxima persona que
+  /// use este mismo navegador/dispositivo vería por un instante la
+  /// actividad reciente de la cuenta anterior durante la precarga local
+  /// (que corre antes de saber quién inició sesión).
+  Future<void> limpiarCacheLocal() async {
+    try {
+      await _prefs.remove('actividades_recientes');
+      await _prefs.remove('actividad_uid');
+    } catch (e) {
+      AppLogger.log('❌ Error limpiando caché local de actividad: $e');
+    }
+    _actividades = [];
+  }
 }
 
 // Singleton global (misma instancia que `ActividadService()`).

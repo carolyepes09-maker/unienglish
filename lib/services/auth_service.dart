@@ -126,6 +126,15 @@ class AuthService {
       );
       final usuarioId = credencial.user!.uid;
 
+      // Mejor esfuerzo: si falla (límite de envíos, red, etc.) no debe
+      // impedir que el registro se complete -- el usuario ya puede usar la
+      // app, solo no habrá podido verificar el correo en este intento.
+      try {
+        await credencial.user!.sendEmailVerification();
+      } catch (e) {
+        AppLogger.log('⚠️ No se pudo enviar el correo de verificación: $e');
+      }
+
       final nuevoUsuario = {
         'usuario_id': usuarioId,
         'nombre_completo': nombreCompleto,
@@ -254,13 +263,4 @@ class AuthService {
 
   /// Obtiene el usuario actual ID
   Future<String?> obtenerUsuarioId() async => _usuarioActualId;
-
-  /// Muestra información de depuración
-  Future<void> imprimirDebug() async {
-    AppLogger.log('--- AUTH DEBUG INFO ---');
-    AppLogger.log('Usuario ID: $_usuarioActualId');
-    AppLogger.log('Autenticado: $estaAutenticado');
-    AppLogger.log('Datos: $_usuarioActualData');
-    AppLogger.log('-----------------------');
-  }
 }

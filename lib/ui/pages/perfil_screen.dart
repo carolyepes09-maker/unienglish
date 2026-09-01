@@ -4,6 +4,8 @@ import '../utils/app_strings.dart';
 import 'package:gif/gif.dart';
 import '../../services/auth_service.dart';
 import '../../services/progreso_service.dart';
+import '../../services/vocabulario_service.dart';
+import '../../services/actividad_service.dart';
 import '../../services/idioma_service.dart';
 import '../../services/tema_service.dart';
 import '../utils/app_colors.dart';
@@ -30,9 +32,15 @@ const Color kCreamMuted = Color(0xAAF5E6D0);
 
 class PerfilScreen extends StatefulWidget {
   final AuthService authService;
+  final VocabularioService vocabularioService;
   final VoidCallback? onBack;
 
-  const PerfilScreen({super.key, required this.authService, this.onBack});
+  const PerfilScreen({
+    super.key,
+    required this.authService,
+    required this.vocabularioService,
+    this.onBack,
+  });
 
   @override
   State<PerfilScreen> createState() => _PerfilScreenState();
@@ -570,6 +578,18 @@ class _PerfilScreenState extends State<PerfilScreen>
                                 onPressed: () async {
                                   Navigator.pop(context);
                                   await widget.authService.cerrarSesion();
+                                  // Limpia la caché local de las 3 fuentes
+                                  // de datos: sin esto, si otra persona usa
+                                  // este mismo navegador/dispositivo y
+                                  // inicia sesión con su propia cuenta,
+                                  // vería por un instante el progreso,
+                                  // vocabulario y actividad de esta cuenta
+                                  // durante la precarga local del arranque.
+                                  await Future.wait([
+                                    _progresoService.limpiarCacheLocal(),
+                                    widget.vocabularioService.limpiarCacheLocal(),
+                                    ActividadService().limpiarCacheLocal(),
+                                  ]);
                                   // AuthWrapper redirigirá automáticamente a LoginScreen
                                   if (mounted) {
                                     Navigator.pushReplacementNamed(
