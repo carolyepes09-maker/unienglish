@@ -55,15 +55,16 @@ class HomeDesktopBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Encabezado: saludo + racha + progreso ──────────────────
-              // Misma textureCard() (fondo.webp + capa oscura + bisel) que
-              // usa el resto de la app -- antes era un degradado plano sin
-              // ninguna imagen detrás, la única pantalla de escritorio que
-              // no coincidía con la estética institucional del Login.
+              // bg_home.webp -- la misma foto del campus que ya usa el
+              // encabezado de Inicio en móvil (Image.asset directo ahí, no
+              // textureCard()). Antes escritorio mostraba fondo.webp (la
+              // textura roja genérica), una imagen distinta a la del móvil.
               textureCard(
                 margin: EdgeInsets.zero,
                 padding: const EdgeInsets.all(28),
                 radius: 20,
-                imageAlignment: Alignment.topCenter,
+                imagePath: 'assets/images/bg_home.webp',
+                overlayColor: Colors.black.withValues(alpha: 0.50),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

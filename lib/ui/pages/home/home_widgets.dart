@@ -26,6 +26,7 @@ Widget textureCard({
   // en la franja del medio, más plana; Alignment.topCenter captura esa
   // zona de brillo y se nota mucho más como una foto real.
   Alignment imageAlignment = Alignment.center,
+  String imagePath = 'assets/images/fondo.webp',
 }) {
   return Container(
     margin: margin,
@@ -49,7 +50,7 @@ Widget textureCard({
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/fondo.webp',
+              imagePath,
               fit: BoxFit.cover,
               alignment: imageAlignment,
             ),
