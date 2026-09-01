@@ -153,7 +153,7 @@ class ProgresoService extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      debugPrint('Error cargando datos de progreso: $e');
+      AppLogger.log('❌ Error cargando datos de progreso: $e');
     }
   }
 
@@ -198,7 +198,7 @@ class ProgresoService extends ChangeNotifier {
         await _guardarLocal(actualizadoRemoto);
       }
     } catch (e) {
-      debugPrint('Error sincronizando progreso por timestamp: $e');
+      AppLogger.log('❌ Error sincronizando progreso por timestamp: $e');
     }
   }
 
@@ -270,7 +270,7 @@ class ProgresoService extends ChangeNotifier {
         await _prefs.setString('progreso_uid', usuarioId);
       }
     } catch (e) {
-      debugPrint('Error guardando datos locales de progreso: $e');
+      AppLogger.log('❌ Error guardando datos locales de progreso: $e');
     }
   }
 
@@ -291,7 +291,7 @@ class ProgresoService extends ChangeNotifier {
         'progreso_actualizado_en': marcaDeTiempo.toIso8601String(),
       });
     } catch (e) {
-      debugPrint('Error guardando progreso en Firestore: $e');
+      AppLogger.log('❌ Error guardando progreso en Firestore: $e');
     }
   }
 

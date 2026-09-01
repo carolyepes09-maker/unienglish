@@ -5,8 +5,10 @@
 ///
 /// FUNCIONES PRINCIPALES:
 /// 1. Categorización: Define los bloques de Grammar, Reading, Listening, etc.
-/// 2. Mocking de Progreso: Simula el progreso por nivel (A1, A2, etc.) para
-///    la visualización de los "Cursos" en la UI.
+/// 2. Progreso real: la barra de cada bloque usa el dominio por habilidad ya
+///    calculado por [ProgresoService] (el mismo dato que alimenta el radar
+///    de la pantalla Progreso) -- antes eran valores fijos según el nivel
+///    seleccionado, iguales para cualquier usuario.
 ///
 /// RELACIÓN CON OTRAS CAPAS:
 /// - UI: [LeccionesScreen] consume este servicio para renderizar la lista
@@ -35,42 +37,47 @@ class LeccionInfo {
 class LeccionService extends ChangeNotifier {
   final List<String> niveles = ['A1', 'A2', 'B1', 'B2'];
 
-  /// ─── PASO 2: EL FILTRO POR NIVEL ──────────────────────────────────────────
-  /// Cuando el usuario cambia de pestaña (A1, A2...), este método se dispara
-  /// para calcular qué contenido es visible basándose en el nivel seleccionado.
-  List<LeccionInfo> getLecciones(String nivel) {
-    // 2.1 MOCKING DE PROGRESO: Simulamos valores para que la barra se vea llena
-    // o vacía dependiendo del nivel actual del usuario.
-    double baseProgress = 0.0;
-    if (nivel == 'A1') baseProgress = 0.8;
-    if (nivel == 'A2') baseProgress = 0.4;
+  /// ─── PASO 2: LAS TARJETAS DE HABILIDAD ────────────────────────────────────
+  /// [habilidadesValues] es el mismo arreglo (escala 0-100) que usa el radar
+  /// de la pantalla Progreso: [Grammar, Reading, Listening, Writing, Speaking].
+  /// El nivel (A1/A2/B1/B2) no filtra qué bloques se muestran -- hoy la app
+  /// no lleva progreso desglosado por nivel, así que se muestra el dominio
+  /// real y general por habilidad, igual en cualquier pestaña de nivel.
+  List<LeccionInfo> getLecciones(
+    String nivel,
+    List<double> habilidadesValues,
+  ) {
+    double valorDe(int indice) {
+      if (indice >= habilidadesValues.length) return 0.0;
+      return (habilidadesValues[indice] / 100).clamp(0.0, 1.0);
+    }
 
-    // 2.2 GENERACIÓN DE ESTRUCTURAS: Aquí creamos los objetos 'LeccionInfo'
+    // 2.1 GENERACIÓN DE ESTRUCTURAS: Aquí creamos los objetos 'LeccionInfo'
     // que la UI convertirá en tarjetas interactivas.
     return [
       LeccionInfo(
         icon: Icons.menu_book,
         title: 'Grammar',
         subtitle: 'Gramática',
-        progress: (baseProgress + 0.1).clamp(0.0, 1.0),
+        progress: valorDe(0),
       ),
       LeccionInfo(
         icon: Icons.auto_stories,
         title: 'Reading',
         subtitle: 'Lectura',
-        progress: (baseProgress - 0.1).clamp(0.0, 1.0),
+        progress: valorDe(1),
       ),
       LeccionInfo(
         icon: Icons.headphones,
         title: 'Listening',
         subtitle: 'Escucha',
-        progress: (baseProgress - 0.2).clamp(0.0, 1.0),
+        progress: valorDe(2),
       ),
       LeccionInfo(
         icon: Icons.edit_note,
         title: 'Writing',
         subtitle: 'Escritura',
-        progress: (baseProgress - 0.3).clamp(0.0, 1.0),
+        progress: valorDe(3),
       ),
       LeccionInfo(
         icon: Icons.mic,

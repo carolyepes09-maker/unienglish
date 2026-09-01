@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_fonts.dart';
 import '../../services/leccion_service.dart';
+import '../../services/progreso_service.dart';
 import 'leccion_detalle_screen.dart';
 import '../utils/responsive.dart';
 import '../utils/app_strings.dart';
@@ -40,6 +41,7 @@ class LeccionesScreen extends StatefulWidget {
 class _LeccionesScreenState extends State<LeccionesScreen>
     with IdiomaListenerMixin<LeccionesScreen> {
   final LeccionService _leccionService = LeccionService();
+  final ProgresoService _progresoService = ProgresoService();
   int _selectedLevel = 0;
   bool _imagenesPrecargadas = false;
 
@@ -50,6 +52,17 @@ class _LeccionesScreenState extends State<LeccionesScreen>
         widget.authService.usuarioActual?['nivel_actual'] ?? 'A1';
     _selectedLevel = _leccionService.niveles.indexOf(nivelActual);
     if (_selectedLevel == -1) _selectedLevel = 0;
+    _progresoService.addListener(_actualizarUI);
+  }
+
+  void _actualizarUI() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _progresoService.removeListener(_actualizarUI);
+    super.dispose();
   }
 
   @override
@@ -73,6 +86,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
     // Le pedimos al servicio las lecciones que corresponden al nivel seleccionado.
     final lecciones = _leccionService.getLecciones(
       _leccionService.niveles[_selectedLevel],
+      _progresoService.habilidadesValues,
     );
 
     if (isDesktop(context)) {
