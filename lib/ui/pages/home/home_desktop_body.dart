@@ -48,7 +48,8 @@ class HomeDesktopBody extends StatelessWidget {
       backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
-        child: ConstrainedBox(
+        child: Center(
+          child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,6 +348,7 @@ class HomeDesktopBody extends StatelessWidget {
               const SizedBox(height: 20),
             ],
           ),
+        ),
         ),
       ),
     );

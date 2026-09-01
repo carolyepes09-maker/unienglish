@@ -42,7 +42,8 @@ class SimulacroDesktopLayout extends StatelessWidget {
       backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
-        child: ConstrainedBox(
+        child: Center(
+          child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,6 +433,7 @@ class SimulacroDesktopLayout extends StatelessWidget {
               const SizedBox(height: 20),
             ],
           ),
+        ),
         ),
       ),
     );

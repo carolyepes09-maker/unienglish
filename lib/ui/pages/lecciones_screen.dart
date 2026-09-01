@@ -460,7 +460,8 @@ class _LeccionesScreenState extends State<LeccionesScreen>
       backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
-        child: ConstrainedBox(
+        child: Center(
+          child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,6 +667,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
               ),
             ],
           ),
+        ),
         ),
       ),
     );

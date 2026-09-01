@@ -429,7 +429,8 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
       backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
-        child: ConstrainedBox(
+        child: Center(
+          child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -605,6 +606,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
                           tema.descripcionEn,
                         ),
                         estado: tema.estado,
+                        imagePath: _getBackgroundImage(),
                       ),
                     );
                   }
@@ -624,6 +626,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
             ],
           ),
         ),
+        ),
       ),
     );
   }
@@ -631,7 +634,11 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
   // ═══════════════════════════════════════════════════════════════════════════
   // WIDGET — Tarjeta con textura roja
   // ═══════════════════════════════════════════════════════════════════════════
-  Widget _textureCard({required Widget child, EdgeInsets? padding}) {
+  Widget _textureCard({
+    required Widget child,
+    EdgeInsets? padding,
+    String imagePath = 'assets/images/fondo.webp',
+  }) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -650,7 +657,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
           children: [
             // Textura roja
             Positioned.fill(
-              child: Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
+              child: Image.asset(imagePath, fit: BoxFit.cover),
             ),
             // Capa oscura
             Positioned.fill(
@@ -688,9 +695,11 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
     required String nombre,
     required String descripcion,
     required EstadoTema estado,
+    String imagePath = 'assets/images/fondo.webp',
   }) {
     return _textureCard(
       padding: const EdgeInsets.all(16),
+      imagePath: imagePath,
       child: Row(
         children: [
           // Número del tema en círculo
