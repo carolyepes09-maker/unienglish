@@ -6,6 +6,7 @@ import 'leccion_detalle_screen.dart';
 import '../utils/responsive.dart';
 import '../utils/app_strings.dart';
 import '../utils/app_colors.dart';
+import 'home/home_widgets.dart' show textureCard;
 import 'tema_detalle/tema_detalle_pages.dart' show kGrammarTopicImages;
 
 const Color kPrimaryRed = Color(0xFFCC0000);
@@ -563,20 +564,16 @@ class _LeccionesScreenState extends State<LeccionesScreen>
               const SizedBox(height: 24),
 
               // ── Banner de nivel ─────────────────────────────────────────
-              Container(
-                width: double.infinity,
+              // Misma textureCard() (fondo.webp + capa oscura + bisel) que
+              // ya usan las tarjetas de habilidad justo debajo -- antes este
+              // banner era el único con un degradado plano sin textura.
+              textureCard(
+                margin: EdgeInsets.zero,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 28,
                   vertical: 22,
                 ),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6B1010), Color(0xFF8B6F6F)],
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                ),
+                radius: 18,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

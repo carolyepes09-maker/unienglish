@@ -54,17 +54,14 @@ class HomeDesktopBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Encabezado: saludo + racha + progreso ──────────────────
-              Container(
-                width: double.infinity,
+              // Misma textureCard() (fondo.webp + capa oscura + bisel) que
+              // usa el resto de la app -- antes era un degradado plano sin
+              // ninguna imagen detrás, la única pantalla de escritorio que
+              // no coincidía con la estética institucional del Login.
+              textureCard(
+                margin: EdgeInsets.zero,
                 padding: const EdgeInsets.all(28),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6B1010), Color(0xFF3A0A0A)],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                radius: 20,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -360,16 +357,10 @@ class HomeDesktopBody extends StatelessWidget {
     required String label,
     required String subtitle,
   }) {
-    return Container(
+    return textureCard(
+      margin: EdgeInsets.zero,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF6B1010), Color(0xFF3A0A0A)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
+      radius: 16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
