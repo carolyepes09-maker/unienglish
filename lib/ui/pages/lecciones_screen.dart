@@ -575,6 +575,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                   vertical: 22,
                 ),
                 radius: 18,
+                imageAlignment: Alignment.topCenter,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

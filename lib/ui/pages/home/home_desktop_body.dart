@@ -63,6 +63,7 @@ class HomeDesktopBody extends StatelessWidget {
                 margin: EdgeInsets.zero,
                 padding: const EdgeInsets.all(28),
                 radius: 20,
+                imageAlignment: Alignment.topCenter,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -341,6 +342,7 @@ class HomeDesktopBody extends StatelessWidget {
                       title: act['titulo'] ?? AppStrings.tr('Actividad', 'Activity'),
                       subtitle: act['subtitulo'] ?? AppStrings.tr('Progreso', 'Progress'),
                       percentage: act['porcentaje'] ?? '0%',
+                      imageAlignment: Alignment.topCenter,
                     ),
                   );
                 }),
@@ -363,6 +365,7 @@ class HomeDesktopBody extends StatelessWidget {
       margin: EdgeInsets.zero,
       padding: const EdgeInsets.all(20),
       radius: 16,
+      imageAlignment: Alignment.topCenter,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

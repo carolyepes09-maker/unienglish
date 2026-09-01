@@ -19,6 +19,13 @@ Widget textureCard({
   EdgeInsets padding = const EdgeInsets.all(20),
   double radius = 16,
   Color? overlayColor, // Nuevo parámetro para el tinte
+  // fondo.webp es una foto vertical (600x900) con un brillo cálido cerca
+  // de la parte de arriba y esquinas oscuras. Con BoxFit.cover, entre más
+  // ancha y baja sea la tarjeta, más delgada es la franja que se recorta:
+  // Alignment.center (el de siempre, no cambia nada de lo existente) cae
+  // en la franja del medio, más plana; Alignment.topCenter captura esa
+  // zona de brillo y se nota mucho más como una foto real.
+  Alignment imageAlignment = Alignment.center,
 }) {
   return Container(
     margin: margin,
@@ -41,7 +48,11 @@ Widget textureCard({
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
+            child: Image.asset(
+              'assets/images/fondo.webp',
+              fit: BoxFit.cover,
+              alignment: imageAlignment,
+            ),
           ),
           Positioned.fill(
             child: Container(
@@ -93,6 +104,7 @@ Widget activityTile({
   required String title,
   required String subtitle,
   required String percentage,
+  Alignment imageAlignment = Alignment.center,
 }) {
   // Color según el porcentaje: solo tiñe el chip del porcentaje, no la
   // tarjeta completa (antes todo el fondo de la tarjeta cambiaba de color).
@@ -107,6 +119,7 @@ Widget activityTile({
   }
 
   return textureCard(
+    imageAlignment: imageAlignment,
     child: Row(
       children: [
         Container(
