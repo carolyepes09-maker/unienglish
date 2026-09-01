@@ -460,7 +460,7 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
           children: [
             // Textura roja
             Positioned.fill(
-              child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
             ),
             // Capa oscura
             Positioned.fill(

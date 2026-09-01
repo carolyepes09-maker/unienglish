@@ -10,7 +10,7 @@ import '../../utils/app_fonts.dart';
 /// aparte en vez de duplicarse en cada uno.
 /// =============================================================================
 
-/// Tarjeta con textura de fondo (fondo.jpg + overlay + relieve), usada como
+/// Tarjeta con textura de fondo (fondo.webp + overlay + relieve), usada como
 /// base visual tanto de los accesos rápidos (móvil) como de la actividad
 /// reciente (móvil y escritorio).
 Widget textureCard({
@@ -41,7 +41,7 @@ Widget textureCard({
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
+            child: Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
           ),
           Positioned.fill(
             child: Container(

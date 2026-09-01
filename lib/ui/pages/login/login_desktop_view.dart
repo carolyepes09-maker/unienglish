@@ -66,7 +66,7 @@ class LoginDesktopView extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Image.asset(
-                  'assets/images/fondo.jpg',
+                  'assets/images/fondo.webp',
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                 ),

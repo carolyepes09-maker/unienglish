@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// =============================================================================
 /// Roles de color que sí cambian entre modo claro y oscuro (fondos de
 /// pantalla, tarjetas "limpias", texto, bordes). Las tarjetas con textura
-/// (fondo.jpg + overlay oscuro, `textureCard`) NO usan este archivo: ya son
+/// (fondo.webp + overlay oscuro, `textureCard`) NO usan este archivo: ya son
 /// oscuras en los dos modos, no necesitan variante.
 ///
 /// Cada método lee `Theme.of(context).brightness`, que cambia solo cuando

@@ -247,7 +247,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                                 width: 3,
                               ),
                               image: const DecorationImage(
-                                image: AssetImage('assets/images/fondo.jpg'),
+                                image: AssetImage('assets/images/fondo.webp'),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -367,7 +367,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                   children: [
                     Positioned.fill(
                       child: Image.asset(
-                        'assets/images/fondo.jpg',
+                        'assets/images/fondo.webp',
                         fit: BoxFit.cover,
                       ),
                     ),

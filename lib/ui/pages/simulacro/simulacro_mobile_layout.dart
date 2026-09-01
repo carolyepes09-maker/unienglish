@@ -150,7 +150,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                           children: [
                             Positioned.fill(
                               child: Image.asset(
-                                'assets/images/fondo.jpg',
+                                'assets/images/fondo.webp',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -239,7 +239,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                       children: [
                         Positioned.fill(
                           child: Image.asset(
-                            'assets/images/fondo.jpg',
+                            'assets/images/fondo.webp',
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -438,7 +438,7 @@ class SimulacroMobileLayout extends StatelessWidget {
                         children: [
                           Positioned.fill(
                             child: Image.asset(
-                              'assets/images/fondo.jpg',
+                              'assets/images/fondo.webp',
                               fit: BoxFit.cover,
                             ),
                           ),

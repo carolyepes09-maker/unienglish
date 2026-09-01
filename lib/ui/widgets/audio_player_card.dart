@@ -272,7 +272,7 @@ class _AudioPlayerCardState extends State<AudioPlayerCard> {
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
+            child: Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
           ),
           Positioned.fill(
             child: Container(color: Colors.black.withValues(alpha: 0.42)),

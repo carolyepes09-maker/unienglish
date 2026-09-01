@@ -76,19 +76,19 @@ flutter:
 
   # Assets para la aplicación
   assets:
-    - assets/images/fondo.jpg
+    - assets/images/fondo.webp
     - assets/images/logo.recortado.webp
-    - assets/images/bg_grammar.jpg
-    - assets/images/bg_reading.jpg
-    - assets/images/bg_listening.jpg
-    - assets/images/bg_writing.jpg
-    - assets/images/bg_home.jpg
+    - assets/images/bg_grammar.webp
+    - assets/images/bg_reading.webp
+    - assets/images/bg_listening.webp
+    - assets/images/bg_writing.webp
+    - assets/images/bg_home.webp
     - assets/images/bg_perfil.webp
-    - assets/images/bg_nivel.jpg
-    - assets/images/present_simple.jpg
-    - assets/images/present_continuos.jpg
-    - assets/images/past_simple.jpg
-    - assets/images/past_present.jpg
+    - assets/images/bg_nivel.webp
+    - assets/images/present_simple.webp
+    - assets/images/present_continuos.webp
+    - assets/images/past_simple.webp
+    - assets/images/past_present.webp
     - assets/images/Fire.gif
     - assets/data/usuarios.json
     - assets/data/modulos.json

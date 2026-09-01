@@ -193,15 +193,15 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
   String _getBackgroundImage() {
     switch (widget.titulo.toLowerCase()) {
       case 'grammar':
-        return 'assets/images/bg_grammar.jpg';
+        return 'assets/images/bg_grammar.webp';
       case 'reading':
-        return 'assets/images/bg_reading.jpg';
+        return 'assets/images/bg_reading.webp';
       case 'listening':
-        return 'assets/images/bg_listening.jpg';
+        return 'assets/images/bg_listening.webp';
       case 'writing':
-        return 'assets/images/bg_writing.jpg';
+        return 'assets/images/bg_writing.webp';
       default:
-        return 'assets/images/fondo.jpg';
+        return 'assets/images/fondo.webp';
     }
   }
 
@@ -650,7 +650,7 @@ class _LeccionDetalleScreenState extends State<LeccionDetalleScreen>
           children: [
             // Textura roja
             Positioned.fill(
-              child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
             ),
             // Capa oscura
             Positioned.fill(

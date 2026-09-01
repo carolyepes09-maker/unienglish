@@ -86,7 +86,7 @@ class HomeMobileBody extends StatelessWidget {
                     // Capa 1: Fondo visual
                     Positioned.fill(
                       child: Image.asset(
-                        'assets/images/bg_home.jpg',
+                        'assets/images/bg_home.webp',
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
                       ),

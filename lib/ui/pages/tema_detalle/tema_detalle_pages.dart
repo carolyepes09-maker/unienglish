@@ -22,10 +22,10 @@ const Color _kCreamMuted = Color(0xAAF5E6D0);
 
 // Imagen ilustrativa por tema de Grammar (se muestra en la página de Teoría)
 const Map<String, String> kGrammarTopicImages = {
-  'Present Simple': 'assets/images/present_simple.jpg',
-  'Present Continuous': 'assets/images/present_continuos.jpg',
-  'Past Simple': 'assets/images/past_simple.jpg',
-  'Present Perfect': 'assets/images/past_present.jpg',
+  'Present Simple': 'assets/images/present_simple.webp',
+  'Present Continuous': 'assets/images/present_continuos.webp',
+  'Past Simple': 'assets/images/past_simple.webp',
+  'Present Perfect': 'assets/images/past_present.webp',
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -690,7 +690,7 @@ Widget _textureCard({
         children: [
           // Textura roja
           Positioned.fill(
-            child: Image.asset('assets/images/fondo.jpg', fit: BoxFit.cover),
+            child: Image.asset('assets/images/fondo.webp', fit: BoxFit.cover),
           ),
           // Capa oscura
           Positioned.fill(

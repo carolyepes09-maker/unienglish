@@ -480,6 +480,22 @@ class _MainNavigationState extends State<MainNavigation>
     );
   }
 
+  bool _fondoPrecargado = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // fondo.webp es la textura compartida por casi todas las tarjetas de la
+    // app (Home, Lecciones, Progreso, Vocabulario...) -- se precarga una
+    // sola vez aquí, apenas arranca la navegación principal, para que la
+    // primera pantalla que la use no pague el costo de decodificarla en
+    // ese momento.
+    if (!_fondoPrecargado) {
+      _fondoPrecargado = true;
+      precacheImage(const AssetImage('assets/images/fondo.webp'), context);
+    }
+  }
+
   void _verificarConsentimientoDatos() {
     if (!mounted) return;
     final usuario = _authService.usuarioActual;
@@ -566,34 +582,56 @@ class _MainNavigationState extends State<MainNavigation>
   // PageView la desplaza durante el swipe, el motor solo mueve/compone su
   // capa ya pintada en vez de repintar todo el árbol de widgets en cada
   // frame — es lo que hace que el gesto se sienta fluido y no retardado.
+  // TickerMode(enabled: false, ...) pausa cualquier animación basada en
+  // Ticker (AnimationController, y con eso el GIF de racha que Home/
+  // Progreso/Perfil animan cada una por su cuenta) en las pestañas que NO
+  // son la activa, sin destruir su estado -- PageView (a diferencia de
+  // PageView.builder) no las desmonta al cambiar de pestaña, así que sin
+  // esto sus animaciones seguían corriendo de fondo indefinidamente una
+  // vez visitadas, compitiendo por tiempo de frame con la pestaña activa.
   List<Widget> get _screens => [
-    RepaintBoundary(
-      child: HomeScreen(
-        authService: _authService,
-        vocabularioService: _vocabularioService,
-        onNavigate: _irAPantalla,
+    TickerMode(
+      enabled: _currentIndex == 0,
+      child: RepaintBoundary(
+        child: HomeScreen(
+          authService: _authService,
+          vocabularioService: _vocabularioService,
+          onNavigate: _irAPantalla,
+        ),
       ),
     ),
-    RepaintBoundary(
-      child: LeccionesScreen(
-        authService: _authService,
-        onBack: () => _irAPantalla(0),
+    TickerMode(
+      enabled: _currentIndex == 1,
+      child: RepaintBoundary(
+        child: LeccionesScreen(
+          authService: _authService,
+          onBack: () => _irAPantalla(0),
+        ),
       ),
     ),
-    RepaintBoundary(
-      child: SimulacroScreen(
-        authService: _authService,
-        onBack: () => _irAPantalla(0),
+    TickerMode(
+      enabled: _currentIndex == 2,
+      child: RepaintBoundary(
+        child: SimulacroScreen(
+          authService: _authService,
+          onBack: () => _irAPantalla(0),
+        ),
       ),
     ),
-    RepaintBoundary(
-      child: ProgresoScreen(onBack: () => _irAPantalla(0)),
+    TickerMode(
+      enabled: _currentIndex == 3,
+      child: RepaintBoundary(
+        child: ProgresoScreen(onBack: () => _irAPantalla(0)),
+      ),
     ),
-    RepaintBoundary(
-      child: PerfilScreen(
-        authService: _authService,
-        vocabularioService: _vocabularioService,
-        onBack: () => _irAPantalla(0),
+    TickerMode(
+      enabled: _currentIndex == 4,
+      child: RepaintBoundary(
+        child: PerfilScreen(
+          authService: _authService,
+          vocabularioService: _vocabularioService,
+          onBack: () => _irAPantalla(0),
+        ),
       ),
     ),
   ];

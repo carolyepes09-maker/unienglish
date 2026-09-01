@@ -79,7 +79,7 @@ class LoginMobileView extends StatelessWidget {
           // ─────────────────────────────────────────────────────────────────
           Positioned.fill(
             child: Image.asset(
-              'assets/images/fondo.jpg',
+              'assets/images/fondo.webp',
               fit: BoxFit.cover,
               alignment: Alignment.center,
             ),
