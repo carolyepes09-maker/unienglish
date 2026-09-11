@@ -564,17 +564,27 @@ class _MainNavigationState extends State<MainNavigation>
   }
 
   /// Cambia de pestaña de forma programática (tap en la barra de navegación,
-  /// onBack de una pantalla, etc.) animando el PageView para que se vea
-  /// igual de fluido que un swipe manual.
+  /// onBack de una pantalla, etc.). Para una pestaña VECINA (distancia 1),
+  /// anima el PageView para que se vea igual de fluido que un swipe manual.
+  /// Para una pestaña LEJANA (2+ de distancia, ej. Home -> Perfil),
+  /// PageController.animateToPage() recorre físicamente cada pantalla
+  /// intermedia en el camino -- con 4 posiciones de distancia y los mismos
+  /// 280ms, eso se ve como un destello de pantallas no relacionadas. Ahí
+  /// se salta directo con jumpToPage(), sin atravesar las intermedias.
   void _irAPantalla(int index) {
     if (index == _currentIndex) return;
+    final distancia = (index - _currentIndex).abs();
     setState(() => _currentIndex = index);
     if (_pageController.hasClients) {
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeOutCubic,
-      );
+      if (distancia == 1) {
+        _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeOutCubic,
+        );
+      } else {
+        _pageController.jumpToPage(index);
+      }
     }
   }
 
