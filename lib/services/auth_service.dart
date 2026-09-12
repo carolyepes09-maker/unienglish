@@ -263,4 +263,44 @@ class AuthService {
 
   /// Obtiene el usuario actual ID
   Future<String?> obtenerUsuarioId() async => _usuarioActualId;
+
+  /// Elimina permanentemente la cuenta del usuario (documento en Firestore
+  /// + cuenta de Firebase Authentication). Firebase exige una sesión
+  /// "reciente" para esta operación, así que primero se reautentica con la
+  /// contraseña que el usuario acaba de escribir -- si la sesión es vieja,
+  /// un delete() directo fallaría con 'requires-recent-login'.
+  Future<Map<String, dynamic>> eliminarCuenta({
+    required String password,
+  }) async {
+    final usuario = _auth.currentUser;
+    if (usuario == null || usuario.email == null) {
+      return {'success': false, 'error': 'No hay sesión activa'};
+    }
+    final usuarioId = usuario.uid;
+
+    try {
+      final credencial = fb_auth.EmailAuthProvider.credential(
+        email: usuario.email!,
+        password: password,
+      );
+      await usuario.reauthenticateWithCredential(credencial);
+
+      // Borra el documento de Firestore MIENTRAS la sesión de Auth todavía
+      // es válida -- las reglas exigen request.auth.uid == usuarioId, y
+      // eso deja de cumplirse en cuanto se borra la cuenta de Auth.
+      await _usuariosRef.doc(usuarioId).delete().timeout(_kFirestoreTimeout);
+
+      // Última: borra la cuenta de Firebase Auth (esto cierra la sesión).
+      await usuario.delete();
+
+      _usuarioActualId = null;
+      _usuarioActualData = null;
+
+      return {'success': true};
+    } on fb_auth.FirebaseAuthException catch (e) {
+      return {'success': false, 'error': _mensajeError(e)};
+    } catch (e) {
+      return {'success': false, 'error': 'Error inesperado: ${e.toString()}'};
+    }
+  }
 }

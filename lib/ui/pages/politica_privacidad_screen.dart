@@ -108,8 +108,12 @@ class PoliticaPrivacidadScreen extends StatelessWidget {
                   'datos, cuando no exista un deber legal que impida '
                   'eliminarlos.\n'
                   '• Acceder de forma gratuita a tus datos personales.\n\n'
-                  'Para ejercer estos derechos, escribe a $kCorreoContacto '
-                  'indicando tu solicitud. Se atenderá en un plazo razonable.',
+                  'Puedes eliminar tu cuenta y tus datos directamente desde '
+                  'la app (Perfil → Eliminar cuenta), sin necesidad de '
+                  'esperar respuesta de nadie. Para los demás derechos '
+                  '(conocer, actualizar, rectificar), escribe a '
+                  '$kCorreoContacto indicando tu solicitud; se atenderá en '
+                  'un plazo razonable.',
             ),
             _seccion(
               context,

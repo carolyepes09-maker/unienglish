@@ -80,6 +80,120 @@ class _PerfilScreenState extends State<PerfilScreen>
     return '';
   }
 
+  /// Pide confirmación + contraseña (Firebase exige sesión reciente para
+  /// borrar la cuenta) y, si todo sale bien, elimina la cuenta por completo.
+  void _confirmarEliminarCuenta() {
+    final passwordController = TextEditingController();
+    bool cargando = false;
+    String? error;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: Text(
+            AppStrings.tr('Eliminar cuenta', 'Delete account'),
+            style: const TextStyle(color: kPrimaryRed),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppStrings.tr(
+                  'Esta acción borra tu cuenta y todos tus datos de forma permanente. No se puede deshacer.',
+                  'This permanently deletes your account and all your data. This cannot be undone.',
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppStrings.tr(
+                  'Escribe tu contraseña para confirmar:',
+                  'Enter your password to confirm:',
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  errorText: error,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: cargando ? null : () => Navigator.pop(dialogContext),
+              child: Text(AppStrings.tr('Cancelar', 'Cancel')),
+            ),
+            TextButton(
+              onPressed: cargando
+                  ? null
+                  : () async {
+                      if (passwordController.text.isEmpty) {
+                        setDialogState(
+                          () => error = AppStrings.tr(
+                            'Ingresa tu contraseña',
+                            'Enter your password',
+                          ),
+                        );
+                        return;
+                      }
+                      setDialogState(() {
+                        cargando = true;
+                        error = null;
+                      });
+                      final resultado = await widget.authService
+                          .eliminarCuenta(password: passwordController.text);
+                      if (resultado['success'] == true) {
+                        // Misma limpieza de caché local que al cerrar
+                        // sesión: sin esto, el siguiente que use este
+                        // navegador vería por un instante los datos de
+                        // esta cuenta ya eliminada durante la precarga.
+                        await Future.wait([
+                          _progresoService.limpiarCacheLocal(),
+                          widget.vocabularioService.limpiarCacheLocal(),
+                          ActividadService().limpiarCacheLocal(),
+                        ]);
+                        if (dialogContext.mounted) {
+                          Navigator.pop(dialogContext);
+                        }
+                        if (mounted) {
+                          Navigator.pushReplacementNamed(context, '/');
+                        }
+                      } else {
+                        setDialogState(() {
+                          cargando = false;
+                          error =
+                              resultado['error'] ??
+                              AppStrings.tr(
+                                'Error al eliminar la cuenta',
+                                'Error deleting account',
+                              );
+                        });
+                      }
+                    },
+              child: cargando
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(
+                      AppStrings.tr('Eliminar', 'Delete'),
+                      style: const TextStyle(color: kPrimaryRed),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    ).then((_) => passwordController.dispose());
+  }
+
   /// Abre el selector de idioma de interfaz y aplica el cambio de inmediato.
   void _mostrarSelectorIdioma() {
     showModalBottomSheet(
@@ -607,6 +721,14 @@ class _PerfilScreenState extends State<PerfilScreen>
                           ),
                         );
                       },
+                    ),
+                    Divider(height: 1, color: AppColors.divider(context)),
+                    _settingsItem(
+                      icon: Icons.delete_forever,
+                      label: AppStrings.tr('Eliminar cuenta', 'Delete account'),
+                      iconColor: kPrimaryRed,
+                      labelColor: kPrimaryRed,
+                      onTap: _confirmarEliminarCuenta,
                     ),
                   ],
                 ),

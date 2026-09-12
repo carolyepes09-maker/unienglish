@@ -99,9 +99,11 @@ service cloud.firestore {
         && usuarioIdConsistente(request.resource.data)
         && datosValidos(request.resource.data);
 
-      // Nada en la app borra el documento de un usuario -- se deja explícito
-      // en vez de depender del "denegado por defecto" implícito.
-      allow delete: if false;
+      // Un usuario puede borrar SOLO su propio documento (eliminación de
+      // cuenta desde Perfil). AuthService.eliminarCuenta() hace esto ANTES
+      // de borrar la cuenta de Firebase Auth, así que request.auth todavía
+      // es válido en este punto.
+      allow delete: if request.auth != null && request.auth.uid == usuarioId;
     }
   }
 }
