@@ -454,7 +454,16 @@ class _LeccionesScreenState extends State<LeccionesScreen>
     List<LeccionInfo> lecciones,
   ) {
     final nivelActual = _leccionService.niveles[_selectedLevel];
-    final activas = lecciones.where((l) => !l.isLocked).length;
+    final desbloqueadas = lecciones.where((l) => !l.isLocked).toList();
+    final activas = desbloqueadas.length;
+    // Promedio real de progreso entre las habilidades desbloqueadas (antes
+    // era un "68%" fijo, igual para cualquier usuario). Se excluye Speaking
+    // (bloqueada) para no arrastrar el promedio hacia abajo con una
+    // habilidad que ningún usuario puede practicar todavía.
+    final double progresoPromedio = desbloqueadas.isEmpty
+        ? 0.0
+        : desbloqueadas.map((l) => l.progress).reduce((a, b) => a + b) /
+              desbloqueadas.length;
 
     return Scaffold(
       backgroundColor: AppColors.background(context),
@@ -607,7 +616,7 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '68%',
+                          '${(progresoPromedio * 100).toInt()}%',
                           style: AppFonts.poppins(
                             color: const Color(0xFFD4A017),
                             fontSize: 26,
