@@ -100,10 +100,37 @@ class _PerfilScreenState extends State<PerfilScreen>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                AppStrings.tr(
-                  'Esta acción borra tu cuenta y todos tus datos de forma permanente. No se puede deshacer.',
-                  'This permanently deletes your account and all your data. This cannot be undone.',
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: kPrimaryRed.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: kPrimaryRed.withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      color: kPrimaryRed,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        AppStrings.tr(
+                          'Esta acción borra tu cuenta y todos tus datos de forma permanente. No se puede deshacer.',
+                          'This permanently deletes your account and all your data. This cannot be undone.',
+                        ),
+                        style: const TextStyle(
+                          color: kPrimaryRed,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16),
