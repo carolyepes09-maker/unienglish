@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../ui/utils/app_strings.dart';
 import '../utils/app_logger.dart';
 
 /// =============================================================================
@@ -75,6 +76,12 @@ class AuthService {
   }
 
   /// Carga el documento de perfil desde Firestore y actualiza el estado local.
+  ///
+  /// Si la cuenta de Firebase Auth existe pero su perfil no (el registro
+  /// creó la cuenta y falló al guardar el perfil, p. ej. por perder la
+  /// conexión justo en ese momento), se crea un perfil base en vez de dejar
+  /// la cuenta "huérfana": sin esto no se podía iniciar sesión (no hay
+  /// perfil) ni volver a registrarse (el correo ya está en uso).
   Future<void> _cargarPerfil(String usuarioId) async {
     final doc = await _usuariosRef.doc(usuarioId).get().timeout(
       _kFirestoreTimeout,
@@ -83,7 +90,51 @@ class AuthService {
       _usuarioActualId = usuarioId;
       _usuarioActualData = doc.data();
       AppLogger.log('✅ Perfil restaurado desde Firestore: $usuarioId');
+      return;
     }
+
+    final usuarioFirebase = _auth.currentUser;
+    if (usuarioFirebase == null || usuarioFirebase.uid != usuarioId) return;
+    final email = usuarioFirebase.email ?? '';
+    final perfil = _perfilNuevo(
+      usuarioId: usuarioId,
+      email: email,
+      nombreCompleto: usuarioFirebase.displayName ?? email.split('@').first,
+      // Esta cuenta se registró antes de guardar su perfil; el consentimiento
+      // se le vuelve a pedir al entrar (ver MainNavigation).
+      aceptoPolitica: false,
+    );
+    await _usuariosRef.doc(usuarioId).set(perfil).timeout(_kFirestoreTimeout);
+    _usuarioActualId = usuarioId;
+    _usuarioActualData = perfil;
+    AppLogger.log('🩹 Perfil faltante recreado para: $usuarioId');
+  }
+
+  Map<String, dynamic> _perfilNuevo({
+    required String usuarioId,
+    required String email,
+    required String nombreCompleto,
+    String? codigoEstudiante,
+    String? facultadPrograma,
+    required bool aceptoPolitica,
+  }) {
+    final ahora = DateTime.now().toIso8601String();
+    return {
+      'usuario_id': usuarioId,
+      'nombre_completo': nombreCompleto,
+      'correo_electronico': email,
+      'codigo_estudiante': codigoEstudiante ?? '',
+      'facultad_programa': facultadPrograma ?? '',
+      'idioma_preferido': 'es',
+      'nivel_actual': 'A1',
+      'racha_dias': 0,
+      'puntos_totales': 0,
+      'fecha_registro': ahora,
+      'ultima_conexion': ahora,
+      'notificaciones_activas': true,
+      'acepto_politica_datos': aceptoPolitica,
+      if (aceptoPolitica) 'fecha_aceptacion_politica': ahora,
+    };
   }
 
   /// Getters básicos
@@ -91,25 +142,54 @@ class AuthService {
   bool get estaAutenticado => _usuarioActualId != null;
   Map<String, dynamic>? get usuarioActual => _usuarioActualData;
 
-  /// Traduce los códigos de error de Firebase a mensajes en español
+  /// Traduce los códigos de error de Firebase a mensajes en el idioma de la
+  /// interfaz (antes solo salían en español).
   String _mensajeError(fb_auth.FirebaseAuthException e) {
     switch (e.code) {
       case 'email-already-in-use':
-        return 'El correo ya está registrado';
+        return AppStrings.tr(
+          'El correo ya está registrado',
+          'This email is already registered',
+        );
       case 'invalid-email':
-        return 'Correo electrónico inválido';
+        return AppStrings.tr(
+          'Correo electrónico inválido',
+          'Invalid email address',
+        );
       case 'weak-password':
-        return 'La contraseña es demasiado débil';
+        return AppStrings.tr(
+          'La contraseña es demasiado débil',
+          'The password is too weak',
+        );
       case 'user-not-found':
       case 'wrong-password':
       case 'invalid-credential':
-        return 'Credenciales inválidas';
+        return AppStrings.tr('Credenciales inválidas', 'Invalid credentials');
       case 'too-many-requests':
-        return 'Demasiados intentos. Intenta de nuevo más tarde';
+        return AppStrings.tr(
+          'Demasiados intentos. Intenta de nuevo más tarde',
+          'Too many attempts. Please try again later',
+        );
+      case 'network-request-failed':
+        return AppStrings.tr(
+          'Sin conexión. Revisa tu internet e inténtalo de nuevo',
+          'No connection. Check your internet and try again',
+        );
+      case 'requires-recent-login':
+        return AppStrings.tr(
+          'Por seguridad, vuelve a iniciar sesión e inténtalo de nuevo',
+          'For security, sign in again and retry',
+        );
       default:
-        return 'Error de autenticación: ${e.message ?? e.code}';
+        return AppStrings.tr(
+          'Error de autenticación: ${e.message ?? e.code}',
+          'Authentication error: ${e.message ?? e.code}',
+        );
     }
   }
+
+  String _errorInesperado(Object e) =>
+      AppStrings.tr('Error inesperado: $e', 'Unexpected error: $e');
 
   /// Registra un nuevo usuario (Firebase Authentication + perfil en Firestore)
   Future<Map<String, dynamic>> registrarUsuario({
@@ -135,25 +215,17 @@ class AuthService {
         AppLogger.log('⚠️ No se pudo enviar el correo de verificación: $e');
       }
 
-      final nuevoUsuario = {
-        'usuario_id': usuarioId,
-        'nombre_completo': nombreCompleto,
-        'correo_electronico': email,
-        'codigo_estudiante': codigoEstudiante ?? '',
-        'facultad_programa': facultadPrograma ?? '',
-        'idioma_preferido': 'es',
-        'nivel_actual': 'A1',
-        'racha_dias': 0,
-        'puntos_totales': 0,
-        'fecha_registro': DateTime.now().toIso8601String(),
-        'ultima_conexion': DateTime.now().toIso8601String(),
-        'notificaciones_activas': true,
+      final nuevoUsuario = _perfilNuevo(
+        usuarioId: usuarioId,
+        email: email,
+        nombreCompleto: nombreCompleto,
+        codigoEstudiante: codigoEstudiante,
+        facultadPrograma: facultadPrograma,
         // El formulario de registro ya bloquea el botón hasta que se marca
         // el checkbox de aceptación (ver login_screen.dart), así que si
         // llegamos aquí es porque el usuario ya aceptó.
-        'acepto_politica_datos': true,
-        'fecha_aceptacion_politica': DateTime.now().toIso8601String(),
-      };
+        aceptoPolitica: true,
+      );
 
       await _usuariosRef
           .doc(usuarioId)
@@ -167,7 +239,7 @@ class AuthService {
     } on fb_auth.FirebaseAuthException catch (e) {
       return {'success': false, 'error': _mensajeError(e)};
     } catch (e) {
-      return {'success': false, 'error': 'Error inesperado: ${e.toString()}'};
+      return {'success': false, 'error': _errorInesperado(e)};
     }
   }
 
@@ -197,7 +269,7 @@ class AuthService {
     } on fb_auth.FirebaseAuthException catch (e) {
       return {'success': false, 'error': _mensajeError(e)};
     } catch (e) {
-      return {'success': false, 'error': 'Error inesperado: ${e.toString()}'};
+      return {'success': false, 'error': _errorInesperado(e)};
     }
   }
 
@@ -211,7 +283,7 @@ class AuthService {
     } on fb_auth.FirebaseAuthException catch (e) {
       return {'success': false, 'error': _mensajeError(e)};
     } catch (e) {
-      return {'success': false, 'error': 'Error inesperado: ${e.toString()}'};
+      return {'success': false, 'error': _errorInesperado(e)};
     }
   }
 
@@ -274,7 +346,10 @@ class AuthService {
   }) async {
     final usuario = _auth.currentUser;
     if (usuario == null || usuario.email == null) {
-      return {'success': false, 'error': 'No hay sesión activa'};
+      return {
+        'success': false,
+        'error': AppStrings.tr('No hay sesión activa', 'No active session'),
+      };
     }
     final usuarioId = usuario.uid;
 
@@ -300,7 +375,7 @@ class AuthService {
     } on fb_auth.FirebaseAuthException catch (e) {
       return {'success': false, 'error': _mensajeError(e)};
     } catch (e) {
-      return {'success': false, 'error': 'Error inesperado: ${e.toString()}'};
+      return {'success': false, 'error': _errorInesperado(e)};
     }
   }
 }

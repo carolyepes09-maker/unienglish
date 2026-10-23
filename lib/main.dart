@@ -23,13 +23,22 @@ import 'ui/pages/simulacro_screen.dart';
 import 'ui/pages/perfil_screen.dart';
 import 'ui/utils/responsive.dart';
 
-// Servicios globales
-late final AuthService _authService;
-late final ProgresoService _progresoService;
-late final VocabularioService _vocabularioService;
-late final ActividadService _actividadService;
+// Servicios globales. Construirlos no toca Firebase (sin I/O en el
+// constructor), así que pueden ser `final` normales: antes eran `late final`
+// asignados dentro de _inicializarServicios(), y al volver a '/' tras cerrar
+// sesión esa función corría otra vez y la reasignación lanzaba
+// LateInitializationError.
+final AuthService _authService = AuthService();
+final ProgresoService _progresoService = ProgresoService();
+final VocabularioService _vocabularioService = VocabularioService(_authService);
+final ActividadService _actividadService = ActividadService();
 final IdiomaService _idiomaService = IdiomaService();
 final TemaService _temaService = TemaService();
+
+// El arranque (Firebase + cachés locales) se hace UNA sola vez por ejecución
+// de la app. Volver a '/' (cerrar sesión, eliminar cuenta) reutiliza este
+// mismo Future ya completado en vez de repetirlo.
+Future<void>? _inicializacion;
 
 // Etapas reales del arranque, para que la pantalla de carga (_LoadingScreen)
 // pueda mostrar un texto que avanza de verdad en vez de un spinner mudo.
@@ -56,17 +65,6 @@ const kTextDark = Color(0xFF1C1C1C);
 // inmediato y este Future se espera dentro del árbol de widgets (ver
 // _AppBootstrap), mostrando una pantalla de carga mientras tanto.
 Future<void> _inicializarServicios() async {
-  // Los servicios se construyen SIEMPRE, pase lo que pase con Firebase más
-  // abajo: son solo instancias de singleton (sin I/O en el constructor). Si
-  // esto quedara dentro del try y Firebase.initializeApp() fallara antes de
-  // llegar aquí, estas variables late final nunca se asignarían, y
-  // AuthWrapper truena con LateInitializationError apenas las lee -- el
-  // "seguir funcionando a pesar del error" de más abajo no serviría de nada.
-  _authService = AuthService();
-  _progresoService = ProgresoService();
-  _vocabularioService = VocabularioService(_authService);
-  _actividadService = ActividadService();
-
   try {
     // Fase local: SharedPreferences/assets no dependen de Firebase ni de
     // que haya sesión, así que corren en PARALELO con
@@ -169,7 +167,9 @@ class _AppBootstrapState extends State<_AppBootstrap> {
   // límite de tiempo (ver auth_service.dart), pero este timeout general
   // garantiza que la pantalla de carga nunca quede colgada para siempre
   // sin importar qué falle.
-  late final Future<void> _initFuture = _inicializarServicios().timeout(
+  late final Future<void> _initFuture = (_inicializacion ??=
+          _inicializarServicios())
+      .timeout(
     const Duration(seconds: 15),
     onTimeout: () {
       AppLogger.log('⚠️ Timeout general inicializando la app, continuando de todas formas');
@@ -527,11 +527,27 @@ class _MainNavigationState extends State<MainNavigation>
         actions: [
           TextButton(
             onPressed: () async {
-              await _authService.actualizarUsuario(usuarioId, {
+              final guardado = await _authService.actualizarUsuario(usuarioId, {
                 'acepto_politica_datos': true,
                 'fecha_aceptacion_politica': DateTime.now().toIso8601String(),
               });
-              if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+              if (!dialogContext.mounted) return;
+              // Si no se pudo guardar (sin conexión), el diálogo se queda
+              // abierto: cerrarlo dejaría el consentimiento sin registrar.
+              if (!guardado) {
+                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppStrings.tr(
+                        'No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.',
+                        "Couldn't save. Check your connection and try again.",
+                      ),
+                    ),
+                  ),
+                );
+                return;
+              }
+              Navigator.of(dialogContext).pop();
             },
             child: Text(AppStrings.tr('Aceptar y continuar', 'Accept and continue')),
           ),
