@@ -45,29 +45,43 @@ class _SimulacroScreenState extends State<SimulacroScreen>
     // Cargamos el banco de preguntas después de que el widget se monte,
     // escalado según el nivel actual del usuario (más preguntas/tiempo
     // cuanto más avanzado el nivel).
+    // Si ya hay un examen en curso (el usuario cambió de pestaña y volvió),
+    // se retoma tal cual en vez de empezar otro.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final nivel =
-          widget.authService?.usuarioActual?['nivel_actual'] as String? ??
-          'A1';
-      _examenService.inicializar(nivel: nivel);
+      if (!mounted) return;
+      if (_examenService.tiempoAgotado) {
+        _finalizarExamen();
+      } else if (!_examenService.enCurso) {
+        final nivel =
+            widget.authService?.usuarioActual?['nivel_actual'] as String? ??
+            'A1';
+        _examenService.inicializar(nivel: nivel);
+      }
     });
   }
 
   void _onServiceUpdate() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    if (_examenService.tiempoAgotado) {
+      _finalizarExamen();
+      return;
+    }
+    setState(() {});
   }
 
   @override
   void dispose() {
+    // El reloj NO se detiene aquí: el examen sigue corriendo aunque el
+    // usuario cambie de pestaña, como en un examen real. ExamenService lo
+    // detiene al finalizar.
     _examenService.removeListener(_onServiceUpdate);
-    // ⏱️ LIMPIEZA: Detenemos el reloj para evitar fugas de memoria.
-    _examenService.stopTimer();
     super.dispose();
   }
 
   // ─── TRANSICIÓN A RESULTADOS ───────────────────────────────────────────
   // Envía al usuario a la pantalla de puntaje final tras completar el examen.
   void _finalizarExamen() {
+    _examenService.consumirTiempoAgotado();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

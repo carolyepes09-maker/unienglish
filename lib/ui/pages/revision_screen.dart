@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluter_app/services/progreso_service.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_strings.dart';
 import '../utils/app_colors.dart';
@@ -38,6 +39,7 @@ class RevisionScreen extends StatefulWidget {
 class _RevisionScreenState extends State<RevisionScreen>
     with IdiomaListenerMixin<RevisionScreen> {
   late RevisionService _revisionService; // Controlador de la lógica de negocio
+  final Stopwatch _cronometro = Stopwatch()..start(); // Tiempo real de estudio
 
   @override
   void initState() {
@@ -66,7 +68,12 @@ class _RevisionScreenState extends State<RevisionScreen>
   // Procesa si el usuario recordó la palabra correctamente o no.
   void _responder(bool sabia) {
     if (!_revisionService.responder(sabia)) {
-      // 🏁 FIN DE LA SESIÓN: Si no hay más palabras, saltamos al resumen.
+      // 🏁 FIN DE LA SESIÓN: se registra una sola vez (racha + tiempo) y
+      // saltamos al resumen.
+      ProgresoService().registrarRevision(
+        _revisionService.correctas,
+        duracion: _cronometro.elapsed,
+      );
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

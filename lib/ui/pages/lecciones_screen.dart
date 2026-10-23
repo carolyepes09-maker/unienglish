@@ -136,16 +136,10 @@ class _LeccionesScreenState extends State<LeccionesScreen>
               children: List.generate(_leccionService.niveles.length, (index) {
                 final isSelected = _selectedLevel == index;
                 return GestureDetector(
-                  onTap: () async {
-                    setState(() => _selectedLevel = index);
-                    final String? userId = widget.authService.usuarioActualId;
-                    if (userId != null) {
-                      await widget.authService.actualizarNivel(
-                        userId,
-                        _leccionService.niveles[index],
-                      );
-                    }
-                  },
+                  // Solo cambia qué nivel se está viendo. El nivel de la
+                  // cuenta se gana completando lecciones y simulacros (ver
+                  // ProgresoService), no se elige con esta pestaña.
+                  onTap: () => setState(() => _selectedLevel = index),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -538,17 +532,9 @@ class _LeccionesScreenState extends State<LeccionesScreen>
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
-                        onTap: () async {
-                          setState(() => _selectedLevel = index);
-                          final String? userId =
-                              widget.authService.usuarioActualId;
-                          if (userId != null) {
-                            await widget.authService.actualizarNivel(
-                              userId,
-                              _leccionService.niveles[index],
-                            );
-                          }
-                        },
+                        // Solo cambia qué nivel se está viendo (ver la
+                        // pestaña de la versión móvil).
+                        onTap: () => setState(() => _selectedLevel = index),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 22,

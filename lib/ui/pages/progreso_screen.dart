@@ -108,7 +108,7 @@ class _ProgresoScreenState extends State<ProgresoScreen>
                       size: 16,
                     ),
                     label: AppStrings.tr('Tiempo total', 'Total time'),
-                    value: _progresoService.tiempoTotalHoras.toString(),
+                    value: (_progresoService.tiempoMesMinutos / 60).toStringAsFixed(1),
                     subtitle: AppStrings.tr(
                       'horas este mes',
                       'hours this month',

@@ -7,7 +7,6 @@ import '../../models/grammar_content.dart';
 import '../../models/reading_content.dart';
 import '../../models/listening_content.dart';
 import '../../models/writing_content.dart';
-import 'package:fluter_app/services/progreso_service.dart';
 import 'ejercicios_screen.dart';
 import 'tema_detalle_screen.dart';
 import 'simulacro_screen.dart';
@@ -35,19 +34,17 @@ class ResultadoScreen extends StatelessWidget {
   final String leccion; // Categoría del aprendizaje
   final dynamic authService;
 
-  ResultadoScreen({
+  // El progreso lo registra quien termina la sesión (EjerciciosScreen o
+  // ExamenService), no esta pantalla: así un simulacro no cuenta además
+  // como lección, y un constructor que se ejecute dos veces no suma doble.
+  const ResultadoScreen({
     super.key,
     required this.correctas,
     required this.total,
     required this.temaNombre,
     required this.leccion,
     this.authService,
-  }) {
-    // ─── ACTUALIZACIÓN DE PROGRESO GLOBAL ─────────────────────────────────────
-    // Registramos que el usuario ha finalizado una lección para que el sistema
-    // de gamificación compute los puntos y la subida de nivel.
-    ProgresoService().completarLeccion();
-  }
+  });
 
   // ─── LÓGICA DE PRESENTACIÓN ────────────────────────────────────────────────
   // Métodos que ayudan a decidir qué colores, iconos y textos mostrar según la nota.

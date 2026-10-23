@@ -5,7 +5,6 @@ import '../utils/app_colors.dart';
 import 'package:fluter_app/models/palabra_model.dart';
 import 'package:fluter_app/services/vocabulario_service.dart';
 import 'package:fluter_app/ui/pages/agregar_palabra_screen.dart';
-import 'package:fluter_app/services/progreso_service.dart';
 
 const Color kCream = Color(0xFFF5E6D0);
 const Color kCreamMuted = Color(0xAAF5E6D0);
@@ -23,18 +22,15 @@ class ResultadoRevisionScreen extends StatelessWidget {
   final int incorrectas;
   final VocabularioService vocabularioService;
 
-  ResultadoRevisionScreen({
+  // El registro de la sesión (racha, tiempo) lo hace RevisionScreen al
+  // terminar: un constructor de widget puede ejecutarse más de una vez.
+  const ResultadoRevisionScreen({
     super.key,
     required this.total,
     required this.correctas,
     required this.incorrectas,
     required this.vocabularioService,
-  }) {
-    // ─── ACTUALIZACIÓN DE LOGROS ──────────────────────────────────────────
-    // Al instanciar esta pantalla, notificamos al sistema de progreso que
-    // el usuario ha completado una sesión de repaso para actualizar su racha.
-    ProgresoService().registrarRevision(correctas);
-  }
+  });
 
   // ─── LÓGICA DE FEEDBACK DINÁMICO ──────────────────────────────────────────
   // Calcula un mensaje personalizado basado en la precisión del usuario.

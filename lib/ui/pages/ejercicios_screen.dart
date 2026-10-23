@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/progreso_service.dart';
 import '../utils/app_fonts.dart';
 import '../utils/responsive.dart';
 import '../../services/ejercicio_service.dart';
@@ -29,6 +30,7 @@ class EjerciciosScreen extends StatefulWidget {
 class _EjerciciosScreenState extends State<EjerciciosScreen>
     with IdiomaListenerMixin<EjerciciosScreen> {
   final EjercicioService _ejercicioService = EjercicioService();
+  final Stopwatch _cronometro = Stopwatch()..start(); // Tiempo real de estudio
 
   @override
   void initState() {
@@ -54,6 +56,12 @@ class _EjerciciosScreenState extends State<EjerciciosScreen>
     if (!_ejercicioService.siguientePregunta()) {
       // 1. FINALIZACIÓN: Si no hay más preguntas, guardamos el log en el historial.
       _ejercicioService.finalizar(widget.leccion, widget.temaNombre);
+      final total = _ejercicioService.totalPreguntas;
+      ProgresoService().completarLeccion(
+        porcentaje: total == 0 ? 0 : _ejercicioService.correctas / total,
+        duracion: _cronometro.elapsed,
+        habilidad: widget.leccion,
+      );
 
       // 2. CAMBIO DE PANTALLA: Enviamos al usuario a la vista de resultados.
       Navigator.pushReplacement(

@@ -46,6 +46,13 @@ class ExamenService extends ChangeNotifier {
   int _correctas = 0;
   bool _isLoading = true;
 
+  // Estado del examen: en curso mientras hay preguntas cargadas y no se ha
+  // finalizado. Vive en el singleton (no en la pantalla), así que cambiar
+  // de pestaña a mitad del examen ya no lo reinicia.
+  bool _enCurso = false;
+  bool _tiempoAgotado = false;
+  DateTime? _inicio;
+
   // Aciertos y total de preguntas respondidas, agrupados por habilidad
   // ('grammar', 'reading', 'listening', 'writing'), para que al terminar el
   // examen el progreso se reparta en la habilidad real de cada pregunta y no
@@ -65,6 +72,11 @@ class ExamenService extends ChangeNotifier {
       _preguntas.isEmpty ? null : _preguntas[_currentIndex];
   bool get isLoading => _isLoading;
   int get correctas => _correctas;
+  bool get enCurso => _enCurso;
+
+  /// true si el examen terminó porque se acabó el tiempo y la pantalla
+  /// todavía no ha mostrado los resultados (ver [consumirTiempoAgotado]).
+  bool get tiempoAgotado => _tiempoAgotado;
 
   String get formattedTime {
     final minutes = _secondsRemaining ~/ 60;
@@ -152,7 +164,10 @@ class ExamenService extends ChangeNotifier {
       _correctasPorHabilidad.clear();
       _totalPorHabilidad.clear();
       _secondsRemaining = _tiempoParaExamen(_preguntas.length);
-      startTimer();
+      _tiempoAgotado = false;
+      _inicio = DateTime.now();
+      _enCurso = _preguntas.isNotEmpty;
+      if (_enCurso) startTimer();
     } catch (e) {
       debugPrint('❌ Error cargando simulacros: $e');
     } finally {
@@ -225,8 +240,12 @@ class ExamenService extends ChangeNotifier {
       if (_secondsRemaining > 0) {
         _secondsRemaining--;
         notifyListeners(); // Actualiza el reloj en la pantalla por cada segundo.
-      } else {
-        stopTimer(); // Se acaba el tiempo.
+      }
+      if (_secondsRemaining == 0) {
+        // Se acabó el tiempo: el examen se cierra con lo respondido hasta
+        // ahora (las preguntas sin responder cuentan como no acertadas).
+        _tiempoAgotado = true;
+        finalizar();
       }
     });
   }
@@ -240,7 +259,7 @@ class ExamenService extends ChangeNotifier {
   /// instante (igual que en las lecciones normales): a partir de aquí la
   /// UI puede mostrar el acierto/error y la explicación de la pregunta.
   void selectAnswer(int index) {
-    if (_respondida || _preguntas.isEmpty) return;
+    if (!_enCurso || _respondida || _preguntas.isEmpty) return;
     _selectedAnswer = index;
     _respondida = true;
 
@@ -263,16 +282,38 @@ class ExamenService extends ChangeNotifier {
       notifyListeners();
       return true;
     } else {
-      stopTimer();
-      // Registrar en el progreso global, desglosado por habilidad real de
-      // cada pregunta (no solo el total agregado).
-      ProgresoService().registrarExamen(
-        _correctasPorHabilidad,
-        _totalPorHabilidad,
-      );
+      finalizar();
       return false;
     }
   }
+
+  /// Cierra el examen y lo registra en el progreso global, desglosado por la
+  /// habilidad real de cada pregunta. Idempotente: solo registra una vez.
+  void finalizar() {
+    stopTimer();
+    if (!_enCurso) return;
+    _enCurso = false;
+
+    // Las preguntas que quedaron sin responder (por tiempo) también cuentan
+    // en el total de su habilidad, como no acertadas.
+    for (var i = _currentIndex + (_respondida ? 1 : 0); i < _preguntas.length; i++) {
+      final skill = _preguntas[i].skill;
+      _totalPorHabilidad[skill] = (_totalPorHabilidad[skill] ?? 0) + 1;
+    }
+
+    ProgresoService().registrarExamen(
+      _correctasPorHabilidad,
+      _totalPorHabilidad,
+      duracion: _inicio == null
+          ? Duration.zero
+          : DateTime.now().difference(_inicio!),
+    );
+    notifyListeners();
+  }
+
+  /// La pantalla llama a esto al mostrar los resultados de un examen que
+  /// terminó por tiempo, para no volver a mostrarlos.
+  void consumirTiempoAgotado() => _tiempoAgotado = false;
 
   @override
   void dispose() {
