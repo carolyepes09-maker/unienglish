@@ -59,22 +59,15 @@ class RevisionService extends ChangeNotifier {
       palabra.respuestaCorrecta();
       _correctas++;
     } else {
-      // 2. FALLO: Si no la sabía, el nivel vuelve a 0 para repaso inmediato.
+      // 2. FALLO: Si no la sabía, vuelve a 0 aciertos seguidos y se repasa ya.
       palabra.respuestaIncorrecta();
       _incorrectas++;
     }
 
     // ─── SINCRONIZACIÓN (UPDATE) ───────────────────────────────────────────
-    // Actualizamos el estado en el servicio global para que el cambio persista
-    vocabularioService.actualizarPalabra(palabra.id, {
-      'facilidad': sabia ? 5 : 1,
-      'total_correctas': sabia
-          ? (palabra.vecesCorrectamente + 1)
-          : palabra.vecesCorrectamente,
-      'total_incorrectas': sabia
-          ? palabra.vecesIncorrectamente
-          : (palabra.vecesIncorrectamente + 1),
-    });
+    // Guarda el nuevo estado SM-2 de la palabra (repeticiones, facilidad,
+    // intervalo y próxima revisión) para que persista entre sesiones.
+    vocabularioService.registrarRespuesta(palabra);
 
     if (_indiceActual < palabras.length - 1) {
       // 3. NAVEGACIÓN: Pasamos a la siguiente flashcard de la pila.

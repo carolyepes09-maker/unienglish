@@ -1,4 +1,4 @@
-// Tests del algoritmo de repetición espaciada (SM-2 simplificado) en
+// Tests del algoritmo de repetición espaciada (SM-2) en
 // PalabraModel. Es lógica pura (sin Firebase/SharedPreferences), así que se
 // prueba de forma aislada sin necesitar ningún mock.
 
@@ -44,25 +44,32 @@ void main() {
       expect(palabra.vecesCorrectamente, 1);
     });
 
-    test('espacia la próxima revisión según el nivel alcanzado', () {
-      // intervalos = [0, 1, 3, 7, 14, 30] -- nivel 2 -> 3, salto a nivel 3 -> 7 días.
-      final antes = DateTime.now();
-      final palabra = _nuevaPalabra(nivel: 2);
-      palabra.respuestaCorrecta();
-      final despues = DateTime.now();
+    test('espacia la próxima revisión según SM-2 (1 día, 6 días, luego x facilidad)', () {
+      final palabra = _nuevaPalabra();
 
-      expect(palabra.nivel, 3);
-      const diasEsperados = Duration(days: 7);
+      palabra.respuestaCorrecta();
+      expect(palabra.intervaloDias, 1);
+
+      palabra.respuestaCorrecta();
+      expect(palabra.intervaloDias, 6);
+
+      final facilidad = palabra.facilidad;
+      palabra.respuestaCorrecta();
+      expect(palabra.intervaloDias, (6 * facilidad).round());
+
+      final esperado = DateTime.now().add(Duration(days: palabra.intervaloDias));
       expect(
-        palabra.proximaRevision.isAfter(antes.add(diasEsperados - const Duration(minutes: 1))),
-        isTrue,
-        reason: 'la próxima revisión debería quedar ~7 días adelante, no antes',
+        palabra.proximaRevision.difference(esperado).inMinutes.abs(),
+        lessThan(1),
       );
-      expect(
-        palabra.proximaRevision.isBefore(despues.add(diasEsperados + const Duration(minutes: 1))),
-        isTrue,
-        reason: 'la próxima revisión no debería pasarse de ~7 días adelante',
-      );
+    });
+
+    test('"Lo sabía" (calidad 4) mantiene la facilidad; calidad 5 la sube', () {
+      final normal = _nuevaPalabra()..responder(4);
+      expect(normal.facilidad, closeTo(PalabraModel.facilidadInicial, 1e-9));
+
+      final perfecta = _nuevaPalabra()..responder(5);
+      expect(perfecta.facilidad, greaterThan(PalabraModel.facilidadInicial));
     });
   });
 
@@ -71,6 +78,14 @@ void main() {
       final palabra = _nuevaPalabra(nivel: 4);
       palabra.respuestaIncorrecta();
       expect(palabra.nivel, 0);
+    });
+
+    test('baja la facilidad, sin pasar del mínimo 1.3', () {
+      final palabra = _nuevaPalabra();
+      for (var i = 0; i < 20; i++) {
+        palabra.respuestaIncorrecta();
+      }
+      expect(palabra.facilidad, PalabraModel.facilidadMinima);
     });
 
     test('incrementa vecesIncorrectamente', () {
@@ -144,6 +159,8 @@ void main() {
       expect(reconstruida.vecesCorrectamente, original.vecesCorrectamente);
       expect(reconstruida.vecesIncorrectamente, original.vecesIncorrectamente);
       expect(reconstruida.proximaRevision, original.proximaRevision);
+      expect(reconstruida.facilidad, original.facilidad);
+      expect(reconstruida.intervaloDias, original.intervaloDias);
     });
   });
 }

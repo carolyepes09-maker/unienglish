@@ -108,11 +108,24 @@ class ResultadoRevisionScreen extends StatelessWidget {
                     // Consulta al servicio cuántas palabras estarán disponibles
                     // para repasar en el futuro cercano según el algoritmo SM-2.
                     FutureBuilder<List<PalabraModel>>(
-                      future: vocabularioService.obtenerPalabrasParaRepasar(),
+                      future: vocabularioService.cargarPalabras(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) return const SizedBox.shrink();
-                        final proximas = (snapshot.data as List<PalabraModel>)
-                            .where((p) => !p.necesitaRevision)
+                        // Palabras que tocan mañana: aún no vencen hoy,
+                        // pero su próxima revisión cae antes de que
+                        // termine el día de mañana.
+                        final ahora = DateTime.now();
+                        final finDeManana = DateTime(
+                          ahora.year,
+                          ahora.month,
+                          ahora.day + 2,
+                        );
+                        final proximas = snapshot.data!
+                            .where(
+                              (p) =>
+                                  !p.necesitaRevision &&
+                                  p.proximaRevision.isBefore(finDeManana),
+                            )
                             .length;
                         return Text(
                           AppStrings.tr(

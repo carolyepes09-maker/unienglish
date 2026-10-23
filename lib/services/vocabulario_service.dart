@@ -236,61 +236,86 @@ class VocabularioService extends ChangeNotifier {
 
   /// Carga todas las tarjetas combinadas
   Future<List<PalabraModel>> cargarPalabras() async {
-    List<PalabraModel> palabras = [];
-    final todasLasTarjetas = [..._tarjetasSistema, ..._tarjetasUsuario];
+    // Índice por tarjeta_id: una sola pasada en vez de recorrer toda la
+    // lista de progreso por cada tarjeta.
+    final progresoPorId = <String, Map<String, dynamic>>{
+      for (final p in _progresoTarjetas)
+        if (p['tarjeta_id'] != null) p['tarjeta_id'].toString(): p,
+    };
 
-    for (var tarjeta in todasLasTarjetas) {
-      final tarjetaId =
-          tarjeta['id']?.toString() ??
-          DateTime.now().millisecondsSinceEpoch.toString();
+    final palabras = <PalabraModel>[];
+    for (final tarjeta in [..._tarjetasSistema, ..._tarjetasUsuario]) {
+      final ingles = tarjeta['palabra_termino']?.toString() ?? '';
+      // El id debe ser estable entre arranques: si se generara al vuelo, el
+      // progreso guardado nunca volvería a encontrar su tarjeta.
+      final tarjetaId = tarjeta['id']?.toString() ?? 'sin_id_$ingles';
+      final progreso = progresoPorId[tarjetaId] ?? const {};
 
-      // Buscar progreso
-      Map<String, dynamic> progreso = {};
-      try {
-        progreso = _progresoTarjetas.firstWhere(
-          (p) => p['tarjeta_id'] == tarjetaId,
-          orElse: () => {},
-        );
-      } catch (_) {}
-
-      if (progreso.isNotEmpty) {
-        palabras.add(
-          PalabraModel(
-            id: tarjetaId,
-            ingles: tarjeta['palabra_termino'] ?? '',
-            espanol: tarjeta['traduccion_definicion'] ?? '',
-            ejemplo: tarjeta['ejemplo_uso'] ?? '',
-            nivel: ((progreso['facilidad'] ?? 2.5) as num).toInt(),
-            proximaRevision:
-                DateTime.tryParse(
-                  progreso['proxima_revision'] as String? ?? '',
-                ) ??
-                DateTime.now(),
-            vecesCorrectamente: progreso['total_correctas'] as int? ?? 0,
-            vecesIncorrectamente: progreso['total_incorrectas'] as int? ?? 0,
+      palabras.add(
+        PalabraModel(
+          id: tarjetaId,
+          ingles: ingles,
+          espanol: tarjeta['traduccion_definicion']?.toString() ?? '',
+          ejemplo: tarjeta['ejemplo_uso']?.toString() ?? '',
+          repeticiones: (progreso['repeticiones'] as num?)?.toInt() ?? 0,
+          facilidad:
+              (progreso['facilidad'] as num?)?.toDouble() ??
+              PalabraModel.facilidadInicial,
+          intervaloDias: (progreso['intervalo_dias'] as num?)?.toInt() ?? 0,
+          proximaRevision: DateTime.tryParse(
+            progreso['proxima_revision']?.toString() ?? '',
           ),
-        );
-      } else {
-        palabras.add(
-          PalabraModel(
-            id: tarjetaId,
-            ingles: tarjeta['palabra_termino'] ?? '',
-            espanol: tarjeta['traduccion_definicion'] ?? '',
-            ejemplo: tarjeta['ejemplo_uso'] ?? '',
-            nivel: 0,
-            proximaRevision: DateTime.now(),
-            vecesCorrectamente: 0,
-            vecesIncorrectamente: 0,
-          ),
-        );
-      }
+          vecesCorrectamente:
+              (progreso['total_correctas'] as num?)?.toInt() ?? 0,
+          vecesIncorrectamente:
+              (progreso['total_incorrectas'] as num?)?.toInt() ?? 0,
+        ),
+      );
     }
     return palabras;
   }
 
-  /// Obtiene la lista de palabras destinadas al repaso
+  /// Obtiene solo las palabras que tocan hoy según SM-2.
   Future<List<PalabraModel>> obtenerPalabrasParaRepasar() async {
-    return await cargarPalabras();
+    final palabras = await cargarPalabras();
+    return palabras.where((p) => p.necesitaRevision).toList();
+  }
+
+  /// Guarda el resultado de un repaso (ya aplicado sobre [palabra] con
+  /// [PalabraModel.responder]). Sirve tanto para palabras del usuario como
+  /// del sistema: el progreso vive aparte de la tarjeta, por tarjeta_id.
+  ///
+  /// La lista en memoria se actualiza ANTES del primer await, así que quien
+  /// lea [cargarPalabras] justo después ya ve el cambio aunque el guardado
+  /// en disco/Firestore siga en curso.
+  Future<void> registrarRespuesta(PalabraModel palabra) async {
+    final progreso = {
+      'tarjeta_id': palabra.id,
+      'facilidad': palabra.facilidad,
+      'intervalo_dias': palabra.intervaloDias,
+      'repeticiones': palabra.repeticiones,
+      'proxima_revision': palabra.proximaRevision.toIso8601String(),
+      'total_revisiones':
+          palabra.vecesCorrectamente + palabra.vecesIncorrectamente,
+      'total_correctas': palabra.vecesCorrectamente,
+      'total_incorrectas': palabra.vecesIncorrectamente,
+    };
+
+    final index = _progresoTarjetas.indexWhere(
+      (p) => p['tarjeta_id'] == palabra.id,
+    );
+    if (index == -1) {
+      _progresoTarjetas.add(progreso);
+    } else {
+      _progresoTarjetas[index] = progreso;
+    }
+
+    try {
+      await _guardarDatosUsuarioLocal();
+    } catch (e) {
+      AppLogger.log('❌ Error guardando progreso de repaso: $e');
+    }
+    notifyListeners();
   }
 
   /// Guarda una nueva palabra
@@ -312,7 +337,7 @@ class VocabularioService extends ChangeNotifier {
       Map<String, dynamic> progreso = {
         'tarjeta_id': tarjetaId,
         'facilidad': 2.5,
-        'intervalo_dias': 1,
+        'intervalo_dias': 0,
         'repeticiones': 0,
         'proxima_revision': DateTime.now().toIso8601String(),
         'total_revisiones': 0,
