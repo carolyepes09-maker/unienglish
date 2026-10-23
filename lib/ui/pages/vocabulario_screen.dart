@@ -150,10 +150,9 @@ class _VocabularioScreenState extends State<VocabularioScreen>
           final palabras = snapshot.data ?? [];
 
           // ── FILTRADO INTELIGENTE ───────────────────────────────────────────
-          // 1. Calculamos las palabras que "tocan" estudiar hoy según el SM-2.
-          final palabrasHoy = palabras
-              .where((p) => p.necesitaRevision)
-              .toList();
+          // 1. Calculamos las palabras que "tocan" estudiar hoy según el SM-2
+          //    (primero las vencidas, luego unas pocas nuevas, con tope).
+          final palabrasHoy = VocabularioService.sesionDeHoy(palabras);
 
           // 2. Contamos cuántas palabras han alcanzado el nivel máximo de memoria.
           final palabrasDominadas = palabras.where((p) => p.dominada).length;

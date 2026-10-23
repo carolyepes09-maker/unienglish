@@ -4,6 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluter_app/models/palabra_model.dart';
 import 'package:fluter_app/services/auth_service.dart';
 import 'package:fluter_app/services/revision_service.dart';
 import 'package:fluter_app/services/vocabulario_service.dart';
@@ -62,5 +63,33 @@ void main() {
       (p) => p.id == palabra.id,
     );
     expect(recargada.nivel, 1);
+  });
+
+  test('la sesión de hoy pone primero las vencidas y limita las nuevas', () {
+    PalabraModel palabra(String id, {int repeticiones = 0, int fallos = 0}) =>
+        PalabraModel(
+          id: id,
+          ingles: id,
+          espanol: id,
+          ejemplo: '',
+          repeticiones: repeticiones,
+          vecesIncorrectamente: fallos,
+          proximaRevision: DateTime.now().subtract(const Duration(days: 1)),
+        );
+
+    final palabras = [
+      for (var i = 0; i < 30; i++) palabra('nueva$i'),
+      palabra('vencida', repeticiones: 2),
+      palabra('fallada', fallos: 1),
+    ];
+    final sesion = VocabularioService.sesionDeHoy(palabras);
+
+    expect(sesion.first.id, 'fallada');
+    expect(sesion[1].id, 'vencida');
+    expect(
+      sesion.where((p) => p.id.startsWith('nueva')).length,
+      VocabularioService.maxNuevasPorSesion,
+    );
+    expect(sesion.length, lessThanOrEqualTo(VocabularioService.maxTarjetasPorSesion));
   });
 }

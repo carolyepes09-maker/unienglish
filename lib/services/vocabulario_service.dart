@@ -275,6 +275,40 @@ class VocabularioService extends ChangeNotifier {
     return palabras;
   }
 
+  /// Máximo de tarjetas por sesión y de palabras nunca vistas que entran en
+  /// ella: con el vocabulario base, un usuario nuevo tendría todas las
+  /// palabras pendientes el primer día.
+  static const int maxTarjetasPorSesion = 20;
+  static const int maxNuevasPorSesion = 10;
+
+  /// Arma la sesión de hoy: primero los repasos vencidos (los más atrasados
+  /// antes), luego palabras nuevas, respetando los topes de arriba.
+  static List<PalabraModel> sesionDeHoy(List<PalabraModel> palabras) {
+    final vencidas =
+        palabras
+            .where((p) => p.necesitaRevision && p.repeticiones > 0)
+            .toList()
+          ..sort((a, b) => a.proximaRevision.compareTo(b.proximaRevision));
+    // Las que se fallaron antes (tienen historial) van antes que las nunca vistas.
+    final sinDominar =
+        palabras.where((p) => p.necesitaRevision && p.repeticiones == 0).toList()
+          ..sort(
+            (a, b) => (b.vecesCorrectamente + b.vecesIncorrectamente).compareTo(
+              a.vecesCorrectamente + a.vecesIncorrectamente,
+            ),
+          );
+    final falladas = sinDominar
+        .where((p) => p.vecesCorrectamente + p.vecesIncorrectamente > 0)
+        .toList();
+    final nuevas = sinDominar
+        .where((p) => p.vecesCorrectamente + p.vecesIncorrectamente == 0)
+        .take(maxNuevasPorSesion);
+
+    return [...falladas, ...vencidas, ...nuevas]
+        .take(maxTarjetasPorSesion)
+        .toList();
+  }
+
   /// Obtiene solo las palabras que tocan hoy según SM-2.
   Future<List<PalabraModel>> obtenerPalabrasParaRepasar() async {
     final palabras = await cargarPalabras();

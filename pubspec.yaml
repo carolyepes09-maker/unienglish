@@ -1,5 +1,5 @@
 name: fluter_app
-description: "A new Flutter project."
+description: "UniEnglish: app de la Universidad Libre para aprender inglés (A1-B2) con lecciones, simulacros y vocabulario con repetición espaciada."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -40,11 +40,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   fl_chart: ^0.68.0
   shared_preferences: ^2.2.2
-  path_provider: ^2.1.1
-  lottie: ^3.0.0
   gif: ^2.2.0
   uuid: ^4.5.1
-  shared_preferences_web: ^2.1.0
   audioplayers: ^6.7.1
   firebase_core: ^3.15.2
   firebase_auth: ^5.7.0
@@ -91,15 +88,11 @@ flutter:
     - assets/images/past_simple.webp
     - assets/images/past_present.webp
     - assets/images/Fire.gif
-    - assets/data/usuarios.json
-    - assets/data/modulos.json
-    - assets/data/progreso_usuario.json
     - assets/data/palabras.json
-    - assets/data/actividad_reciente.json
     - assets/data/simulacros.json
     - assets/audio/basic.mp4
     - assets/audio/news.mp4
-    - "assets/audio/accents .mp4"
+    - assets/audio/accents.mp4
 
   fonts:
     - family: Poppins

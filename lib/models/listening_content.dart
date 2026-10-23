@@ -235,7 +235,7 @@ final ContenidoTema accentsAndPronunciation = ContenidoTema(
           'Razon practica: universidades tienen profesores y estudiantes internacionales. Necesitas entrenar tu oido para MULTIPLES acentos. No es vanidad, es NECESIDAD academica.',
     ),
   ],
-  audioFile: 'assets/audio/accents .mp4',
+  audioFile: 'assets/audio/accents.mp4',
 );
 
 // ══════════════════════════════════════════════════════════════════════════════

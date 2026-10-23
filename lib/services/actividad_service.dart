@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/app_logger.dart';
 import 'auth_service.dart';
@@ -48,15 +47,9 @@ class ActividadService {
     try {
       final actividadesJson = _prefs.getString('actividades_recientes');
       if (actividadesJson == null) {
-        // No hay nada guardado en este dispositivo todavía: usamos la
-        // semilla de assets mientras se resuelve si hay cuenta con datos
-        // propios (esto no depende de a quién pertenezca, es solo el
-        // contenido de ejemplo por defecto).
-        final String assetsJsonString = await rootBundle.loadString(
-          'assets/data/actividad_reciente.json',
-        );
-        final List<dynamic> assetsList = jsonDecode(assetsJsonString);
-        _actividades = List<Map<String, dynamic>>.from(assetsList);
+        // No hay nada guardado en este dispositivo todavía: se empieza
+        // vacío mientras se resuelve si la cuenta tiene actividad propia.
+        _actividades = [];
       }
     } catch (e) {
       AppLogger.log('❌ Error cargando actividades: $e');
@@ -86,8 +79,8 @@ class ActividadService {
             // usuario.
             : [];
       }
-      // Si actividadesJson era null, precargarLocal() ya cargó la semilla
-      // de assets -- nada que decidir aquí.
+      // Si actividadesJson era null, precargarLocal() ya dejó la lista
+      // vacía -- nada que decidir aquí.
     } catch (e) {
       AppLogger.log('❌ Error cargando actividades: $e');
       _actividades = [];
