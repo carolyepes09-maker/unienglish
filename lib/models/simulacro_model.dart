@@ -24,6 +24,9 @@ class SimulacroPregunta {
   final String explanation;  // Por qué esa es la respuesta correcta
   final String skill;        // 'grammar' | 'reading' | 'listening' | 'writing'
 
+  /// Identifica la pregunta entre exámenes (para no repetir las recientes).
+  String get clave => '$skill|$question';
+
   const SimulacroPregunta({
     this.passage,
     this.audioFile,

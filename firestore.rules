@@ -35,6 +35,11 @@ service cloud.firestore {
         return
           (!('racha_dias' in datos) || esNumeroEnRango(datos.racha_dias, 0, 100000)) &&
           (!('tiempo_total_horas' in datos) || esNumeroEnRango(datos.tiempo_total_horas, 0, 100000)) &&
+          (!('tiempo_total_minutos' in datos) || esNumeroEnRango(datos.tiempo_total_minutos, 0, 6000000)) &&
+          (!('tiempo_mes_minutos' in datos) || esNumeroEnRango(datos.tiempo_mes_minutos, 0, 44640)) &&
+          (!('ultimo_dia_actividad' in datos) || textoRazonable(datos.ultimo_dia_actividad, 10)) &&
+          (!('tiempo_mes' in datos) || textoRazonable(datos.tiempo_mes, 7)) &&
+          (!('actividad_semana_inicio' in datos) || textoRazonable(datos.actividad_semana_inicio, 10)) &&
           (!('lecciones_completadas' in datos) || esNumeroEnRango(datos.lecciones_completadas, 0, 100000)) &&
           (!('examenes_realizados' in datos) || esNumeroEnRango(datos.examenes_realizados, 0, 100000)) &&
           (!('puntos_totales' in datos) || esNumeroEnRango(datos.puntos_totales, 0, 10000000)) &&

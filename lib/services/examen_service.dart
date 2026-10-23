@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show mergeSort;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/simulacro_model.dart';
 import '../models/contenido_tema.dart';
 import '../models/grammar_content.dart';
@@ -31,6 +33,10 @@ import 'progreso_service.dart';
 /// - UI: [SimulacroScreen] depende de este servicio para el reloj y el contenido.
 /// - PROGRESO: Al terminar, envía los resultados a [ProgresoService].
 /// =============================================================================
+
+// Preguntas recientes que se evitan repetir en el siguiente simulacro.
+const String _kPreguntasVistas = 'simulacro_preguntas_vistas';
+const int _kMaxPreguntasVistas = 200;
 
 class ExamenService extends ChangeNotifier {
   static final ExamenService _instance = ExamenService._internal();
@@ -140,18 +146,26 @@ class ExamenService extends ChangeNotifier {
         (porHabilidad[pregunta.skill] ??= []).add(pregunta);
       }
 
+      // Adaptativo: la habilidad más débil del usuario recibe una pregunta
+      // extra, y dentro de cada habilidad van primero las preguntas que no
+      // salieron en los simulacros recientes.
       final int porCadaHabilidad = _preguntasPorHabilidadSegunNivel(nivel);
+      final String? masDebil = _habilidadMasDebil();
+      final Set<String> vistas = await _preguntasVistas();
       final List<SimulacroPregunta> seleccionadas = [];
-      for (final habilidad in const [
-        'grammar',
-        'reading',
-        'listening',
-        'writing',
-      ]) {
+      for (final habilidad in _habilidades) {
         final disponibles = List<SimulacroPregunta>.from(
           porHabilidad[habilidad] ?? const [],
         )..shuffle();
-        seleccionadas.addAll(disponibles.take(porCadaHabilidad));
+        // sort es estable: conserva el orden aleatorio dentro de cada grupo.
+        mergeSort(
+          disponibles,
+          compare: (a, b) => (vistas.contains(a.clave) ? 1 : 0).compareTo(
+            vistas.contains(b.clave) ? 1 : 0,
+          ),
+        );
+        final cantidad = porCadaHabilidad + (habilidad == masDebil ? 1 : 0);
+        seleccionadas.addAll(disponibles.take(cantidad));
       }
       seleccionadas.shuffle(); // No siempre en el mismo orden de habilidad.
 
@@ -173,6 +187,52 @@ class ExamenService extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  static const List<String> _habilidades = [
+    'grammar',
+    'reading',
+    'listening',
+    'writing',
+  ];
+
+  /// La habilidad con menor dominio según el progreso del usuario, o null si
+  /// todavía no hay datos (usuario nuevo: examen parejo).
+  String? _habilidadMasDebil() {
+    final valores = ProgresoService().habilidadesValues;
+    if (valores.take(_habilidades.length).every((v) => v == 0)) return null;
+    var indice = 0;
+    for (var i = 1; i < _habilidades.length && i < valores.length; i++) {
+      if (valores[i] < valores[indice]) indice = i;
+    }
+    return _habilidades[indice];
+  }
+
+  Future<Set<String>> _preguntasVistas() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return (prefs.getStringList(_kPreguntasVistas) ?? const []).toSet();
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<void> _guardarPreguntasVistas() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final nuevas = _preguntas.map((p) => p.clave).toSet();
+      final anteriores = (prefs.getStringList(_kPreguntasVistas) ?? const [])
+          .where((c) => !nuevas.contains(c));
+      final todas = [...anteriores, ...nuevas];
+      await prefs.setStringList(
+        _kPreguntasVistas,
+        todas.length > _kMaxPreguntasVistas
+            ? todas.sublist(todas.length - _kMaxPreguntasVistas)
+            : todas,
+      );
+    } catch (e) {
+      debugPrint('⚠️ No se pudieron guardar las preguntas vistas: $e');
     }
   }
 
@@ -308,6 +368,7 @@ class ExamenService extends ChangeNotifier {
           ? Duration.zero
           : DateTime.now().difference(_inicio!),
     );
+    _guardarPreguntasVistas();
     notifyListeners();
   }
 
