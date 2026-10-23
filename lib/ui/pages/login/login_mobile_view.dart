@@ -141,7 +141,7 @@ class LoginMobileView extends StatelessWidget {
                             child: Image.asset(
                               'assets/images/logo.recortado.webp',
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
+                              errorBuilder: (_, _, _) => Container(
                                 color: const Color(0xFF4A3000),
                                 child: const Center(
                                   child: Text(
@@ -631,7 +631,7 @@ class LoginMobileView extends StatelessWidget {
               ),
             ),
           ),
-          if (suffix != null) suffix,
+          ?suffix,
         ],
       ),
     );

@@ -1,14 +1,14 @@
-/// =============================================================================
-/// 📁 CARPETA: lib/models/
-/// =============================================================================
-/// Esta carpeta contiene las "plantillas" o estructuras de datos de la app.
-/// 
-/// RELACIÓN CON OTRAS CAPAS:
-/// 1. UI (lib/ui/): Las pantallas usan estas clases para saber qué mostrar (textos, opciones).
-/// 2. SERVICES (lib/services/): Los servicios transforman datos crudos (JSON/Maps) 
-///    en estos objetos para que la UI no tenga que lidiar con lógica compleja.
-/// 3. DATA (assets/data/): Es la fuente de información que luego se mapea a estos modelos.
-/// =============================================================================
+// =============================================================================
+// 📁 CARPETA: lib/models/
+// =============================================================================
+// Esta carpeta contiene las "plantillas" o estructuras de datos de la app.
+// 
+// RELACIÓN CON OTRAS CAPAS:
+// 1. UI (lib/ui/): Las pantallas usan estas clases para saber qué mostrar (textos, opciones).
+// 2. SERVICES (lib/services/): Los servicios transforman datos crudos (JSON/Maps) 
+//    en estos objetos para que la UI no tenga que lidiar con lógica compleja.
+// 3. DATA (assets/data/): Es la fuente de información que luego se mapea a estos modelos.
+// =============================================================================
 
 /// [Ejemplo] representa un par de oraciones para mostrar uso práctico.
 /// Se usa principalmente en la sección de "Examples" de cada lección.

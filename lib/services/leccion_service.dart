@@ -1,19 +1,19 @@
-/// =============================================================================
-/// 📚 SERVICIO: lib/services/leccion_service.dart
-/// =============================================================================
-/// Este servicio organiza las categorías principales de aprendizaje.
-///
-/// FUNCIONES PRINCIPALES:
-/// 1. Categorización: Define los bloques de Grammar, Reading, Listening, etc.
-/// 2. Progreso real: la barra de cada bloque usa el dominio por habilidad ya
-///    calculado por [ProgresoService] (el mismo dato que alimenta el radar
-///    de la pantalla Progreso) -- antes eran valores fijos según el nivel
-///    seleccionado, iguales para cualquier usuario.
-///
-/// RELACIÓN CON OTRAS CAPAS:
-/// - UI: [LeccionesScreen] consume este servicio para renderizar la lista
-///   de cursos y sus barras de progreso.
-/// =============================================================================
+// =============================================================================
+// 📚 SERVICIO: lib/services/leccion_service.dart
+// =============================================================================
+// Este servicio organiza las categorías principales de aprendizaje.
+//
+// FUNCIONES PRINCIPALES:
+// 1. Categorización: Define los bloques de Grammar, Reading, Listening, etc.
+// 2. Progreso real: la barra de cada bloque usa el dominio por habilidad ya
+//    calculado por [ProgresoService] (el mismo dato que alimenta el radar
+//    de la pantalla Progreso) -- antes eran valores fijos según el nivel
+//    seleccionado, iguales para cualquier usuario.
+//
+// RELACIÓN CON OTRAS CAPAS:
+// - UI: [LeccionesScreen] consume este servicio para renderizar la lista
+//   de cursos y sus barras de progreso.
+// =============================================================================
 import 'package:flutter/material.dart';
 
 class LeccionInfo {

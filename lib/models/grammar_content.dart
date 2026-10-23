@@ -1,16 +1,16 @@
-/// =============================================================================
-/// 📘 ARCHIVO: grammar_content.dart
-/// =============================================================================
-/// Este archivo contiene la "Base de Datos" estática de lecciones de Gramática.
-/// 
-/// RELACIÓN CON EL SISTEMA:
-/// 1. MODELO: Utiliza las clases [ContenidoTema], [Estructura], [Ejemplo] y [Pregunta] 
-///    definidas en `contenido_tema.dart`.
-/// 2. NAVEGACIÓN: El mapa [grammarTopics] al final de este archivo es la fuente 
-///    de verdad para la categoría "Grammar" en la UI.
-/// 3. SERVICIO: Es consumido por [EjercicioService] para inyectar contenido en 
-///    los ejercicios interactivos.
-/// =============================================================================
+// =============================================================================
+// 📘 ARCHIVO: grammar_content.dart
+// =============================================================================
+// Este archivo contiene la "Base de Datos" estática de lecciones de Gramática.
+// 
+// RELACIÓN CON EL SISTEMA:
+// 1. MODELO: Utiliza las clases [ContenidoTema], [Estructura], [Ejemplo] y [Pregunta] 
+//    definidas en `contenido_tema.dart`.
+// 2. NAVEGACIÓN: El mapa [grammarTopics] al final de este archivo es la fuente 
+//    de verdad para la categoría "Grammar" en la UI.
+// 3. SERVICIO: Es consumido por [EjercicioService] para inyectar contenido en 
+//    los ejercicios interactivos.
+// =============================================================================
 
 import 'contenido_tema.dart';
 

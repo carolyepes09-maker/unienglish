@@ -96,7 +96,7 @@ class LoginDesktopView extends StatelessWidget {
                             child: Image.asset(
                               'assets/images/logo.recortado.webp',
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => const Center(
+                              errorBuilder: (_, _, _) => const Center(
                                 child: Text(
                                   'UL',
                                   style: TextStyle(

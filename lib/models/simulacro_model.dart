@@ -1,16 +1,16 @@
-/// =============================================================================
-/// 📝 ARCHIVO: simulacro_model.dart
-/// =============================================================================
-/// Este archivo contiene el modelo de datos para los Exámenes de Simulacro.
-/// 
-/// CARACTERÍSTICA ÚNICA:
-/// - A diferencia de las lecciones normales, el Simulacro permite "passages" 
-///   largos que pueden cambiar por cada pregunta del examen.
-/// 
-/// RELACIÓN CON EL SISTEMA:
-/// - UI: [SimulacroScreen] renderiza el examen usando una lista de estos modelos.
-/// - SERVICE: [ExamenService] carga y mezcla las preguntas de simulacro.
-/// =============================================================================
+// =============================================================================
+// 📝 ARCHIVO: simulacro_model.dart
+// =============================================================================
+// Este archivo contiene el modelo de datos para los Exámenes de Simulacro.
+// 
+// CARACTERÍSTICA ÚNICA:
+// - A diferencia de las lecciones normales, el Simulacro permite "passages" 
+//   largos que pueden cambiar por cada pregunta del examen.
+// 
+// RELACIÓN CON EL SISTEMA:
+// - UI: [SimulacroScreen] renderiza el examen usando una lista de estos modelos.
+// - SERVICE: [ExamenService] carga y mezcla las preguntas de simulacro.
+// =============================================================================
 
 import 'contenido_tema.dart';
 

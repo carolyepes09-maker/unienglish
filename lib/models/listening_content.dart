@@ -2,20 +2,20 @@
 // MODELOS DE DATOS PARA CONTENIDO DE LISTENING
 // ═════════════════════════════════════════════════════════════════════════════════
 
-/// =============================================================================
-/// 🎧 ARCHIVO: listening_content.dart
-/// =============================================================================
-/// Este archivo contiene la "Base de Datos" de lecciones de Escucha (Listening).
-/// 
-/// CARACTERÍSTICAS ESPECIALES:
-/// 1. Campo "audioFile": Ruta al archivo de reprodución (.mp4/mp3).
-/// 2. Campo "transcript": Texto completo de lo que se narra en el audio.
-/// 3. Campo "tecnicasEscucha": Consejos específicos para entender el audio.
-/// 
-/// RELACIÓN CON EL SISTEMA:
-/// - UI: Consumido por [TemaDetalleScreen] para el reproductor de audio.
-/// - SERVICE: [EjercicioService] carga las preguntas de comprensión auditiva.
-/// =============================================================================
+// =============================================================================
+// 🎧 ARCHIVO: listening_content.dart
+// =============================================================================
+// Este archivo contiene la "Base de Datos" de lecciones de Escucha (Listening).
+// 
+// CARACTERÍSTICAS ESPECIALES:
+// 1. Campo "audioFile": Ruta al archivo de reprodución (.mp4/mp3).
+// 2. Campo "transcript": Texto completo de lo que se narra en el audio.
+// 3. Campo "tecnicasEscucha": Consejos específicos para entender el audio.
+// 
+// RELACIÓN CON EL SISTEMA:
+// - UI: Consumido por [TemaDetalleScreen] para el reproductor de audio.
+// - SERVICE: [EjercicioService] carga las preguntas de comprensión auditiva.
+// =============================================================================
 
 import 'contenido_tema.dart';
 

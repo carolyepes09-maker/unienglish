@@ -160,7 +160,7 @@ class _AudioPlayerCardState extends State<AudioPlayerCard> {
                           } catch (e) {
                             debugPrint('❌ Error playing audio: $e');
                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              ScaffoldMessenger.of(this.context).showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     AppStrings.tr(

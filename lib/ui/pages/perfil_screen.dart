@@ -731,10 +731,12 @@ class _PerfilScreenState extends State<PerfilScreen>
                                     widget.vocabularioService.limpiarCacheLocal(),
                                     ActividadService().limpiarCacheLocal(),
                                   ]);
-                                  // AuthWrapper redirigirá automáticamente a LoginScreen
+                                  // Ojo: `context` aquí es el del diálogo, que
+                                  // ya se cerró; se navega con el de la
+                                  // pantalla (this.context).
                                   if (mounted) {
                                     Navigator.pushReplacementNamed(
-                                      context,
+                                      this.context,
                                       '/',
                                     );
                                   }
@@ -845,7 +847,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                 ),
               ),
             ),
-            if (trailing != null) trailing,
+            ?trailing,
           ],
         ),
       ),

@@ -2,19 +2,19 @@
 // MODELOS DE DATOS PARA CONTENIDO DE READING
 // ═════════════════════════════════════════════════════════════════════════════════
 
-/// =============================================================================
-/// 📖 ARCHIVO: reading_content.dart
-/// =============================================================================
-/// Este archivo contiene la "Base de Datos" de lecciones de Lectura (Reading).
-/// 
-/// CARACTERÍSTICA ESPECIAL:
-/// - A diferencia de Grammar, aquí el campo "textoEjemplo" contiene el pasaje 
-///   de lectura principal que el estudiante debe analizar.
-/// 
-/// RELACIÓN CON EL SISTEMA:
-/// - UI: Consumido por [TemaDetalleScreen] para mostrar el texto de lectura.
-/// - SERVICE: [EjercicioService] utiliza los cuestionarios al final de este archivo.
-/// =============================================================================
+// =============================================================================
+// 📖 ARCHIVO: reading_content.dart
+// =============================================================================
+// Este archivo contiene la "Base de Datos" de lecciones de Lectura (Reading).
+// 
+// CARACTERÍSTICA ESPECIAL:
+// - A diferencia de Grammar, aquí el campo "textoEjemplo" contiene el pasaje 
+//   de lectura principal que el estudiante debe analizar.
+// 
+// RELACIÓN CON EL SISTEMA:
+// - UI: Consumido por [TemaDetalleScreen] para mostrar el texto de lectura.
+// - SERVICE: [EjercicioService] utiliza los cuestionarios al final de este archivo.
+// =============================================================================
 
 import 'contenido_tema.dart';
 

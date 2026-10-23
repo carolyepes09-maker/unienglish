@@ -458,7 +458,8 @@ class _VocabularioScreenState extends State<VocabularioScreen>
           onDismissed: (direction) async {
             // ELIMINACIÓN: Borra la palabra del Local Storage y de la lista.
             await widget.vocabularioService.eliminarPalabra(palabra.id);
-            ScaffoldMessenger.of(context).showSnackBar(
+            if (!mounted) return;
+            ScaffoldMessenger.of(this.context).showSnackBar(
               SnackBar(
                 content: Text(
                   AppStrings.tr('Palabra eliminada', 'Word deleted'),

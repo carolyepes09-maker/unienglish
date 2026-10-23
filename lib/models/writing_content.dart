@@ -2,20 +2,20 @@
 // MODELOS DE DATOS PARA CONTENIDO DE WRITING
 // ═════════════════════════════════════════════════════════════════════════════════
 
-/// =============================================================================
-/// ✍️ ARCHIVO: writing_content.dart
-/// =============================================================================
-/// Este archivo contiene la "Base de Datos" de lecciones de Escritura (Writing).
-/// 
-/// CARACTERÍSTICAS ESPECIALES:
-/// 1. Campo "criterios": Explica al estudiante qué se evalúa (coherencia, gramática).
-/// 2. Campo "ejemploModelo": Un ensayo o texto "perfecto" para que el estudiante 
-///    tenga una referencia clara.
-/// 
-/// RELACIÓN CON EL SISTEMA:
-/// - UI: Consumido por [TemaDetalleScreen] para guiar la producción escrita.
-/// - SERVICE: [EjercicioService] carga los retos de escritura y preguntas asociadas.
-/// =============================================================================
+// =============================================================================
+// ✍️ ARCHIVO: writing_content.dart
+// =============================================================================
+// Este archivo contiene la "Base de Datos" de lecciones de Escritura (Writing).
+// 
+// CARACTERÍSTICAS ESPECIALES:
+// 1. Campo "criterios": Explica al estudiante qué se evalúa (coherencia, gramática).
+// 2. Campo "ejemploModelo": Un ensayo o texto "perfecto" para que el estudiante 
+//    tenga una referencia clara.
+// 
+// RELACIÓN CON EL SISTEMA:
+// - UI: Consumido por [TemaDetalleScreen] para guiar la producción escrita.
+// - SERVICE: [EjercicioService] carga los retos de escritura y preguntas asociadas.
+// =============================================================================
 
 import 'contenido_tema.dart';
 

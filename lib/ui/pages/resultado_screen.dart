@@ -92,44 +92,6 @@ class ResultadoScreen extends StatelessWidget {
     return kPrimaryRed; // Rojo (Reintentar)
   }
 
-  // ─── FEEDBACK DE CONTENIDO EN DESARROLLO ──────────────────────────────────
-  // Muestra un modal informativo si una lección seleccionada no está lista aún.
-  void _mostrarPendiente(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          AppStrings.tr('Lección pendiente', 'Lesson pending'),
-          style: AppFonts.poppins(
-            fontWeight: FontWeight.bold,
-            color: kPrimaryRed,
-          ),
-        ),
-        content: Text(
-          AppStrings.tr(
-            'Esta lección aún no está implementada. ¡Estamos trabajando en nuevo contenido para ti!',
-            "This lesson hasn't been implemented yet. We're working on new content for you!",
-          ),
-          style: AppFonts.poppins(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              AppStrings.tr('Entendido', 'Got it'),
-              style: AppFonts.poppins(
-                color: kGoldAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     // ─── PREPARACIÓN DE NAVEGACIÓN ──────────────────────────────────────────

@@ -368,7 +368,7 @@ class HomeMobileBody extends StatelessWidget {
                     subtitle: act['subtitulo'] ?? AppStrings.tr('Progreso', 'Progress'),
                     percentage: act['porcentaje'] ?? '0%',
                   );
-                }).toList(),
+                }),
 
               const SizedBox(height: 20),
             ],
